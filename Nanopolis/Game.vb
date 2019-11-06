@@ -40,10 +40,10 @@ Module Module1
     End Sub
     Sub PrintMap()
         Console.Clear()
-        Dim Map(,) As Integer = {{-1, -1, -1, -1, -1, -1}, {-1, -1, -1, -1, -1, -1}}
+        Dim Map(,) As Integer = {{-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41}, {-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41}}
         For Row As Integer = 0 To 1
             For CurrentLine As Integer = 0 To 3
-                For Column = 0 To 5
+                For Column = 0 To 19
                     If CurrentLine = 0 Then
                         Select Case Map(Row, Column)
                             Case -1
@@ -287,7 +287,9 @@ Module Module1
                                 Console.Write("|")
                                 Console.ResetColor()
                             Case 3
+                                Console.BackgroundColor = ConsoleColor.Gray
                                 Console.Write("[GAS]")
+                                Console.ResetColor()
                             Case 4
                                 Console.Write("MART ")
                             Case 5
