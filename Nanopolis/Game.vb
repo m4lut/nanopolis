@@ -1,6 +1,6 @@
 ﻿Imports System.IO
 '0 at start menu displays 6x2 grid of various buildings, for debugging PrintMap()
-Module Game
+Module Module1
     Sub StartMenu()
         Console.Clear()
         MsgBox("Welcome to Nanopolis!" & vbCrLf & "Developed by Maksim Al-Utaibi" & vbCrLf & "Make sure to maximise the console window when playing.", vbOKOnly)
