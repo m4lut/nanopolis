@@ -123,7 +123,7 @@
         Console.WriteLine("\ |  ")
         '21
         Console.WriteLine("Low vol road, down right turn:")
-        Console.WriteLine("	    ")
+        Console.WriteLine("     ")
         Console.WriteLine("  ___")
         Console.WriteLine(" /  _")
         Console.WriteLine(" | / ")
