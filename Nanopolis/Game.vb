@@ -89,7 +89,14 @@ Module Module1
                             Case 11
                                 Console.Write("_____")
                             Case 12
-                                Console.Write(" ||  ")
+                                Console.BackgroundColor = ConsoleColor.Green
+                                Console.Write(" ")
+                                Console.BackgroundColor = ConsoleColor.DarkGray
+                                Console.ForegroundColor = ConsoleColor.Black
+                                Console.Write("||")
+                                Console.BackgroundColor = ConsoleColor.Green
+                                Console.Write("  ")
+                                Console.ResetColor()
                             Case 13
                                 Console.Write("_/ \_")
                             Case 14
