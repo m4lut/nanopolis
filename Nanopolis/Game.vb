@@ -2,7 +2,6 @@
 '0 at start menu displays 6x2 grid of various buildings, for debugging PrintMap()
 Module Module1
     Sub StartMenu()
-        Console.Clear()
         MsgBox("Welcome to Nanopolis!" & vbCrLf & "Developed by Maksim Al-Utaibi" & vbCrLf & "Make sure to maximise the console window when playing.", vbOKOnly)
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
@@ -43,7 +42,7 @@ Module Module1
         Dim Map(,) As Integer = {{-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41}, {-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41}}
         For Row As Integer = 0 To 1
             For CurrentLine As Integer = 0 To 3
-                For Column = 0 To 19
+                For Column = 0 To 41
                     If CurrentLine = 0 Then
                         Select Case Map(Row, Column)
                             Case -1
@@ -68,11 +67,13 @@ Module Module1
                                 Console.Write("_____")
                                 Console.ResetColor()
                             Case 3
-                                Console.BackgroundColor = ConsoleColor.Gray
+                                Console.BackgroundColor = ConsoleColor.Green
                                 Console.Write("     ")
                                 Console.ResetColor()
                             Case 4
+                                Console.BackgroundColor = ConsoleColor.Green
                                 Console.Write("     ")
+                                Console.ResetColor()
                             Case 5
                                 Console.Write("|MA|_")
                             Case 6
@@ -86,27 +87,27 @@ Module Module1
                             Case 10
                                 Console.Write(" ___|")
                             Case 11
-                                Console.Write("     ")
+                                Console.Write("_____")
                             Case 12
                                 Console.Write(" ||  ")
                             Case 13
-                                Console.Write(" ||  ")
+                                Console.Write("_/ \_")
                             Case 14
-                                Console.Write(" ||  ")
+                                Console.Write("_/ \_")
                             Case 15
-                                Console.Write("     ")
+                                Console.Write("_____")
                             Case 16
-                                Console.Write(" ||  ")
+                                Console.Write("_/|  ")
                             Case 17
-                                Console.Write(" ||  ")
+                                Console.Write(" | \_")
                             Case 18
-                                Console.Write(" ||  ")
+                                Console.Write("_/|  ")
                             Case 19
-                                Console.Write(" ||  ")
+                                Console.Write(" |\__")
                             Case 20
-                                Console.Write("     ")
+                                Console.Write("__   ")
                             Case 21
-                                Console.Write("     ")
+                                Console.Write("  ___")
                             Case 22
                                 Console.Write("_____")
                             Case 23
@@ -178,43 +179,76 @@ Module Module1
                                 Console.Write("|")
                                 Console.ResetColor()
                             Case 3
+                                Console.BackgroundColor = ConsoleColor.Green
                                 Console.Write("_____")
+                                Console.ResetColor()
                             Case 4
+                                Console.BackgroundColor = ConsoleColor.Green
                                 Console.Write("____ ")
+                                Console.ResetColor()
                             Case 5
-                                Console.Write("|LL||")
+                                Console.Write("|LL|")
+                                Console.BackgroundColor = ConsoleColor.DarkCyan
+                                Console.Write("|")
+                                Console.ResetColor()
                             Case 6
+                                Console.BackgroundColor = ConsoleColor.Green
+                                Console.ForegroundColor = ConsoleColor.DarkGreen
                                 Console.Write("|:::|")
+                                Console.ResetColor()
                             Case 7
-                                Console.Write("| h |")
+                                Console.BackgroundColor = ConsoleColor.Green
+                                Console.Write("|")
+                                Console.ForegroundColor = ConsoleColor.DarkYellow
+                                Console.Write("h ")
+                                Console.ForegroundColor = ConsoleColor.White
+                                Console.Write(" |")
+                                Console.ResetColor()
                             Case 8
+                                Console.BackgroundColor = ConsoleColor.Green
                                 Console.Write(".:::|")
+                                Console.ResetColor()
                             Case 9
+                                Console.BackgroundColor = ConsoleColor.Green
+                                Console.ForegroundColor = ConsoleColor.DarkGreen
                                 Console.Write("|:::|")
+                                Console.ResetColor()
                             Case 10
+                                Console.BackgroundColor = ConsoleColor.Green
+                                Console.ForegroundColor = ConsoleColor.DarkYellow
                                 Console.Write("|   |")
+                                Console.ResetColor()
                             Case 11
+                                Console.BackgroundColor = ConsoleColor.Green
                                 Console.Write("_____")
+                                Console.ResetColor()
                             Case 12
-                                Console.Write(" ||  ")
+                                Console.BackgroundColor = ConsoleColor.Green
+                                Console.ForegroundColor = ConsoleColor.Black
+                                Console.Write(" ")
+                                Console.BackgroundColor = ConsoleColor.Gray
+                                Console.Write("||")
+                                Console.BackgroundColor = ConsoleColor.Green
+                                Console.Write("  ")
+                                Console.ResetColor()
                             Case 13
-                                Console.Write("_/ \_")
+                                Console.Write("_   _")
                             Case 14
-                                Console.Write("_/ \_")
+                                Console.Write("_   _")
                             Case 15
                                 Console.Write("_____")
                             Case 16
-                                Console.Write("_/|  ")
+                                Console.Write("_ |  ")
                             Case 17
-                                Console.Write(" | \_")
+                                Console.Write(" | __")
                             Case 18
-                                Console.Write("_/|  ")
+                                Console.Write("__/  ")
                             Case 19
-                                Console.Write(" | \_")
+                                Console.Write(" \___")
                             Case 20
-                                Console.Write("__   ")
+                                Console.Write("_ \  ")
                             Case 21
-                                Console.Write("  ___")
+                                Console.Write(" /  _")
                             Case 22
                                 Console.Write("-----")
                             Case 23
@@ -287,13 +321,26 @@ Module Module1
                                 Console.Write("|")
                                 Console.ResetColor()
                             Case 3
-                                Console.BackgroundColor = ConsoleColor.Gray
+                                Console.BackgroundColor = ConsoleColor.DarkGray
+                                Console.ForegroundColor = ConsoleColor.Black
                                 Console.Write("[GAS]")
                                 Console.ResetColor()
                             Case 4
-                                Console.Write("MART ")
+                                Console.BackgroundColor = ConsoleColor.Red
+                                Console.Write("M")
+                                Console.BackgroundColor = ConsoleColor.DarkRed
+                                Console.Write("A")
+                                Console.BackgroundColor = ConsoleColor.Red
+                                Console.Write("R")
+                                Console.BackgroundColor = ConsoleColor.DarkRed
+                                Console.Write("T")
+                                Console.BackgroundColor = ConsoleColor.Green
+                                Console.Write(" ")
+                                Console.ResetColor()
                             Case 5
+                                Console.BackgroundColor = ConsoleColor.DarkCyan
                                 Console.Write("[][]|")
+                                Console.ResetColor()
                             Case 6
                                 Console.Write("|h| |")
                             Case 7
@@ -307,29 +354,29 @@ Module Module1
                             Case 10
                                 Console.Write("|/U\|")
                             Case 11
-                                Console.Write("_____")
+                                Console.Write("     ")
                             Case 12
                                 Console.Write(" ||  ")
                             Case 13
-                                Console.Write("_   _")
+                                Console.Write(" \ / ")
                             Case 14
-                                Console.Write("_____")
+                                Console.Write(" \ / ")
                             Case 15
-                                Console.Write("_   _")
+                                Console.Write(" \ / ")
                             Case 16
-                                Console.Write(" |  _")
+                                Console.Write(" \|  ")
                             Case 17
-                                Console.Write("__/  ")
+                                Console.Write(" |/  ")
                             Case 18
-                                Console.Write(" \___")
+                                Console.Write("     ")
                             Case 19
-                                Console.Write("  \  ")
+                                Console.Write("     ")
                             Case 20
-                                Console.Write("  \  ")
+                                Console.Write(" \|  ")
                             Case 21
-                                Console.Write("_____")
+                                Console.Write(" | / ")
                             Case 22
-                                Console.Write("	    ")
+                                Console.Write("_____")
                             Case 23
                                 Console.Write(" |:| ")
                             Case 24
@@ -402,11 +449,22 @@ Module Module1
                                 Console.Write("_[|")
                                 Console.ResetColor()
                             Case 3
-                                Console.Write("|  []")
+                                Console.Write("|  ")
+                                Console.BackgroundColor = ConsoleColor.DarkCyan
+                                Console.Write("[]")
+                                Console.ResetColor()
                             Case 4
-                                Console.Write("[]_| ")
+                                Console.BackgroundColor = ConsoleColor.DarkCyan
+                                Console.Write("[]")
+                                Console.BackgroundColor = ConsoleColor.DarkGray
+                                Console.Write("_|")
+                                Console.BackgroundColor = ConsoleColor.Green
+                                Console.Write(" ")
+                                Console.ResetColor()
                             Case 5
+                                Console.BackgroundColor = ConsoleColor.DarkCyan
                                 Console.Write("[][]|")
+                                Console.ResetColor()
                             Case 6
                                 Console.Write("|___|")
                             Case 7
@@ -422,23 +480,23 @@ Module Module1
                             Case 12
                                 Console.Write(" ||  ")
                             Case 13
-                                Console.Write(" \ / ")
+                                Console.Write(" ||  ")
                             Case 14
-                                Console.Write("     ")
+                                Console.Write(" ||  ")
                             Case 15
-                                Console.Write(" \ / ")
+                                Console.Write(" ||  ")
                             Case 16
-                                Console.Write(" \|  ")
+                                Console.Write(" ||  ")
                             Case 17
-                                Console.Write(" | / ")
+                                Console.Write(" ||  ")
                             Case 18
                                 Console.Write("     ")
                             Case 19
                                 Console.Write("     ")
                             Case 20
-                                Console.Write("\ |  ")
+                                Console.Write(" ||  ")
                             Case 21
-                                Console.Write(" | / ")
+                                Console.Write(" ||  ")
                             Case 22
                                 Console.Write("     ")
                             Case 23
