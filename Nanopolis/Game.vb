@@ -38,11 +38,12 @@ Module Module1
         End Select
     End Sub
     Sub PrintMap()
+        Dim map As Map = New Map()
         Console.Clear()
-        Map.Grid =
+        Map.Grid = {{-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31}, {-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31}}
         For y As Integer = 0 To 1
             For CurrentLine As Integer = 0 To 3
-                For x = 0 To 41
+                For x = 0 To 31
                     If CurrentLine = 0 Then
                         Select Case Map.Grid(y, x)
                             Case -1
@@ -159,7 +160,7 @@ Module Module1
                                 Console.Write("OOo  ")
                         End Select
                     ElseIf CurrentLine = 1 Then
-                        Select Case Map(y, x)
+                        Select Case Map.Grid(y, x)
                             Case -1
                                 Console.BackgroundColor = ConsoleColor.Green
                                 Console.ForegroundColor = ConsoleColor.DarkGreen
@@ -300,7 +301,7 @@ Module Module1
                                 Console.Write("")
                         End Select
                     ElseIf CurrentLine = 2 Then
-                        Select Case Map(y, x)
+                        Select Case map.Grid(y, x)
                             Case -1
                                 Console.BackgroundColor = ConsoleColor.Green
                                 Console.ForegroundColor = ConsoleColor.DarkGreen
@@ -429,7 +430,7 @@ Module Module1
                                 Console.Write("_||__")
                         End Select
                     ElseIf CurrentLine = 3 Then
-                        Select Case Map(y, x)
+                        Select Case Map.Grid(y, x)
                             Case -1
                                 Console.BackgroundColor = ConsoleColor.Green
                                 Console.ForegroundColor = ConsoleColor.DarkGreen
