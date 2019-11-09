@@ -28,7 +28,7 @@ Module Module1
             Case 3
                 Tutorial()
             Case 4
-                Binds()
+                KeyBindMenu()
             Case 5
                 GraphicsMenu()
             Case 6
@@ -39,12 +39,12 @@ Module Module1
     End Sub
     Sub PrintMap()
         Console.Clear()
-        Dim Map(,) As Integer = {{-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31}, {-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31}}
-        For Row As Integer = 0 To 1
+        Map.Grid =
+        For y As Integer = 0 To 1
             For CurrentLine As Integer = 0 To 3
-                For Column = 0 To 41
+                For x = 0 To 41
                     If CurrentLine = 0 Then
-                        Select Case Map(Row, Column)
+                        Select Case Map.Grid(y, x)
                             Case -1
                                 Console.BackgroundColor = ConsoleColor.Green
                                 Console.ForegroundColor = ConsoleColor.DarkGreen
@@ -159,7 +159,7 @@ Module Module1
                                 Console.Write("OOo  ")
                         End Select
                     ElseIf CurrentLine = 1 Then
-                        Select Case Map(Row, Column)
+                        Select Case Map(y, x)
                             Case -1
                                 Console.BackgroundColor = ConsoleColor.Green
                                 Console.ForegroundColor = ConsoleColor.DarkGreen
@@ -300,7 +300,7 @@ Module Module1
                                 Console.Write("")
                         End Select
                     ElseIf CurrentLine = 2 Then
-                        Select Case Map(Row, Column)
+                        Select Case Map(y, x)
                             Case -1
                                 Console.BackgroundColor = ConsoleColor.Green
                                 Console.ForegroundColor = ConsoleColor.DarkGreen
@@ -429,7 +429,7 @@ Module Module1
                                 Console.Write("_||__")
                         End Select
                     ElseIf CurrentLine = 3 Then
-                        Select Case Map(Row, Column)
+                        Select Case Map(y, x)
                             Case -1
                                 Console.BackgroundColor = ConsoleColor.Green
                                 Console.ForegroundColor = ConsoleColor.DarkGreen
@@ -574,7 +574,7 @@ Module Module1
             Case 3
                 Tutorial()
             Case 4
-                Binds()
+                KeyBindMenu()
             Case 5
                 GraphicsMenu()
             Case 6
@@ -585,7 +585,7 @@ Module Module1
         Console.WriteLine("--GRAPHICS OPTIONS--")
         Dim MenuCode As Integer = Console.ReadLine()
     End Function
-    Sub Binds()
+    Sub KeyBindMenu()
         Console.Clear()
         Console.WriteLine("--KEY BINDINGS--")
         Dim MenuCode As Integer = Console.ReadLine()
@@ -603,6 +603,9 @@ Module Module1
     End Sub
     Sub SaveGame()
         Dim MenuCode As Integer = Console.ReadLine()
+    End Sub
+    Sub MapSelection()
+
     End Sub
     Sub Main()
         StartMenu()
