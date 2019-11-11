@@ -1,4 +1,4 @@
-﻿Public Class Grid
+﻿Public Class Map
     Public Shared GridCodes(,) As Integer
     Public Sub PrintMap(ByRef SelectorY, ByRef SelectorX)
         Console.Clear()
@@ -21,7 +21,8 @@
                                 Console.ForegroundColor = ConsoleColor.Red
                                 Console.Write("/\")
                                 Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("   ")
+                                Console.ForegroundColor = ConsoleColor.DarkGreen
+                                Console.Write(". .")
                                 Console.ResetColor()
                             Case 2
                                 Console.BackgroundColor = ConsoleColor.Green
@@ -30,7 +31,8 @@
                                 Console.ResetColor()
                             Case 3
                                 Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("     ")
+                                Console.ForegroundColor = ConsoleColor.DarkGreen
+                                Console.Write(". . .")
                                 Console.ResetColor()
                             Case 4
                                 Console.BackgroundColor = ConsoleColor.Green
@@ -70,12 +72,14 @@
                                 Console.ResetColor()
                             Case 12
                                 Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
+                                Console.ForegroundColor = ConsoleColor.DarkGreen
+                                Console.Write(".")
                                 Console.BackgroundColor = ConsoleColor.DarkGray
                                 Console.ForegroundColor = ConsoleColor.Black
                                 Console.Write("||")
                                 Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("  ")
+                                Console.ForegroundColor = ConsoleColor.DarkGreen
+                                Console.Write(" .")
                                 Console.ResetColor()
                             Case 13
                                 Console.BackgroundColor = ConsoleColor.Green
@@ -201,7 +205,8 @@
                                 Console.Write("  ___")
                                 Console.ResetColor()
                             Case 32
-                                Console.BackgroundColor = ConsoleColor.DarkGray
+                                Console.BackgroundColor = ConsoleColor.Gray
+                                Console.ForegroundColor = ConsoleColor.Black
                                 Console.Write("oOO  ")
                                 Console.ResetColor()
                             Case 33
@@ -223,7 +228,9 @@
                             Case 40
                                 Console.Write("x   x")
                             Case 41
+                                Console.BackgroundColor = ConsoleColor.Gray
                                 Console.Write("OOo  ")
+                                Console.ResetColor()
                         End Select
                     ElseIf CurrentLine = 1 Then
                         Select Case GridCodes(y, x)
@@ -633,11 +640,11 @@
         MapSelection()
     End Sub
     Public Sub MapSelection()
-        Dim grid As Grid = New Grid()
-        Dim building As Building = New Building()
+        Dim map As Map = New Map()
+        Dim Lot As Lot = New Lot()
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
-        Console.WriteLine("Navigate the map using WASD:")
+        Console.WriteLine("Navigate[WASD], Select[ENTER]:")
         Console.ResetColor()
         Dim Selected As Boolean = False
         Dim SelectorX As Integer = 16
@@ -664,16 +671,17 @@
             Console.WriteLine("Remove[r] Build[p]")
             Choice = Console.ReadKey().Key
             If Choice = ConsoleKey.R Then
-                Building.Remove(Grid.GridCodes, SelectorY, SelectorX)
+                Lot.Remove(Map.GridCodes, SelectorY, SelectorX)
             End If
         End While
         Console.ReadLine()
     End Sub
 End Class
-Public Class Building
+
+Public Class Lot
     Public xPos As Integer
     Public yPos As Integer
-    Public Sub GetPos(Map)
+    Public Sub GetPos(ByVal Gridcodes(,), SelectorY, SelectorX)
 
     End Sub
     Public Sub Build(GridCodes, yPos, xPos)
@@ -682,44 +690,51 @@ Public Class Building
     Public Sub Remove(ByRef GridCodes, ByRef yPos, ByRef xPos)
 
     End Sub
+    Public Function ChangeLandValue()
+
+    End Function
+    Public Function GetLandValue()
+
+    End Function
+
 End Class
 Public Class Roads
-    Inherits Building
+    Inherits Lot
 
 End Class
 Public Class Nature
-    Inherits Building
+    Inherits Lot
 
 End Class
 Public Class ResidentialLot
-    Inherits Building
+    Inherits Lot
     Public Size As Integer
 End Class
 Public Class CommercialLot
-    Inherits Building
+    Inherits Lot
     Public Size As Integer
 End Class
 Public Class Park
-    Inherits Building
+    Inherits Lot
 
 End Class
 Public Class Industry
-    Inherits Building
+    Inherits Lot
 
 End Class
 Public Class Parliament
-    Inherits Building
+    Inherits Lot
 
 End Class
 Public Class Construction
-    Inherits Building
+    Inherits Lot
 
 End Class
 Public Class PoliceStations
-    Inherits Building
+    Inherits Lot
 
 End Class
 Public Class Energy
-    Inherits Building
+    Inherits Lot
 
 End Class
