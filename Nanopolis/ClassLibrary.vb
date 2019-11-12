@@ -640,6 +640,7 @@
         MapSelection()
     End Sub
     Public Sub MapSelection()
+        Console.TreatControlCAsInput = True
         Dim map As Map = New Map()
         Dim Lot As Lot = New Lot()
         Console.BackgroundColor = ConsoleColor.Gray
@@ -668,10 +669,12 @@
             ElseIf Key = ConsoleKey.Enter Then
                 Selected = True
             End If
-            Console.WriteLine("Remove[r] Build[p]")
+            Console.WriteLine("Remove[R] Build[P]")
             Choice = Console.ReadKey().Key
             If Choice = ConsoleKey.R Then
                 Lot.Remove(Map.GridCodes, SelectorY, SelectorX)
+            ElseIf Choice = ConsoleKey.B Then
+                Lot.Build(Map.GridCodes, SelectorY, SelectorX)
             End If
         End While
         Console.ReadLine()
@@ -681,13 +684,37 @@ End Class
 Public Class Lot
     Public xPos As Integer
     Public yPos As Integer
-    Public Sub GetPos(ByVal Gridcodes(,), SelectorY, SelectorX)
-
-    End Sub
+    Public landvalue As Integer
+    Public landvaluemodifier As Integer
+    Public Function GetPos(ByVal Gridcodes(,), yPos, xPos)
+        Return yPos
+        Return xPos
+    End Function
     Public Sub Build(GridCodes, yPos, xPos)
+        Dim input As ConsoleKeyInfo = Console.ReadKey
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.WriteLine("Residential[1], Commercial[2], Inustrial[3], Road[4], Power[5], Park[6], Police[7], Parliament[8], Nature[9]")
+        Console.ResetColor()
+        Select Case input.Key
+            Case ConsoleKey.D1
+                Console.BackgroundColor = ConsoleColor.Gray
+                Console.ForegroundColor = ConsoleColor.Black
+                Console.WriteLine("Low density[1], High density[2]")
+                Console.ResetColor()
+                input = Console.ReadKey
+                If input.Key = ConsoleKey.D1 Then
+                    Map.GridCodes(xPos, yPos) = 1
+                    Dim 
+                ElseIf input.Key = ConsoleKey.D2 Then
+                    Map.GridCodes(xPos, yPos) = 2
+                End If
+            Case ConsoleKey.D2
+        End Select
+
 
     End Sub
-    Public Sub Remove(ByRef GridCodes, ByRef yPos, ByRef xPos)
+    Public Sub Demolish(ByRef GridCodes, ByRef yPos, ByRef xPos)
 
     End Sub
     Public Function ChangeLandValue()

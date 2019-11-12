@@ -24,10 +24,10 @@ Imports System.Runtime.InteropServices
 '
 '      Major Version
 '      Minor Version
-'      Build Number
+'      Build ber
 '      Revision
 '
-' You can specify all the values or you can default the Build and Revision Numbers
+' You can specify all the values or you can default the Build and Revision bers
 ' by using the '*' as shown below:
 ' <Assembly: AssemblyVersion("1.0.*")>
 

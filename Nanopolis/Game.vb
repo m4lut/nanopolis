@@ -1,9 +1,7 @@
 ﻿Imports System.IO
 Imports System.Data
 Imports System.Data.DataTable
-Public Interface IScript
-    Function DoWork() As String
-End Interface
+
 Module Module1
     Sub StartMenu()
         MsgBox("Welcome to Nanopolis!" & vbCrLf & "Developed by Maksim Al-Utaibi" & vbCrLf & "Make sure to maximise the console window when playing.", vbOKOnly)
@@ -11,7 +9,7 @@ Module Module1
         Console.ForegroundColor = ConsoleColor.Black
         Console.WriteLine("---MAIN MENU---" & vbCrLf)
         Console.ResetColor()
-        Console.WriteLine("Please enter one of the numbers below:")
+        Console.WriteLine("Please enter one of the bers below:")
         Dim MenuCode As Integer
         Console.WriteLine("1 New game")
         Console.WriteLine("2 Load a previously saved game")
@@ -43,7 +41,7 @@ Module Module1
     Sub MainMenu()
         Console.Clear()
         Console.WriteLine("---MAIN MENU---" & vbCrLf)
-        Console.WriteLine("Please enter one of the numbers below:")
+        Console.WriteLine("Please enter one of the bers below:")
         Dim MenuCode As Integer
         Console.WriteLine("1 New game")
         Console.WriteLine("2 Load a previously saved game")
