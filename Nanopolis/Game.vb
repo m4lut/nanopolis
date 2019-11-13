@@ -3,6 +3,9 @@ Imports System.Data
 Imports System.Data.DataTable
 
 Module Module1
+    Sub Main()
+        StartMenu()
+    End Sub
     Sub StartMenu()
         MsgBox("Welcome to Nanopolis!" & vbCrLf & "Developed by Maksim Al-Utaibi" & vbCrLf & "Make sure to maximise the console window when playing.", vbOKOnly)
         Console.BackgroundColor = ConsoleColor.Gray
@@ -37,7 +40,6 @@ Module Module1
                 End
         End Select
     End Sub
-
     Sub MainMenu()
         Console.Clear()
         Console.WriteLine("---MAIN MENU---" & vbCrLf)
@@ -88,7 +90,6 @@ Module Module1
             Console.WriteLine(ex.Message)
         End Try
     End Sub
-
     Sub Tutorial()
 
     End Sub
@@ -115,13 +116,7 @@ Module Module1
         Catch ex As Exception
         End Try
         Console.Clear()
-        Map.PrintMap(1, 16)
-    End Sub
-
-
-    Sub Main()
-
-        StartMenu()
+        map.PrintMap(1, 16)
     End Sub
 
 End Module

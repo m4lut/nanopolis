@@ -1,5 +1,6 @@
 ﻿Public Class Map
     Public Shared GridCodes(,) As Integer
+    Public Shared NextTurnGridCodes(,) As Integer
     Public Shared SelectorY As Integer = 0
     Public Shared SelectorX As Integer = 16
     Public Sub PrintMap(ByRef SelectorY, ByRef SelectorX)
@@ -691,7 +692,6 @@ Public Class Lot
     Public xPos As Integer
     Public yPos As Integer
     Public LandValue As Integer
-    Public LandValueModifier As Integer
     Public Function GetPos(ByVal Gridcodes(,), yPos, xPos)
         Return yPos
         Return xPos
@@ -708,7 +708,7 @@ Public Class Lot
             Case ConsoleKey.D1
                 Console.BackgroundColor = ConsoleColor.Gray
                 Console.ForegroundColor = ConsoleColor.Black
-                Console.WriteLine("Low density[1]($10) | High density[2]($20)")
+                Console.WriteLine("Low density[1]($15) | High density[2]($25)")
                 Console.ResetColor()
                 input = Console.ReadKey(True)
                 If input.Key = ConsoleKey.D1 Then
@@ -721,7 +721,7 @@ Public Class Lot
             Case ConsoleKey.D2
                 Console.BackgroundColor = ConsoleColor.Gray
                 Console.ForegroundColor = ConsoleColor.Black
-                Console.WriteLine("Low density[1]($15) | High density[2]($25)")
+                Console.WriteLine("Low density[1]($20) | High density[2]($30)")
                 Console.ResetColor()
                 input = Console.ReadKey(True)
                 If input.Key = ConsoleKey.D1 Then
@@ -733,6 +733,28 @@ Public Class Lot
                 End If
             Case ConsoleKey.D3
                 GridCodes(yPos, xPos) = 5
+            Case ConsoleKey.D4
+                Console.BackgroundColor = ConsoleColor.Gray
+                Console.ForegroundColor = ConsoleColor.Black
+                Console.WriteLine("Low density[1]($20) | High density[2]($40)")
+                Console.ResetColor()
+                input = Console.ReadKey(True)
+                If input.Key = ConsoleKey.D1 Then
+                    GridCodes(yPos, xPos) = 6
+                ElseIf input.Key = ConsoleKey.D2 Then
+                    GridCodes(yPos, xPos) = 7
+                End If
+            Case ConsoleKey.D5
+                Console.BackgroundColor = ConsoleColor.Gray
+                Console.ForegroundColor = ConsoleColor.Black
+                Console.WriteLine("Coal plant[1]($150) | Wind Farm[2]($200)")
+                Console.ResetColor()
+                input = Console.ReadKey(True)
+                If input.Key = ConsoleKey.D1 Then
+                    GridCodes(yPos, xPos) = 41
+                ElseIf input.Key = ConsoleKey.D2 Then
+                    GridCodes(yPos, xPos) = 42
+                End If
         End Select
         map.PrintMap(0, 16)
     End Sub
@@ -743,7 +765,7 @@ Public Class Lot
     Public Function ChangeLandValue()
 
     End Function
-    Public Function GetLandValue()
+    Public Function CalcLandValue()
 
     End Function
 
@@ -756,35 +778,76 @@ Public Class Nature
     Inherits Lot
 
 End Class
+Public Class Grass
+    Inherits Nature
+    Shadows Const LandValueModifier As Integer = 2
+
+End Class
+Public Class Water
+    Inherits Nature
+    Shadows Const LandValueModifier As Integer = 10
+
+End Class
+Public Class Forest
+    Inherits Nature
+    Shadows Const LandValueModifier As Integer = 5
+
+End Class
 Public Class ResidentialLot
     Inherits Lot
-    Public Size As Integer
+End Class
+Public Class SmallResidential
+    Inherits ResidentialLot
+End Class
+Public Class LargeResidential
+    Inherits ResidentialLot
 End Class
 Public Class CommercialLot
     Inherits Lot
-    Public Size As Integer
+End Class
+Public Class SmallCommercial
+    Inherits CommercialLot
+End Class
+Public Class LargeCommercial
+    Inherits CommercialLot
 End Class
 Public Class Park
     Inherits Lot
 
 End Class
+Public Class SmallPark
+    Inherits Park
+    Shadows Const LandValueModifier As Integer = 20
+End Class
+Public Class LargePark
+    Inherits Park
+    Shadows Const LandValueModifier As Integer = 35
+End Class
 Public Class Industry
     Inherits Lot
-
+    Shadows Const LandValueModifier As Integer = -10
 End Class
 Public Class Parliament
     Inherits Lot
-
+    Shadows Const LandValueModifier As Integer = 25
 End Class
 Public Class Construction
     Inherits Lot
 
 End Class
-Public Class PoliceStations
+Public Class PoliceStation
+    Inherits Lot
+    Shadows Const LandValueModifier As Integer = 5
+End Class
+Public Class PowerPlant
     Inherits Lot
 
 End Class
-Public Class Energy
-    Inherits Lot
-
+Public Class CoalStation
+    Inherits PowerPlant
+    Shadows Const LandValueModifier As Integer = -20
+End Class
+Public Class WindFarm
+    Inherits PowerPlant
+    Shadows Const LandValueModifier As Integer = -5
 End Class
