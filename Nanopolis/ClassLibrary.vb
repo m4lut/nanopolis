@@ -1,5 +1,7 @@
 ﻿Public Class Map
     Public Shared GridCodes(,) As Integer
+    Public Shared SelectorY As Integer = 0
+    Public Shared SelectorX As Integer = 16
     Public Sub PrintMap(ByRef SelectorY, ByRef SelectorX)
         Console.Clear()
         For y As Integer = 0 To 1
@@ -637,23 +639,23 @@
                 Console.WriteLine()
             Next
         Next
-        MapSelection()
+        Console.Write("Y" & Int(SelectorY))
+        Console.Write("X" & Int(SelectorX))
+        MapSelection(SelectorY, SelectorX, GridCodes)
     End Sub
-    Public Sub MapSelection()
+    Public Sub MapSelection(ByRef SelectorY, ByRef SelectorX, ByRef GridCodes)
         Console.TreatControlCAsInput = True
         Dim map As Map = New Map()
         Dim Lot As Lot = New Lot()
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
-        Console.WriteLine("Navigate[WASD], Select[ENTER]:")
+        Console.WriteLine("Navigate[WASD] | Select[ENTER]:")
         Console.ResetColor()
         Dim Selected As Boolean = False
-        Dim SelectorX As Integer = 16
-        Dim SelectorY As Integer = 1
         Dim Key As ConsoleKey
         Dim Choice As ConsoleKey
         While Selected = False
-            Key = Console.ReadKey().Key
+            Key = Console.ReadKey(True).Key
             If Key = ConsoleKey.A Then
                 SelectorX -= 1
                 PrintMap(SelectorY, SelectorX)
@@ -669,54 +671,75 @@
             ElseIf Key = ConsoleKey.Enter Then
                 Selected = True
             End If
-            Console.WriteLine("Remove[R] Build[P]")
-            Choice = Console.ReadKey().Key
-            If Choice = ConsoleKey.R Then
-                Lot.Remove(Map.GridCodes, SelectorY, SelectorX)
+            Console.BackgroundColor = ConsoleColor.Gray
+            Console.ForegroundColor = ConsoleColor.Black
+            Console.WriteLine("Demolish[D] | Build[B] | Cancel[C]")
+            Console.ResetColor()
+            Choice = Console.ReadKey(True).Key
+            If Choice = ConsoleKey.D Then
+                Lot.Demolish(Map.GridCodes, SelectorY, SelectorX)
             ElseIf Choice = ConsoleKey.B Then
-                Lot.Build(Map.GridCodes, SelectorY, SelectorX)
+                Lot.Build(Map.GridCodes, SelectorY, SelectorX, map)
+            ElseIf Choice = ConsoleKey.C Then
+                map.MapSelection(SelectorY, SelectorX, Map.GridCodes)
             End If
         End While
-        Console.ReadLine()
     End Sub
 End Class
 
 Public Class Lot
     Public xPos As Integer
     Public yPos As Integer
-    Public landvalue As Integer
-    Public landvaluemodifier As Integer
+    Public LandValue As Integer
+    Public LandValueModifier As Integer
     Public Function GetPos(ByVal Gridcodes(,), yPos, xPos)
         Return yPos
         Return xPos
     End Function
-    Public Sub Build(GridCodes, yPos, xPos)
-        Dim input As ConsoleKeyInfo = Console.ReadKey
+    Public Sub Build(ByRef GridCodes, ByRef yPos, ByRef xPos, ByRef map)
+        Randomize()
+        Dim ShopType As Integer = Math.Round((Rnd() * 2) + 1)
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
-        Console.WriteLine("Residential[1], Commercial[2], Inustrial[3], Road[4], Power[5], Park[6], Police[7], Parliament[8], Nature[9]")
+        Console.WriteLine("Residential[1] | Commercial[2] | Industrial[3]($20)| Road[4] | Power[5] | Park[6] | Police[7]($75) | Parliament[8]($20000) | Nature[9]")
         Console.ResetColor()
+        Dim input As ConsoleKeyInfo = Console.ReadKey(True)
         Select Case input.Key
             Case ConsoleKey.D1
                 Console.BackgroundColor = ConsoleColor.Gray
                 Console.ForegroundColor = ConsoleColor.Black
-                Console.WriteLine("Low density[1], High density[2]")
+                Console.WriteLine("Low density[1]($10) | High density[2]($20)")
                 Console.ResetColor()
-                input = Console.ReadKey
+                input = Console.ReadKey(True)
                 If input.Key = ConsoleKey.D1 Then
-                    Map.GridCodes(xPos, yPos) = 1
-                    Dim 
+                    GridCodes(yPos, xPos) = 1
+                    'Dim 
                 ElseIf input.Key = ConsoleKey.D2 Then
-                    Map.GridCodes(xPos, yPos) = 2
+                    GridCodes(yPos, xPos) = 2
+                    'Dim
                 End If
             Case ConsoleKey.D2
+                Console.BackgroundColor = ConsoleColor.Gray
+                Console.ForegroundColor = ConsoleColor.Black
+                Console.WriteLine("Low density[1]($15) | High density[2]($25)")
+                Console.ResetColor()
+                input = Console.ReadKey(True)
+                If input.Key = ConsoleKey.D1 Then
+                    GridCodes(yPos, xPos) = ShopType
+                    'Dim
+                ElseIf input.Key = ConsoleKey.D2 Then
+                    GridCodes(yPos, xPos) = 5
+                    'Dim
+                End If
+            Case ConsoleKey.D3
+                GridCodes(yPos, xPos) = 5
         End Select
-
-
+        map.PrintMap(0, 16)
     End Sub
     Public Sub Demolish(ByRef GridCodes, ByRef yPos, ByRef xPos)
 
     End Sub
+
     Public Function ChangeLandValue()
 
     End Function
