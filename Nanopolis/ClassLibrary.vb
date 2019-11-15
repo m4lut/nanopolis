@@ -323,7 +323,7 @@
                             Case 14
                                 Console.BackgroundColor = ConsoleColor.DarkGray
                                 Console.ForegroundColor = ConsoleColor.Black
-                                Console.Write("_   _")
+                                Console.Write("_____")
                                 Console.ResetColor()
                             Case 15
                                 Console.BackgroundColor = ConsoleColor.DarkGray
@@ -455,7 +455,7 @@
                             Case 13
                                 Console.Write(" \ / ")
                             Case 14
-                                Console.Write(" \ / ")
+                                Console.Write("     ")
                             Case 15
                                 Console.Write(" \ / ")
                             Case 16
@@ -577,7 +577,7 @@
                             Case 13
                                 Console.Write(" ||  ")
                             Case 14
-                                Console.Write(" ||  ")
+                                Console.Write("     ")
                             Case 15
                                 Console.Write(" ||  ")
                             Case 16
@@ -698,7 +698,7 @@ Public Class Lot
     End Function
     Public Sub Build(ByRef GridCodes, ByRef yPos, ByRef xPos, ByRef map)
         Randomize()
-        Dim ShopType As Integer = Math.Round((Rnd() * 2) + 1)
+        Dim ShopType As Integer = Math.Round((Rnd()) + 3)
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
         Console.WriteLine("Residential[1] | Commercial[2] | Industrial[3]($20)| Road[4] | Power[5] | Park[6] | Police[7]($75) | Parliament[8]($20000) | Nature[9]")
@@ -754,6 +754,43 @@ Public Class Lot
                     GridCodes(yPos, xPos) = 41
                 ElseIf input.Key = ConsoleKey.D2 Then
                     GridCodes(yPos, xPos) = 42
+                End If
+            Case ConsoleKey.D6
+                Console.BackgroundColor = ConsoleColor.Gray
+                Console.ForegroundColor = ConsoleColor.Black
+                Console.WriteLine("Small park[1]($125) | Large park[2]($200)")
+                Console.ResetColor()
+                input = Console.ReadKey(True)
+                If input.Key = ConsoleKey.D1 Then
+                    GridCodes(yPos, xPos) = 6
+                    GridCodes(yPos, xPos + 1) = 7
+                    GridCodes(yPos + 1, xPos) = 8
+                    GridCodes(yPos + 1, xPos + 1) = 9
+                ElseIf input.Key = ConsoleKey.D2 Then
+                    GridCodes(yPos, xPos) = 7
+                End If
+            Case ConsoleKey.D7
+                Console.BackgroundColor = ConsoleColor.Gray
+                Console.ForegroundColor = ConsoleColor.Black
+                Console.WriteLine("Low volume[1]($10) | High volume[2]($20)")
+                Console.ResetColor()
+                input = Console.ReadKey(True)
+                If input.Key = ConsoleKey.D1 Then
+                    GridCodes(yPos, xPos) = 13
+                    If GridCodes(yPos + 1, xPos) = 13 Then
+                        GridCodes(yPos + 1, xPos) = 12
+                        GridCodes(yPos, xPos) = 12
+                    ElseIf GridCodes(yPos + 1, xPos) = 14 Then
+                        GridCodes(yPos, xPos) = 12
+                    ElseIf GridCodes(yPos + 1, xPos) = 12 And GridCodes(yPos, xPos + 1) = 11 Then
+                        GridCodes(yPos, xPos) = 21
+                    ElseIf GridCodes(yPos + 1, xpos) = 12 And GridCodes(yPos, xPos - 1) Then
+                        GridCodes(yPos, xPos) = 20
+                    ElseIf GridCodes(yPos - 1, xpos) = 12 And GridCodes(ypos, xPos + 1) = 11 Then
+                        GridCodes(yPos, xPos) = 19
+                    ElseIf GridCodes(yPos - 1, xpos) = 12 And GridCodes(yPos, xPos - 1) Then
+                        GridCodes(yPos, xPos) = 18
+                    End If
                 End If
         End Select
         map.PrintMap(0, 16)
