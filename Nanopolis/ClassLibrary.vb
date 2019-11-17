@@ -1,13 +1,13 @@
 ﻿Public Class Map
-    Public Shared GridCodes(,) As Integer
-    Public Shared NextTurnGridCodes(,) As Integer
-    Public Shared SelectorY As Integer = 0
+    Public Shared GridCodes(30, 32) As Integer
+    Public Shared NextTurnGridCodes(25, 32) As Integer
+    Public Shared SelectorY As Integer = 14
     Public Shared SelectorX As Integer = 16
     Public Sub PrintMap(ByRef SelectorY, ByRef SelectorX)
         Console.Clear()
-        For y As Integer = 0 To 1
+        For y As Integer = 0 To 24
             For CurrentLine As Integer = 0 To 3
-                For x = 0 To 31
+                For x As Integer = 0 To 31
                     If CurrentLine = 0 Then
                         Select Case GridCodes(y, x)
                             Case -1
@@ -22,7 +22,8 @@
                                 Console.Write("\")
                                 Console.ResetColor()
                             Case 1
-                                Console.ForegroundColor = ConsoleColor.Red
+                                Console.BackgroundColor = ConsoleColor.Red
+                                Console.ForegroundColor = ConsoleColor.Black
                                 Console.Write("/\")
                                 Console.BackgroundColor = ConsoleColor.Green
                                 Console.ForegroundColor = ConsoleColor.DarkGreen
@@ -102,9 +103,9 @@
                                 Console.ForegroundColor = ConsoleColor.Black
                                 Console.Write("_")
                                 Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("/ \")
+                                Console.Write("/\")
                                 Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("_")
+                                Console.Write("__")
                                 Console.ResetColor()
                             Case 15
                                 Console.BackgroundColor = ConsoleColor.Green
@@ -125,9 +126,9 @@
                                 Console.BackgroundColor = ConsoleColor.Green
                                 Console.Write(" ")
                                 Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("| \")
+                                Console.Write("|\")
                                 Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("_")
+                                Console.Write("__")
                                 Console.ResetColor()
                             Case 18
                                 Console.ForegroundColor = ConsoleColor.Black
@@ -177,10 +178,12 @@
                                 Console.Write("/ : \")
                                 Console.ResetColor()
                             Case 25
+                                Console.ForegroundColor = ConsoleColor.White
                                 Console.BackgroundColor = ConsoleColor.DarkGray
                                 Console.Write("/ : \")
                                 Console.ResetColor()
                             Case 26
+                                Console.ForegroundColor = ConsoleColor.White
                                 Console.BackgroundColor = ConsoleColor.DarkGray
                                 Console.Write("/ :|")
                                 Console.BackgroundColor = ConsoleColor.Green
@@ -188,16 +191,19 @@
                             Case 27
                                 Console.BackgroundColor = ConsoleColor.Green
                                 Console.Write(" ")
+                                Console.ForegroundColor = ConsoleColor.White
                                 Console.BackgroundColor = ConsoleColor.DarkGray
                                 Console.Write("|: \")
                                 Console.ResetColor()
                             Case 28
+                                Console.ForegroundColor = ConsoleColor.White
                                 Console.BackgroundColor = ConsoleColor.DarkGray
                                 Console.Write("/ :|")
                                 Console.BackgroundColor = ConsoleColor.Green
                                 Console.Write(" ")
                                 Console.ResetColor()
                             Case 29
+                                Console.ForegroundColor = ConsoleColor.White
                                 Console.BackgroundColor = ConsoleColor.Green
                                 Console.Write(" ")
                                 Console.BackgroundColor = ConsoleColor.DarkGray
@@ -249,8 +255,8 @@
                                 Console.Write("~~~~~")
                                 Console.BackgroundColor = ConsoleColor.Black
                             Case 39
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.ForegroundColor = ConsoleColor.DarkGreen
+                                Console.ForegroundColor = ConsoleColor.Green
+                                Console.BackgroundColor = ConsoleColor.DarkGreen
                                 Console.Write(":::::")
                                 Console.ResetColor()
                             Case 40
@@ -733,7 +739,7 @@
                                 Console.Write(" ")
                                 Console.ResetColor()
                             Case 22
-                                Console.BackgroundColor = ConsoleColor.Green
+                                Console.BackgroundColor = ConsoleColor.DarkGray
                                 Console.Write("_____")
                                 Console.ResetColor()
                             Case 23
@@ -836,8 +842,8 @@
                                 Console.Write("~~~~~")
                                 Console.ResetColor()
                             Case 39
-                                Console.ForegroundColor = ConsoleColor.DarkGreen
-                                Console.BackgroundColor = ConsoleColor.Green
+                                Console.BackgroundColor = ConsoleColor.DarkGreen
+                                Console.ForegroundColor = ConsoleColor.Green
                                 Console.Write(":::::")
                                 Console.ResetColor()
                             Case 40
@@ -1150,13 +1156,28 @@
         Dim Lot As Lot = New Lot()
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
-        Console.WriteLine("Navigate[WASD] | Select[ENTER]:")
+        Console.WriteLine("Navigate[WASD] | Select[ENTER] | Main Menu[ESC]")
         Console.ResetColor()
         Dim Selected As Boolean = False
         Dim Key As ConsoleKey
         Dim Choice As ConsoleKey
         While Selected = False
             Key = Console.ReadKey(True).Key
+            If Key = ConsoleModifiers.Control AndAlso Key = ConsoleKey.A Then
+                SelectorX -= 5
+                PrintMap(SelectorY, SelectorX)
+            ElseIf Key = ConsoleModifiers.Control AndAlso Key = ConsoleKey.D Then
+                SelectorX += 5
+                PrintMap(SelectorY, SelectorX)
+            ElseIf Key = ConsoleModifiers.Control AndAlso Key = ConsoleKey.S Then
+                SelectorY += 5
+                PrintMap(SelectorY, SelectorX)
+            ElseIf Key = ConsoleModifiers.Control AndAlso Key = ConsoleKey.W Then
+                SelectorY -= 5
+                PrintMap(SelectorY, SelectorX)
+            ElseIf Key = ConsoleModifiers.Control AndAlso Key = ConsoleKey.Enter Then
+                Selected = True
+            End If
             If Key = ConsoleKey.A Then
                 SelectorX -= 1
                 PrintMap(SelectorY, SelectorX)
@@ -1171,6 +1192,8 @@
                 PrintMap(SelectorY, SelectorX)
             ElseIf Key = ConsoleKey.Enter Then
                 Selected = True
+            ElseIf Key = ConsoleKey.Escape Then
+                MainMenu(map)
             End If
             Console.BackgroundColor = ConsoleColor.Gray
             Console.ForegroundColor = ConsoleColor.Black
@@ -1178,11 +1201,13 @@
             Console.ResetColor()
             Choice = Console.ReadKey(True).Key
             If Choice = ConsoleKey.D Then
-                Lot.Demolish(Map.GridCodes, SelectorY, SelectorX)
+                Lot.Demolish(Map.GridCodes, SelectorY, SelectorX, map)
             ElseIf Choice = ConsoleKey.B Then
                 Lot.Build(Map.GridCodes, SelectorY, SelectorX, map)
             ElseIf Choice = ConsoleKey.C Then
                 map.MapSelection(SelectorY, SelectorX, Map.GridCodes)
+            ElseIf Choice = ConsoleKey.Escape Then
+                MainMenu(map)
             End If
         End While
     End Sub
@@ -1201,7 +1226,7 @@ Public Class Lot
         Dim ShopType As Integer = Math.Round((Rnd()) + 3)
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
-        Console.WriteLine("Residential[1] | Commercial[2] | Industrial[3]($20)| Road[4] | Power[5] | Park[6] | Police[7]($75) | Parliament[8]($20000) | Nature[9]")
+        Console.WriteLine("Residential[1] | Commercial[2] | Industrial[3]($30) | Road[4] | Power[5] | Park[6] | Police[7]($75) | Parliament[8]($20000) | Nature[9]")
         Console.ResetColor()
         Dim input As ConsoleKeyInfo = Console.ReadKey(True)
         Select Case input.Key
@@ -1213,10 +1238,10 @@ Public Class Lot
                 input = Console.ReadKey(True)
                 If input.Key = ConsoleKey.D1 Then
                     GridCodes(yPos, xPos) = 1
-                    'Dim 
+                    'dim new object
                 ElseIf input.Key = ConsoleKey.D2 Then
                     GridCodes(yPos, xPos) = 2
-                    'Dim
+                    'Dim new object
                 End If
             Case ConsoleKey.D2
                 Console.BackgroundColor = ConsoleColor.Gray
@@ -1236,13 +1261,25 @@ Public Class Lot
             Case ConsoleKey.D4
                 Console.BackgroundColor = ConsoleColor.Gray
                 Console.ForegroundColor = ConsoleColor.Black
-                Console.WriteLine("Low density[1]($20) | High density[2]($40)")
+                Console.WriteLine("Low volume[1]($10) | High volume[2]($20)")
                 Console.ResetColor()
                 input = Console.ReadKey(True)
                 If input.Key = ConsoleKey.D1 Then
-                    GridCodes(yPos, xPos) = 6
-                ElseIf input.Key = ConsoleKey.D2 Then
-                    GridCodes(yPos, xPos) = 7
+                    GridCodes(yPos, xPos) = 13
+                    If GridCodes(yPos + 1, xPos) = 13 Then
+                        GridCodes(yPos + 1, xPos) = 14
+                        GridCodes(yPos, xPos) = 14
+                    ElseIf GridCodes(yPos + 1, xPos) = 14 Then
+                        GridCodes(yPos, xPos) = 13
+                    ElseIf GridCodes(yPos + 1, xPos) = 13 And GridCodes(yPos, xPos + 1) = 14 Then
+                        GridCodes(yPos, xPos) = 21
+                    ElseIf GridCodes(yPos + 1, xPos) = 13 And GridCodes(yPos, xPos - 1) = 13 Then
+                        GridCodes(yPos, xPos) = 20
+                    ElseIf GridCodes(yPos - 1, xPos) = 13 And GridCodes(yPos, xPos + 1) = 13 Then
+                        GridCodes(yPos, xPos) = 19
+                    ElseIf GridCodes(yPos - 1, xPos) = 13 And GridCodes(yPos, xPos - 1) = 13 Then
+                        GridCodes(yPos, xPos) = 18
+                    End If
                 End If
             Case ConsoleKey.D5
                 Console.BackgroundColor = ConsoleColor.Gray
@@ -1253,14 +1290,9 @@ Public Class Lot
                 If input.Key = ConsoleKey.D1 Then
                     GridCodes(yPos, xPos) = 41
                 ElseIf input.Key = ConsoleKey.D2 Then
-                    GridCodes(yPos, xPos) = 42
+                    GridCodes(yPos, xPos) = 40
                 End If
             Case ConsoleKey.D6
-                Console.BackgroundColor = ConsoleColor.Gray
-                Console.ForegroundColor = ConsoleColor.Black
-                Console.WriteLine("Small park[1]($125) | Large park[2]($200)")
-                Console.ResetColor()
-                input = Console.ReadKey(True)
                 If input.Key = ConsoleKey.D2 Then
                     GridCodes(yPos, xPos) = 6
                     GridCodes(yPos, xPos + 1) = 7
@@ -1269,34 +1301,28 @@ Public Class Lot
                 ElseIf input.Key = ConsoleKey.D1 Then
                     GridCodes(yPos, xPos) = 7
                 End If
-            Case ConsoleKey.D7
+            Case ConsoleKey.D8
+                GridCodes(yPos, xPos) = 33
+                GridCodes(yPos, xPos + 1) = 34
+                GridCodes(yPos + 1, xPos) = 35
+                GridCodes(yPos + 1, xPos + 1) = 36
+            Case ConsoleKey.D9
                 Console.BackgroundColor = ConsoleColor.Gray
                 Console.ForegroundColor = ConsoleColor.Black
-                Console.WriteLine("Low volume[1]($10) | High volume[2]($20)")
+                Console.WriteLine("Forest[1]($5) | Water[2]($30)")
                 Console.ResetColor()
                 input = Console.ReadKey(True)
                 If input.Key = ConsoleKey.D1 Then
-                    GridCodes(yPos, xPos) = 13
-                    If GridCodes(yPos + 1, xPos) = 13 Then
-                        GridCodes(yPos + 1, xPos) = 12
-                        GridCodes(yPos, xPos) = 12
-                    ElseIf GridCodes(yPos + 1, xPos) = 14 Then
-                        GridCodes(yPos, xPos) = 12
-                    ElseIf GridCodes(yPos + 1, xPos) = 12 And GridCodes(yPos, xPos + 1) = 11 Then
-                        GridCodes(yPos, xPos) = 21
-                    ElseIf GridCodes(yPos + 1, xpos) = 12 And GridCodes(yPos, xPos - 1) Then
-                        GridCodes(yPos, xPos) = 20
-                    ElseIf GridCodes(yPos - 1, xpos) = 12 And GridCodes(ypos, xPos + 1) = 11 Then
-                        GridCodes(yPos, xPos) = 19
-                    ElseIf GridCodes(yPos - 1, xpos) = 12 And GridCodes(yPos, xPos - 1) Then
-                        GridCodes(yPos, xPos) = 18
-                    End If
+                    GridCodes(yPos, xPos) = 39
+                ElseIf input.Key = ConsoleKey.D2 Then
+                    GridCodes(yPos, xPos) = 38
                 End If
         End Select
-        map.PrintMap(0, 16)
+        map.PrintMap(14, 16)
     End Sub
-    Public Sub Demolish(ByRef GridCodes, ByRef yPos, ByRef xPos)
-
+    Public Sub Demolish(ByRef GridCodes, ByRef yPos, ByRef xPos, ByRef map)
+        GridCodes(yPos, xPos) = -1
+        map.Printmap(14, 16)
     End Sub
 
     Public Function ChangeLandValue()
@@ -1387,4 +1413,7 @@ End Class
 Public Class WindFarm
     Inherits PowerPlant
     Shadows Const LandValueModifier As Integer = -5
+End Class
+Public Class Government
+
 End Class

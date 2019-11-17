@@ -4,68 +4,70 @@ Imports System.Data.DataTable
 
 Module Module1
     Sub Main()
+        MsgBox("Welcome to Nanopolis!" & vbCrLf & "Developed by Maksim Al-Utaibi" & vbCrLf & "Make sure to maximise the console window when playing.", vbOKOnly)
         StartMenu()
     End Sub
     Sub StartMenu()
-        MsgBox("Welcome to Nanopolis!" & vbCrLf & "Developed by Maksim Al-Utaibi" & vbCrLf & "Make sure to maximise the console window when playing.", vbOKOnly)
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
         Console.WriteLine("---MAIN MENU---" & vbCrLf)
         Console.ResetColor()
-        Console.WriteLine("Please enter one of the bers below:")
-        Dim MenuCode As Integer
-        Console.WriteLine("1 New game")
-        Console.WriteLine("2 Load a previously saved game")
-        Console.WriteLine("3 Start a tutorial game")
-        Console.WriteLine("4 Display key bindings")
-        Console.WriteLine("5 Graphics options")
-        Console.WriteLine("6 Quit to desktop")
-        Try
-            MenuCode = Console.ReadLine()
-        Catch ex As Exception
-            MsgBox(ex.Message, vbCritical)
-        End Try
-        Select Case MenuCode
-            Case 1
-                NewGame()
-            Case 2
-                LoadGame()
-            Case 3
-                Tutorial()
-            Case 4
-                KeyBindMenu()
-            Case 5
-                GraphicsMenu()
-            Case 6
-                End
-        End Select
+        Console.WriteLine("Please enter one of the keys below:")
+        Console.WriteLine("[1] New game")
+        Console.WriteLine("[2] Load a previously saved game")
+        Console.WriteLine("[3] Start a tutorial game")
+        Console.WriteLine("[4] View key bindings")
+        Console.WriteLine("[5] Graphics options")
+        Console.WriteLine("[6] Quit to desktop")
+        Dim MenuCode As ConsoleKeyInfo = Console.ReadKey(True)
+        If MenuCode.Key = ConsoleKey.D1 Then
+            NewGame()
+        ElseIf MenuCode.Key = ConsoleKey.D2 Then
+            LoadGame(Nothing, True)
+        ElseIf MenuCode.Key = ConsoleKey.D3 Then
+            Tutorial()
+        ElseIf MenuCode.Key = ConsoleKey.D4 Then
+            KeyBindMenu()
+        ElseIf MenuCode.Key = ConsoleKey.D5 Then
+            GraphicsMenu()
+        ElseIf MenuCode.Key = ConsoleKey.D6 Then
+            Stop
+        Else
+            StartMenu()
+        End If
     End Sub
-    Sub MainMenu()
+    Sub MainMenu(map)
         Console.Clear()
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
         Console.WriteLine("---MAIN MENU---" & vbCrLf)
-        Console.WriteLine("Please enter one of the bers below:")
-        Dim MenuCode As Integer
-        Console.WriteLine("1 New game")
-        Console.WriteLine("2 Load a previously saved game")
-        Console.WriteLine("3 Start a tutorial game")
-        Console.WriteLine("4 Display key bindings")
-        Console.WriteLine("5 Pick resolution")
-        Console.WriteLine("6 Quit to desktop")
-        MenuCode = Console.ReadLine()
-        Select Case MenuCode
-            Case 1
-                NewGame()
-            Case 2
-                LoadGame()
-            Case 3
-                Tutorial()
-            Case 4
-                KeyBindMenu()
-            Case 5
-                GraphicsMenu()
-            Case 6
-                End
-        End Select
+        Console.ResetColor()
+        Console.WriteLine("Please enter one of the following keys:")
+        Console.WriteLine("[1] New game")
+        Console.WriteLine("[2] Load a previously saved game")
+        Console.WriteLine("[3] Start a tutorial game")
+        Console.WriteLine("[4] View key bindings")
+        Console.WriteLine("[5] Graphics options")
+        Console.WriteLine("[6] Quit to desktop")
+        Console.WriteLine("[ESC] Return to game")
+        Dim MenuCode As ConsoleKeyInfo = Console.ReadKey(True)
+        If MenuCode.Key = ConsoleKey.D1 Then
+            NewGame()
+        ElseIf MenuCode.Key = ConsoleKey.D2 Then
+            LoadGame(map, False)
+        ElseIf MenuCode.Key = ConsoleKey.D3 Then
+            Tutorial()
+        ElseIf MenuCode.Key = ConsoleKey.D4 Then
+            KeyBindMenu()
+        ElseIf MenuCode.Key = ConsoleKey.D5 Then
+            GraphicsMenu()
+        ElseIf MenuCode.Key = ConsoleKey.D6 Then
+            Stop
+        ElseIf MenuCode.Key = ConsoleKey.Escape Then
+            map.printmap(0, 16)
+        Else
+            MainMenu(map)
+        End If
     End Sub
     Function GraphicsMenu()
         Console.WriteLine("--GRAPHICS OPTIONS--")
@@ -76,10 +78,15 @@ Module Module1
         Console.WriteLine("--KEY BINDINGS--")
         Dim MenuCode As Integer = Console.ReadLine()
     End Sub
-    Sub LoadGame()
-
+    Sub LoadGame(map, isStart)
+        Dim PathName As String
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.Write("Input file name:")
+        Console.ResetColor()
+        PathName = Console.ReadLine()
         Try
-            Dim FileReader As New System.IO.StreamReader("name.txt")
+            Dim FileReader As New System.IO.StreamReader(PathName)
             Dim Line As String
             While FileReader.EndOfStream <> True
                 Line = FileReader.ReadLine()
@@ -87,7 +94,15 @@ Module Module1
             End While
             FileReader.Close()
         Catch ex As Exception
+            Console.BackgroundColor = ConsoleColor.Red
+            Console.ForegroundColor = ConsoleColor.Black
             Console.WriteLine(ex.Message)
+            Console.ResetColor()
+            If isStart = True Then
+                StartMenu()
+            Else
+                MainMenu(map)
+            End If
         End Try
     End Sub
     Sub Tutorial()
@@ -96,9 +111,12 @@ Module Module1
     Public Sub NewGame()
         Dim map As Map = New Map()
         Console.WriteLine("Generating map...")
-        Dim newmap As Map = New Map()
-        Map.GridCodes = {{32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31}, {-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31}}
-        map.PrintMap(0, 16)
+        For i As Integer = 0 To 32
+            For j As Integer = 0 To 24
+                Map.GridCodes(j, i) = -1
+            Next
+        Next
+        map.PrintMap(14, 16)
     End Sub
     Sub SaveGame()
         Dim map As Map = New Map()
@@ -116,7 +134,7 @@ Module Module1
         Catch ex As Exception
         End Try
         Console.Clear()
-        map.PrintMap(1, 16)
+        map.PrintMap(0, 16)
     End Sub
 
 End Module
