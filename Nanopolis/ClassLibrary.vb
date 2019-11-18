@@ -1,5 +1,5 @@
 ﻿Public Class Map
-    Public Shared GridCodes(30, 32) As Integer
+    Public Shared GridCodes(30, 33) As Integer
     Public Shared NextTurnGridCodes(25, 32) As Integer
     Public Shared SelectorY As Integer = 14
     Public Shared SelectorX As Integer = 16
@@ -7,7 +7,7 @@
         Console.Clear()
         For y As Integer = 0 To 24
             For CurrentLine As Integer = 0 To 3
-                For x As Integer = 0 To 31
+                For x As Integer = 0 To 32
                     If CurrentLine = 0 Then
                         Select Case GridCodes(y, x)
                             Case -1
@@ -580,10 +580,10 @@
                                 Console.Write("   N ")
                                 Console.ResetColor()
                             Case 1
-                                Console.ForegroundColor = ConsoleColor.Red
+                                Console.ForegroundColor = ConsoleColor.Black
                                 Console.BackgroundColor = ConsoleColor.Green
                                 Console.Write("  ")
-                                Console.BackgroundColor = ConsoleColor.Black
+                                Console.BackgroundColor = ConsoleColor.Red
                                 Console.Write("/\")
                                 Console.BackgroundColor = ConsoleColor.Green
                                 Console.Write(" ")

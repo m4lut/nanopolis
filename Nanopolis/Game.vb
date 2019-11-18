@@ -5,6 +5,7 @@ Imports System.Data.DataTable
 Module Module1
     Sub Main()
         MsgBox("Welcome to Nanopolis!" & vbCrLf & "Developed by Maksim Al-Utaibi" & vbCrLf & "Make sure to maximise the console window when playing.", vbOKOnly)
+        Dim map As Map = New Map()
         StartMenu()
     End Sub
     Sub StartMenu()
@@ -27,9 +28,9 @@ Module Module1
         ElseIf MenuCode.Key = ConsoleKey.D3 Then
             Tutorial()
         ElseIf MenuCode.Key = ConsoleKey.D4 Then
-            KeyBindMenu()
+            KeyBindMenu(Nothing, True)
         ElseIf MenuCode.Key = ConsoleKey.D5 Then
-            GraphicsMenu()
+            GraphicsMenu(Nothing, True)
         ElseIf MenuCode.Key = ConsoleKey.D6 Then
             Stop
         Else
@@ -43,7 +44,7 @@ Module Module1
         Console.WriteLine("---MAIN MENU---" & vbCrLf)
         Console.ResetColor()
         Console.WriteLine("Please enter one of the following keys:")
-        Console.WriteLine("[1] New game")
+        Console.WriteLine("[1] New game (WARNING: Save your game before starting a new game!)")
         Console.WriteLine("[2] Load a previously saved game")
         Console.WriteLine("[3] Start a tutorial game")
         Console.WriteLine("[4] View key bindings")
@@ -58,9 +59,9 @@ Module Module1
         ElseIf MenuCode.Key = ConsoleKey.D3 Then
             Tutorial()
         ElseIf MenuCode.Key = ConsoleKey.D4 Then
-            KeyBindMenu()
+            KeyBindMenu(map, False)
         ElseIf MenuCode.Key = ConsoleKey.D5 Then
-            GraphicsMenu()
+            GraphicsMenu(map, False)
         ElseIf MenuCode.Key = ConsoleKey.D6 Then
             Stop
         ElseIf MenuCode.Key = ConsoleKey.Escape Then
@@ -69,16 +70,34 @@ Module Module1
             MainMenu(map)
         End If
     End Sub
-    Function GraphicsMenu()
+    Function GraphicsMenu(map, isStart)
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
         Console.WriteLine("--GRAPHICS OPTIONS--")
-        Dim MenuCode As Integer = Console.ReadLine()
+        Console.ResetColor()
+        Dim input As ConsoleKeyInfo = Console.ReadKey(True)
+        If input.Key = ConsoleKey.Escape Then
+            If isStart = True Then
+                StartMenu()
+            Else
+                MainMenu(map)
+            End If
+        End If
     End Function
-    Sub KeyBindMenu()
+    Sub KeyBindMenu(map, isStart)
         Console.Clear()
         Console.WriteLine("--KEY BINDINGS--")
-        Dim MenuCode As Integer = Console.ReadLine()
+        Dim input As ConsoleKeyInfo = Console.ReadKey(True)
+        If input.Key = ConsoleKey.Escape Then
+            If isStart = True Then
+                StartMenu()
+            Else
+                MainMenu(map)
+            End If
+        End If
     End Sub
     Sub LoadGame(map, isStart)
+        Console.WriteLine("Return[ESC]")
         Dim PathName As String
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
@@ -109,16 +128,60 @@ Module Module1
 
     End Sub
     Public Sub NewGame()
-        Dim map As Map = New Map()
-        Console.WriteLine("Generating map...")
-        For i As Integer = 0 To 32
-            For j As Integer = 0 To 24
-                Map.GridCodes(j, i) = -1
+        Randomize()
+        Dim grassProb As Integer
+        Dim waterProb As Integer
+        Dim forestProb As Integer
+        Dim totalProb As Integer
+        Console.WriteLine("Create a plain map?[y/n]")
+        Dim plainMapChoice As ConsoleKeyInfo = Console.ReadKey(True)
+        If plainMapChoice.Key = ConsoleKey.N Then
+            Dim map As Map = New Map()
+            Try
+                Console.WriteLine("Set map parameters:")
+                Console.WriteLine("Likelihood of water(0-100): ")
+                waterProb = Console.ReadLine()
+                totalProb += waterProb
+                Console.WriteLine("Likelihood of grass fields(0-100): ")
+                grassProb = Console.ReadLine()
+                totalProb += grassProb
+                Console.WriteLine("Likelihood of forest(0-100): ")
+                forestProb = Console.ReadLine()
+                totalProb += forestProb
+            Catch ex As Exception
+                Console.WriteLine(ex.Message)
+                StartMenu()
+            End Try
+            Console.WriteLine("Generating map...")
+            For i As Integer = 0 To 29
+                For j As Integer = 0 To 32
+                    Dim GeneratedTile As Single = Rnd()
+                    GeneratedTile = GeneratedTile * totalProb
+                    If GeneratedTile < waterProb Then
+                        Map.GridCodes(i, j) = 38
+                    ElseIf GeneratedTile > waterProb And GeneratedTile <= (grassProb + waterProb) Then
+                        Map.GridCodes(i, j) = -1
+                    ElseIf GeneratedTile > (grassProb + waterProb) Then
+                        Map.GridCodes(i, j) = 39
+                    End If
+                Next
             Next
-        Next
-        map.PrintMap(14, 16)
+            map.PrintMap(14, 16)
+        ElseIf plainMapChoice.Key = ConsoleKey.Y Then
+            Dim map As Map = New Map
+            For i As Integer = 0 To 29
+                For j As Integer = 0 To 32
+                    Map.GridCodes(i, j) = -1
+                Next
+            Next
+            map.PrintMap(14, 16)
+        ElseIf plainMapChoice.Key = ConsoleKey.Escape Then
+            StartMenu()
+        Else NewGame()
+        End If
     End Sub
     Sub SaveGame()
+        Console.WriteLine("Return[ESC]")
         Dim map As Map = New Map()
         Dim filename As String
         Console.BackgroundColor = ConsoleColor.Gray
