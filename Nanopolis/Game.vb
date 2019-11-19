@@ -1,7 +1,7 @@
 ﻿Imports System.IO
 Imports System.Data
 Imports System.Data.DataTable
-
+Imports Newtonsoft.Json
 Module Module1
     Sub Main()
         MsgBox("Welcome to Nanopolis!" & vbCrLf & "Developed by Maksim Al-Utaibi" & vbCrLf & "Make sure to maximise the console window when playing.", vbOKOnly)
