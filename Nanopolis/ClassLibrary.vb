@@ -550,7 +550,7 @@
                             Case 39
                                 Console.ForegroundColor = ConsoleColor.DarkRed
                                 Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" | | ")
+                                Console.Write("| | |")
                                 Console.ResetColor()
                             Case 40
                                 Console.BackgroundColor = ConsoleColor.Green
@@ -1216,7 +1216,9 @@ End Class
 Public Class Lot
     Public xPos As Integer
     Public yPos As Integer
-    Public LandValue As Integer
+    Public Cost As Integer
+    Public RealLandValue As Integer
+    Public Shared LotObjectMatrix(30, 33)
     Public Function GetPos(ByVal Gridcodes(,), yPos, xPos)
         Return yPos
         Return xPos
@@ -1238,10 +1240,16 @@ Public Class Lot
                 input = Console.ReadKey(True)
                 If input.Key = ConsoleKey.D1 Then
                     GridCodes(yPos, xPos) = 1
-                    'dim new object
+                    Dim smallResidential As SmallResidential = New SmallResidential()
+                    smallResidential.yPos = yPos
+                    smallResidential.xPos = xPos
+                    LotObjectMatrix(yPos, xPos) = smallResidential
                 ElseIf input.Key = ConsoleKey.D2 Then
                     GridCodes(yPos, xPos) = 2
-                    'Dim new object
+                    Dim largeResidential As LargeResidential = New LargeResidential()
+                    largeResidential.yPos = yPos
+                    largeResidential.xPos = xPos
+                    LotObjectMatrix(yPos, xPos) = largeResidential
                 End If
             Case ConsoleKey.D2
                 Console.BackgroundColor = ConsoleColor.Gray
@@ -1251,13 +1259,23 @@ Public Class Lot
                 input = Console.ReadKey(True)
                 If input.Key = ConsoleKey.D1 Then
                     GridCodes(yPos, xPos) = ShopType
-                    'Dim
+                    Dim smallCommercial As SmallCommercial = New SmallCommercial()
+                    smallCommercial.yPos = yPos
+                    smallCommercial.xPos = xPos
+                    LotObjectMatrix(yPos, xPos) = smallCommercial
                 ElseIf input.Key = ConsoleKey.D2 Then
                     GridCodes(yPos, xPos) = 5
-                    'Dim
+                    Dim largeCommercial As LargeCommercial = New LargeCommercial()
+                    largeCommercial.yPos = yPos
+                    largeCommercial.xPos = xPos
+                    LotObjectMatrix(yPos, xPos) = largeCommercial
                 End If
             Case ConsoleKey.D3
-                GridCodes(yPos, xPos) = 6
+                GridCodes(yPos, xPos) = 32
+                Dim industry As Industry = New Industry()
+                industry.yPos = yPos
+                industry.xPos = xPos
+                LotObjectMatrix(yPos, xPos) = industry
             Case ConsoleKey.D4
                 Console.BackgroundColor = ConsoleColor.Gray
                 Console.ForegroundColor = ConsoleColor.Black
@@ -1266,6 +1284,7 @@ Public Class Lot
                 input = Console.ReadKey(True)
                 If input.Key = ConsoleKey.D1 Then
                     GridCodes(yPos, xPos) = 13
+                    'logic for displaying proper road texture
                     If GridCodes(yPos + 1, xPos) = 13 Then
                         GridCodes(yPos + 1, xPos) = 14
                         GridCodes(yPos, xPos) = 14
@@ -1280,11 +1299,13 @@ Public Class Lot
                     ElseIf GridCodes(yPos - 1, xPos) = 13 And GridCodes(yPos, xPos - 1) = 13 Then
                         GridCodes(yPos, xPos) = 18
                     End If
+                ElseIf input.Key = ConsoleKey.D2 Then
+                    GridCodes(yPos, xPos) = 24
                 End If
             Case ConsoleKey.D5
                 Console.BackgroundColor = ConsoleColor.Gray
                 Console.ForegroundColor = ConsoleColor.Black
-                Console.WriteLine("Coal plant[1]($150) | Wind Farm[2]($200)")
+                Console.WriteLine("Coal plant[1]($150) | Wind Farm[2]($225)")
                 Console.ResetColor()
                 input = Console.ReadKey(True)
                 If input.Key = ConsoleKey.D1 Then
@@ -1293,6 +1314,7 @@ Public Class Lot
                     GridCodes(yPos, xPos) = 40
                 End If
             Case ConsoleKey.D6
+                Console.WriteLine("Small park[1]($15) | Large park[2]($35)")
                 If input.Key = ConsoleKey.D2 Then
                     GridCodes(yPos, xPos) = 6
                     GridCodes(yPos, xPos + 1) = 7
@@ -1323,12 +1345,13 @@ Public Class Lot
     Public Sub Demolish(ByRef GridCodes, ByRef yPos, ByRef xPos, ByRef map)
         GridCodes(yPos, xPos) = -1
         map.Printmap(14, 16)
+        Me.Finalize()
     End Sub
 
-    Public Function ChangeLandValue()
+    Protected Function ChangeLandValue()
 
     End Function
-    Public Function CalcLandValue()
+    Protected Function CalcLandValue()
 
     End Function
 
@@ -1337,23 +1360,32 @@ Public Class Roads
     Inherits Lot
 
 End Class
+Public Class SmallRoad
+    Inherits Roads
+    Shadows Const Cost As Integer = 10
+End Class
+Public Class LargeRoad
+    Inherits Roads
+    Shadows Const Cost As Integer = 20
+End Class
 Public Class Nature
     Inherits Lot
 
 End Class
 Public Class Grass
     Inherits Nature
-    Shadows Const LandValueModifier As Integer = 2
+
+    Shadows Const BaseLandValue As Integer = 0
 
 End Class
 Public Class Water
     Inherits Nature
-    Shadows Const LandValueModifier As Integer = 10
+    Shadows Const BaseLandValue As Integer = 0
 
 End Class
 Public Class Forest
     Inherits Nature
-    Shadows Const LandValueModifier As Integer = 5
+    Shadows Const BaseLandValue As Integer = 0
 
 End Class
 Public Class ResidentialLot
@@ -1361,18 +1393,27 @@ Public Class ResidentialLot
 End Class
 Public Class SmallResidential
     Inherits ResidentialLot
+    Shadows Const BaseLandValue As Integer = 15
+    Shadows Const Cost As Integer = 15
 End Class
 Public Class LargeResidential
     Inherits ResidentialLot
+    Shadows Const BaseLandValue As Integer = 30
+    Shadows Const Cost As Integer = 25
 End Class
 Public Class CommercialLot
     Inherits Lot
+
 End Class
 Public Class SmallCommercial
     Inherits CommercialLot
+    Shadows Const BaseLandValue As Integer = 40
+    Shadows Const Cost As Integer = 20
 End Class
 Public Class LargeCommercial
     Inherits CommercialLot
+    Shadows Const BaseLandValue As Integer = 50
+    Shadows Const Cost As Integer = 30
 End Class
 Public Class Park
     Inherits Lot
@@ -1380,27 +1421,29 @@ Public Class Park
 End Class
 Public Class SmallPark
     Inherits Park
-    Shadows Const LandValueModifier As Integer = 20
+    Shadows Const BaseLandValue As Integer = 15
+    Shadows Const Cost As Integer = 15
 End Class
 Public Class LargePark
     Inherits Park
-    Shadows Const LandValueModifier As Integer = 35
+    Shadows Const BaseLandValue As Integer = 35
+    Shadows Const Cost As Integer = 35
 End Class
 Public Class Industry
     Inherits Lot
-    Shadows Const LandValueModifier As Integer = -10
+    Shadows Const BaseLandValue As Integer = 5
 End Class
 Public Class Parliament
     Inherits Lot
-    Shadows Const LandValueModifier As Integer = 25
+    Shadows Const BaseLandValue As Integer = 25
 End Class
 Public Class Construction
     Inherits Lot
-
+    Shadows Const BaseLandValue As Integer = 0
 End Class
 Public Class PoliceStation
     Inherits Lot
-    Shadows Const LandValueModifier As Integer = 5
+    Shadows Const BaseLandValue As Integer = 5
 End Class
 Public Class PowerPlant
     Inherits Lot
@@ -1408,11 +1451,13 @@ Public Class PowerPlant
 End Class
 Public Class CoalStation
     Inherits PowerPlant
-    Shadows Const LandValueModifier As Integer = -20
+    Shadows Const BaseLandValue As Integer = 5
+    Shadows Const Cost As Integer = 150
 End Class
 Public Class WindFarm
     Inherits PowerPlant
-    Shadows Const LandValueModifier As Integer = -5
+    Shadows Const BaseLandValue As Integer = 5
+    Shadows Const Cost As Integer = 225
 End Class
 Public Class Government
 
