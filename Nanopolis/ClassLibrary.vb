@@ -1,8 +1,11 @@
 ﻿Public Class Map
     Public Shared GridCodes(30, 33) As Integer
-    Public Shared NextTurnGridCodes(25, 32) As Integer
+    Public Shared NextTurnGridCodes(30, 33) As Integer
     Public Shared SelectorY As Integer = 14
     Public Shared SelectorX As Integer = 16
+    Public Sub LoadTextures()
+        'probably some vbcodeprovider here
+    End Sub
     Public Sub PrintMap(ByRef SelectorY, ByRef SelectorX)
         Console.Clear()
         For y As Integer = 0 To 24
@@ -1219,7 +1222,7 @@ Public Class Lot
     Public Cost As Integer
     Public RealLandValue As Integer
     Public Shared LotObjectMatrix(30, 33)
-    Public Function GetPos(ByVal Gridcodes(,), yPos, xPos)
+    Private Function GetPos(ByVal Gridcodes(,), yPos, xPos)
         Return yPos
         Return xPos
     End Function
@@ -1283,6 +1286,8 @@ Public Class Lot
                 Console.ResetColor()
                 input = Console.ReadKey(True)
                 If input.Key = ConsoleKey.D1 Then
+                    Dim smallRoad As SmallRoad = New SmallRoad()
+                    LotObjectMatrix(yPos, xPos) = smallRoad
                     GridCodes(yPos, xPos) = 13
                     'logic for displaying proper road texture
                     If GridCodes(yPos + 1, xPos) = 13 Then
@@ -1301,28 +1306,47 @@ Public Class Lot
                     End If
                 ElseIf input.Key = ConsoleKey.D2 Then
                     GridCodes(yPos, xPos) = 24
+                    Dim largeRoad As LargeRoad = New LargeRoad()
+                    LotObjectMatrix(yPos, xPos) = largeRoad
                 End If
             Case ConsoleKey.D5
                 Console.BackgroundColor = ConsoleColor.Gray
                 Console.ForegroundColor = ConsoleColor.Black
-                Console.WriteLine("Coal plant[1]($150) | Wind Farm[2]($225)")
+                Console.WriteLine("Coal [1]($150) | Wind Farm[2]($225)")
                 Console.ResetColor()
                 input = Console.ReadKey(True)
                 If input.Key = ConsoleKey.D1 Then
+                    Dim coalStation As CoalStation = New CoalStation()
+                    LotObjectMatrix(yPos, xPos) = coalStation
                     GridCodes(yPos, xPos) = 41
                 ElseIf input.Key = ConsoleKey.D2 Then
+                    Dim windFarm As WindFarm = New WindFarm()
+                    LotObjectMatrix(yPos, xPos) = windFarm
                     GridCodes(yPos, xPos) = 40
                 End If
             Case ConsoleKey.D6
                 Console.WriteLine("Small park[1]($15) | Large park[2]($35)")
-                If input.Key = ConsoleKey.D2 Then
+                input = Console.ReadKey(True)
+                If input.Key = ConsoleKey.D1 Then
+                    Dim smallPark As SmallPark = New SmallPark()
+                    LotObjectMatrix(yPos, xPos) = smallPark
                     GridCodes(yPos, xPos) = 6
-                    GridCodes(yPos, xPos + 1) = 7
-                    GridCodes(yPos + 1, xPos) = 8
-                    GridCodes(yPos + 1, xPos + 1) = 9
-                ElseIf input.Key = ConsoleKey.D1 Then
+                ElseIf input.Key = ConsoleKey.D2 Then
+                    Dim largePark As LargePark = New LargePark()
+                    LotObjectMatrix(yPos, xPos) = largePark
+                    'find a way to clone objects
+                    LotObjectMatrix(yPos, xPos + 1) = Nothing
+                    LotObjectMatrix(yPos + 1, xPos) = Nothing
+                    LotObjectMatrix(yPos + 1, xPos + 1) = Nothing
                     GridCodes(yPos, xPos) = 7
+                    GridCodes(yPos, xPos + 1) = 8
+                    GridCodes(yPos + 1, xPos) = 9
+                    GridCodes(yPos + 1, xPos + 1) = 10
                 End If
+            Case ConsoleKey.D7
+                GridCodes(yPos, xPos) = 37
+                Dim policeStation As PoliceStation = New PoliceStation()
+                LotObjectMatrix(yPos, xPos) = policeStation
             Case ConsoleKey.D8
                 GridCodes(yPos, xPos) = 33
                 GridCodes(yPos, xPos + 1) = 34
@@ -1345,7 +1369,7 @@ Public Class Lot
     Public Sub Demolish(ByRef GridCodes, ByRef yPos, ByRef xPos, ByRef map)
         GridCodes(yPos, xPos) = -1
         map.Printmap(14, 16)
-        Me.Finalize()
+        Finalize()
     End Sub
 
     Protected Function ChangeLandValue()

@@ -1,6 +1,4 @@
 ﻿Imports System.IO
-Imports System.Data
-Imports System.Data.DataTable
 Imports Newtonsoft.Json
 Module Module1
     Sub Main()
@@ -101,20 +99,16 @@ Module Module1
         Dim PathName As String
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
-        Console.Write("Input file name:")
+        'Console.Write("Input file name:")
         Console.ResetColor()
         PathName = Console.ReadLine()
         Try
-            Dim FileReader As New System.IO.StreamReader(PathName)
-            Dim Line As String
-            While FileReader.EndOfStream <> True
-                Line = FileReader.ReadLine()
-                Console.WriteLine(Line)
-            End While
-            FileReader.Close()
+            'insert some JSON serealization here
+            Console.ReadLine()
         Catch ex As Exception
             Console.BackgroundColor = ConsoleColor.Red
             Console.ForegroundColor = ConsoleColor.Black
+            Console.WriteLine("Error")
             Console.WriteLine(ex.Message)
             Console.ResetColor()
             If isStart = True Then
@@ -125,7 +119,8 @@ Module Module1
         End Try
     End Sub
     Sub Tutorial()
-
+        Console.ReadLine()
+        StartMenu()
     End Sub
     Public Sub NewGame()
         Randomize()
@@ -158,11 +153,17 @@ Module Module1
                     Dim GeneratedTile As Single = Rnd()
                     GeneratedTile = GeneratedTile * totalProb
                     If GeneratedTile < waterProb Then
+                        Dim water As Water = New Water()
                         Map.GridCodes(i, j) = 38
+                        Lot.LotObjectMatrix(i, j) = water
                     ElseIf GeneratedTile > waterProb And GeneratedTile <= (grassProb + waterProb) Then
+                        Dim grass As Grass = New Grass()
                         Map.GridCodes(i, j) = -1
+                        Lot.LotObjectMatrix(i, j) = grass
                     ElseIf GeneratedTile > (grassProb + waterProb) Then
+                        Dim forest As Forest = New Forest()
                         Map.GridCodes(i, j) = 39
+                        Lot.LotObjectMatrix(i, j) = forest
                     End If
                 Next
             Next
@@ -180,9 +181,8 @@ Module Module1
         Else NewGame()
         End If
     End Sub
-    Sub SaveGame()
+    Sub SaveGame(map)
         Console.WriteLine("Return[ESC]")
-        Dim map As Map = New Map()
         Dim filename As String
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
@@ -195,9 +195,13 @@ Module Module1
             FileWriter.WriteLine(Map.GridCodes.ToString)
             FileWriter.Close()
         Catch ex As Exception
+            MainMenu(map)
         End Try
         Console.Clear()
         map.PrintMap(0, 16)
+    End Sub
+    Sub NextTurn()
+        'game computes all the changes on the map eg. changes to land value and population etc.
     End Sub
 
 End Module

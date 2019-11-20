@@ -1,1 +1,12 @@
-{"examplestring":"Hello world!"}
+[
+	{
+	"textureType": "Grass"
+	"line0": ["Console.BackgroundColor = ConsoleColor.Green","Console.ForegroundColor = ConsoleColor.DarkGreen","Console.Write(". . .")","Console.ResetColor()",,,,,,,]
+	"line1": ["Console.BackgroundColor = ConsoleColor.Green","Console.ForegroundColor = ConsoleColor.DarkGreen","Console.Write(" . . ")","Console.ResetColor()",,,,,,,]
+	"line2": ["Console.BackgroundColor = ConsoleColor.Green","Console.ForegroundColor = ConsoleColor.DarkGreen","Console.Write(". . .")","Console.ResetColor()",,,,,,,]
+	"line3": ["Console.BackgroundColor = ConsoleColor.Green","Console.ForegroundColor = ConsoleColor.DarkGreen","Console.Write(" . . ")","Console.ResetColor()",,,,,,,]
+	}
+	{
+	"textureType": "Construction"
+	}
+]
