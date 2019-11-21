@@ -1,11 +1,17 @@
-﻿Imports System.IO
+﻿'goal: set up building object list,calculate land value
+Imports System.IO
 Imports Newtonsoft.Json
+Imports System.Collections.Generic
 Module Module1
     Sub Main()
         MsgBox("Welcome to Nanopolis!" & vbCrLf & "Developed by Maksim Al-Utaibi" & vbCrLf & "Make sure to maximise the console window when playing.", vbOKOnly)
         Dim map As Map = New Map()
         StartMenu()
     End Sub
+    Function NewMap()
+        Dim map As Map = New Map()
+    End Function
+
     Sub StartMenu()
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
@@ -155,7 +161,7 @@ Module Module1
                     If GeneratedTile < waterProb Then
                         Dim water As Water = New Water()
                         Map.GridCodes(i, j) = 38
-                        Lot.LotObjectMatrix(i, j) = water
+                        Lot.LotObjectMatrix.Add(water)
                     ElseIf GeneratedTile > waterProb And GeneratedTile <= (grassProb + waterProb) Then
                         Dim grass As Grass = New Grass()
                         Map.GridCodes(i, j) = -1

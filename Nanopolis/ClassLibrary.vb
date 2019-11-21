@@ -1,11 +1,11 @@
-﻿Public Class Map
+﻿Structure Position
+    Public x As Integer
+    Public y As Integer
+End Structure
+
+Public Class Map
     Public Shared GridCodes(30, 33) As Integer
     Public Shared NextTurnGridCodes(30, 33) As Integer
-    Public Shared SelectorY As Integer = 14
-    Public Shared SelectorX As Integer = 16
-    Public Sub LoadTextures()
-        'probably some vbcodeprovider here
-    End Sub
     Public Sub PrintMap(ByRef SelectorY, ByRef SelectorX)
         Console.Clear()
         For y As Integer = 0 To 24
@@ -1217,11 +1217,11 @@
 End Class
 
 Public Class Lot
-    Public xPos As Integer
-    Public yPos As Integer
-    Public Cost As Integer
-    Public RealLandValue As Integer
-    Public Shared LotObjectMatrix(30, 33)
+    Private xPos As Integer
+    Private yPos As Integer
+    Private Cost As Integer
+    Private RealLandValue As Integer
+    Public Shared LotObjectMatrix(,) As List(Of Lot)
     Private Function GetPos(ByVal Gridcodes(,), yPos, xPos)
         Return yPos
         Return xPos
@@ -1265,7 +1265,7 @@ Public Class Lot
                     Dim smallCommercial As SmallCommercial = New SmallCommercial()
                     smallCommercial.yPos = yPos
                     smallCommercial.xPos = xPos
-                    LotObjectMatrix(yPos, xPos) = smallCommercial
+                    LotObjectMatrix.Inset()
                 ElseIf input.Key = ConsoleKey.D2 Then
                     GridCodes(yPos, xPos) = 5
                     Dim largeCommercial As LargeCommercial = New LargeCommercial()
@@ -1369,7 +1369,9 @@ Public Class Lot
     Public Sub Demolish(ByRef GridCodes, ByRef yPos, ByRef xPos, ByRef map)
         GridCodes(yPos, xPos) = -1
         map.Printmap(14, 16)
-        Finalize()
+        Dim grass As Grass = New Grass()
+        LotObjectMatrix.fi
+        LotObjectMatrix(yPos, xPos) = grass
     End Sub
 
     Protected Function ChangeLandValue()
