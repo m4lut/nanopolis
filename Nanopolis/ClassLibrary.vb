@@ -2,17 +2,129 @@
     Public x As Integer
     Public y As Integer
 End Structure
+Structure Texture
+    Private _line0 As List(Of String)
+    Private _line1 As List(Of String)
+    Private _line2 As List(Of String)
+    Private _line3 As List(Of String)
+    Public Property Line0 As List(Of String)
+        Get
+            Return _line0
+        End Get
+        Set(value As List(Of String))
+            _line0 = value
+        End Set
+    End Property
+    Public Property Line1 As List(Of String)
+        Get
+            Return _line1
+        End Get
+        Set(value As List(Of String))
+            _line1 = value
+        End Set
+    End Property
+    Public Property Line2 As List(Of String)
+        Get
+            Return _line2
+        End Get
+        Set(value As List(Of String))
+            _line2 = value
+        End Set
+    End Property
+    Public Property Line3 As List(Of String)
+        Get
+            Return _line3
+        End Get
+        Set(value As List(Of String))
+            _line3 = value
+        End Set
+    End Property
+End Structure
+Public Class Game
+    Public LotObjectMatrix(30, 33) As Lot
+    Sub Play(ByRef Game, ByRef Map)
+        Dim pos As Position
 
-Public Class Map
-    Public Shared GridCodes(30, 33) As Integer
-    Public Shared NextTurnGridCodes(30, 33) As Integer
-    Public Sub PrintMap(ByRef SelectorY, ByRef SelectorX)
+    End Sub
+    Sub LoadTextures()
+
+    End Sub
+    Sub NewMap(game, IsStart)
+        Randomize()
+        Dim map As Map = New Map()
+        Dim grassProb As Integer
+        Dim waterProb As Integer
+        Dim forestProb As Integer
+        Dim totalProb As Integer
+        Console.WriteLine("Create a plain map?[y/n]")
+        Dim plainMapChoice As ConsoleKeyInfo = Console.ReadKey(True)
+        If plainMapChoice.Key = ConsoleKey.N Then
+            Try
+                Console.WriteLine("Set map parameters:")
+                Console.WriteLine("Likelihood of water(0-100): ")
+                waterProb = Console.ReadLine()
+                totalProb += waterProb
+                Console.WriteLine("Likelihood of grass fields(0-100): ")
+                grassProb = Console.ReadLine()
+                totalProb += grassProb
+                Console.WriteLine("Likelihood of forest(0-100): ")
+                forestProb = Console.ReadLine()
+                totalProb += forestProb
+            Catch ex As Exception
+                Console.WriteLine(ex.Message)
+                StartMenu()
+            End Try
+            Console.WriteLine("Generating map...")
+            For i As Integer = 0 To 29
+                For j As Integer = 0 To 32
+                    Dim GeneratedTile As Single = Rnd()
+                    GeneratedTile = GeneratedTile * totalProb
+                    If GeneratedTile < waterProb Then
+                        Dim water As Water = New Water()
+                        Map.GridCodes(i, j) = 38
+                        game.LotObjectMatrix(i, j) = water
+                    ElseIf GeneratedTile > waterProb And GeneratedTile <= (grassProb + waterProb) Then
+                        Dim grass As Grass = New Grass()
+                        Map.GridCodes(i, j) = -1
+                        game.LotObjectMatrix(i, j) = grass
+                    ElseIf GeneratedTile > (grassProb + waterProb) Then
+                        Dim forest As Forest = New Forest()
+                        Map.GridCodes(i, j) = 39
+                        game.LotObjectMatrix(i, j) = forest
+                    End If
+                Next
+            Next
+            Dim newGame As Game = New Game()
+            game.PrintMap(14, 16, map, game)
+        ElseIf plainMapChoice.Key = ConsoleKey.Y Then
+            For i As Integer = 0 To 29
+                For j As Integer = 0 To 32
+                    Map.GridCodes(i, j) = -1
+                Next
+            Next
+            Dim newGame As Game = New Game()
+            game.PrintMap(14, 16, map, game)
+        ElseIf plainMapChoice.Key = ConsoleKey.Escape Then
+            StartMenu()
+        Else
+            If IsStart = True Then
+                NewGame(False, game)
+            Else
+                NewGame(True, Nothing)
+            End If
+        End If
+    End Sub
+    Sub ComputeLandValue()
+        Dim TempLandValue As Integer
+    End Sub
+    Public Sub PrintMap(ByRef SelectorY, ByRef SelectorX, map, game)
         Console.Clear()
-        For y As Integer = 0 To 24
+        Dim pos As Position
+        For pos.y = 0 To 24
             For CurrentLine As Integer = 0 To 3
-                For x As Integer = 0 To 32
+                For pos.x = 0 To 32
                     If CurrentLine = 0 Then
-                        Select Case GridCodes(y, x)
+                        Select Case map.GridCodes(pos.y, pos.x)
                             Case -1
                                 Console.BackgroundColor = ConsoleColor.Green
                                 Console.ForegroundColor = ConsoleColor.DarkGreen
@@ -274,7 +386,7 @@ Public Class Map
                                 Console.ResetColor()
                         End Select
                     ElseIf CurrentLine = 1 Then
-                        Select Case GridCodes(y, x)
+                        Select Case map.GridCodes(pos.y, pos.x)
                             Case -1
                                 Console.BackgroundColor = ConsoleColor.Green
                                 Console.ForegroundColor = ConsoleColor.DarkGreen
@@ -571,7 +683,7 @@ Public Class Map
                                 Console.ResetColor()
                         End Select
                     ElseIf CurrentLine = 2 Then
-                        Select Case GridCodes(y, x)
+                        Select Case map.GridCodes(pos.y, pos.x)
                             Case -1
                                 Console.BackgroundColor = ConsoleColor.Green
                                 Console.ForegroundColor = ConsoleColor.DarkGreen
@@ -860,7 +972,7 @@ Public Class Map
                                 Console.ResetColor()
                         End Select
                     ElseIf CurrentLine = 3 Then
-                        Select Case GridCodes(y, x)
+                        Select Case map.GridCodes(pos.y, pos.x)
                             Case -1
                                 Console.BackgroundColor = ConsoleColor.Green
                                 Console.ForegroundColor = ConsoleColor.DarkGreen
@@ -1151,16 +1263,20 @@ Public Class Map
         Next
         Console.Write("Y" & Int(SelectorY))
         Console.Write("X" & Int(SelectorX))
-        MapSelection(SelectorY, SelectorX, GridCodes)
+        map.MapSelection(SelectorY, SelectorX, map, game)
     End Sub
-    Public Sub MapSelection(ByRef SelectorY, ByRef SelectorX, ByRef GridCodes)
+End Class
+
+Public Class Map
+    Public Shared GridCodes(30, 33) As Integer
+    Public Shared NextTurnGridCodes(30, 33) As Integer
+    Public Sub MapSelection(ByRef SelectorY, ByRef SelectorX, ByRef map, ByRef Game)
         Console.TreatControlCAsInput = True
-        Dim map As Map = New Map()
-        Dim Lot As Lot = New Lot()
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
         Console.WriteLine("Navigate[WASD] | Select[ENTER] | Main Menu[ESC]")
         Console.ResetColor()
+        Dim lot As Lot = New Lot()
         Dim Selected As Boolean = False
         Dim Key As ConsoleKey
         Dim Choice As ConsoleKey
@@ -1168,31 +1284,31 @@ Public Class Map
             Key = Console.ReadKey(True).Key
             If Key = ConsoleModifiers.Control AndAlso Key = ConsoleKey.A Then
                 SelectorX -= 5
-                PrintMap(SelectorY, SelectorX)
+                Game.PrintMap(SelectorY, SelectorX, map, Game)
             ElseIf Key = ConsoleModifiers.Control AndAlso Key = ConsoleKey.D Then
                 SelectorX += 5
-                PrintMap(SelectorY, SelectorX)
+                Game.PrintMap(SelectorY, SelectorX, map, Game)
             ElseIf Key = ConsoleModifiers.Control AndAlso Key = ConsoleKey.S Then
                 SelectorY += 5
-                PrintMap(SelectorY, SelectorX)
+                Game.PrintMap(SelectorY, SelectorX, map, Game)
             ElseIf Key = ConsoleModifiers.Control AndAlso Key = ConsoleKey.W Then
                 SelectorY -= 5
-                PrintMap(SelectorY, SelectorX)
+                Game.PrintMap(SelectorY, SelectorX, map, Game)
             ElseIf Key = ConsoleModifiers.Control AndAlso Key = ConsoleKey.Enter Then
                 Selected = True
             End If
             If Key = ConsoleKey.A Then
                 SelectorX -= 1
-                PrintMap(SelectorY, SelectorX)
+                Game.PrintMap(SelectorY, SelectorX, map, Game)
             ElseIf Key = ConsoleKey.D Then
                 SelectorX += 1
-                PrintMap(SelectorY, SelectorX)
+                Game.PrintMap(SelectorY, SelectorX, map, Game)
             ElseIf Key = ConsoleKey.S Then
                 SelectorY += 1
-                PrintMap(SelectorY, SelectorX)
+                Game.PrintMap(SelectorY, SelectorX, map, Game)
             ElseIf Key = ConsoleKey.W Then
                 SelectorY -= 1
-                PrintMap(SelectorY, SelectorX)
+                Game.PrintMap(SelectorY, SelectorX, map, Game)
             ElseIf Key = ConsoleKey.Enter Then
                 Selected = True
             ElseIf Key = ConsoleKey.Escape Then
@@ -1204,11 +1320,11 @@ Public Class Map
             Console.ResetColor()
             Choice = Console.ReadKey(True).Key
             If Choice = ConsoleKey.D Then
-                Lot.Demolish(Map.GridCodes, SelectorY, SelectorX, map)
+                lot.Demolish(SelectorY, SelectorX, Game, map)
             ElseIf Choice = ConsoleKey.B Then
-                Lot.Build(Map.GridCodes, SelectorY, SelectorX, map)
+                lot.Build(SelectorY, SelectorX, Game, map)
             ElseIf Choice = ConsoleKey.C Then
-                map.MapSelection(SelectorY, SelectorX, Map.GridCodes)
+                Game.MapSelection(SelectorY, SelectorX, map, Game)
             ElseIf Choice = ConsoleKey.Escape Then
                 MainMenu(map)
             End If
@@ -1221,12 +1337,7 @@ Public Class Lot
     Private yPos As Integer
     Private Cost As Integer
     Private RealLandValue As Integer
-    Public Shared LotObjectMatrix(,) As List(Of Lot)
-    Private Function GetPos(ByVal Gridcodes(,), yPos, xPos)
-        Return yPos
-        Return xPos
-    End Function
-    Public Sub Build(ByRef GridCodes, ByRef yPos, ByRef xPos, ByRef map)
+    Public Sub Build(ByRef yPos, ByRef xPos, ByRef game, ByRef map)
         Randomize()
         Dim ShopType As Integer = Math.Round((Rnd()) + 3)
         Console.BackgroundColor = ConsoleColor.Gray
@@ -1242,17 +1353,17 @@ Public Class Lot
                 Console.ResetColor()
                 input = Console.ReadKey(True)
                 If input.Key = ConsoleKey.D1 Then
-                    GridCodes(yPos, xPos) = 1
+                    map.GridCodes(yPos, xPos) = 1
                     Dim smallResidential As SmallResidential = New SmallResidential()
                     smallResidential.yPos = yPos
                     smallResidential.xPos = xPos
-                    LotObjectMatrix(yPos, xPos) = smallResidential
+                    game.LotObjectMatrix(yPos, xPos) = smallResidential
                 ElseIf input.Key = ConsoleKey.D2 Then
-                    GridCodes(yPos, xPos) = 2
+                    map.GridCodes(yPos, xPos) = 2
                     Dim largeResidential As LargeResidential = New LargeResidential()
                     largeResidential.yPos = yPos
                     largeResidential.xPos = xPos
-                    LotObjectMatrix(yPos, xPos) = largeResidential
+                    game.LotObjectMatrix(yPos, xPos) = largeResidential
                 End If
             Case ConsoleKey.D2
                 Console.BackgroundColor = ConsoleColor.Gray
@@ -1261,24 +1372,24 @@ Public Class Lot
                 Console.ResetColor()
                 input = Console.ReadKey(True)
                 If input.Key = ConsoleKey.D1 Then
-                    GridCodes(yPos, xPos) = ShopType
+                    map.GridCodes(yPos, xPos) = ShopType
                     Dim smallCommercial As SmallCommercial = New SmallCommercial()
                     smallCommercial.yPos = yPos
                     smallCommercial.xPos = xPos
-                    LotObjectMatrix.Inset()
+                    game.LotObjectMatrix.Inset()
                 ElseIf input.Key = ConsoleKey.D2 Then
-                    GridCodes(yPos, xPos) = 5
+                    map.GridCodes(yPos, xPos) = 5
                     Dim largeCommercial As LargeCommercial = New LargeCommercial()
                     largeCommercial.yPos = yPos
                     largeCommercial.xPos = xPos
-                    LotObjectMatrix(yPos, xPos) = largeCommercial
+                    game.LotObjectMatrix(yPos, xPos) = largeCommercial
                 End If
             Case ConsoleKey.D3
-                GridCodes(yPos, xPos) = 32
+                map.GridCodes(yPos, xPos) = 32
                 Dim industry As Industry = New Industry()
                 industry.yPos = yPos
                 industry.xPos = xPos
-                LotObjectMatrix(yPos, xPos) = industry
+                game.LotObjectMatrix(yPos, xPos) = industry
             Case ConsoleKey.D4
                 Console.BackgroundColor = ConsoleColor.Gray
                 Console.ForegroundColor = ConsoleColor.Black
@@ -1287,27 +1398,27 @@ Public Class Lot
                 input = Console.ReadKey(True)
                 If input.Key = ConsoleKey.D1 Then
                     Dim smallRoad As SmallRoad = New SmallRoad()
-                    LotObjectMatrix(yPos, xPos) = smallRoad
-                    GridCodes(yPos, xPos) = 13
+                    game.LotObjectMatrix(yPos, xPos) = smallRoad
+                    map.GridCodes(yPos, xPos) = 13
                     'logic for displaying proper road texture
-                    If GridCodes(yPos + 1, xPos) = 13 Then
-                        GridCodes(yPos + 1, xPos) = 14
-                        GridCodes(yPos, xPos) = 14
-                    ElseIf GridCodes(yPos + 1, xPos) = 14 Then
-                        GridCodes(yPos, xPos) = 13
-                    ElseIf GridCodes(yPos + 1, xPos) = 13 And GridCodes(yPos, xPos + 1) = 14 Then
-                        GridCodes(yPos, xPos) = 21
-                    ElseIf GridCodes(yPos + 1, xPos) = 13 And GridCodes(yPos, xPos - 1) = 13 Then
-                        GridCodes(yPos, xPos) = 20
-                    ElseIf GridCodes(yPos - 1, xPos) = 13 And GridCodes(yPos, xPos + 1) = 13 Then
-                        GridCodes(yPos, xPos) = 19
-                    ElseIf GridCodes(yPos - 1, xPos) = 13 And GridCodes(yPos, xPos - 1) = 13 Then
-                        GridCodes(yPos, xPos) = 18
+                    If map.GridCodes(yPos + 1, xPos) = 13 Then
+                        map.GridCodes(yPos + 1, xPos) = 14
+                        map.GridCodes(yPos, xPos) = 14
+                    ElseIf map.GridCodes(yPos + 1, xPos) = 14 Then
+                        map.GridCodes(yPos, xPos) = 13
+                    ElseIf map.GridCodes(yPos + 1, xPos) = 13 And map.GridCodes(yPos, xPos + 1) = 14 Then
+                        map.GridCodes(yPos, xPos) = 21
+                    ElseIf map.GridCodes(yPos + 1, xPos) = 13 And map.GridCodes(yPos, xPos - 1) = 13 Then
+                        map.GridCodes(yPos, xPos) = 20
+                    ElseIf map.GridCodes(yPos - 1, xPos) = 13 And map.GridCodes(yPos, xPos + 1) = 13 Then
+                        map.GridCodes(yPos, xPos) = 19
+                    ElseIf map.GridCodes(yPos - 1, xPos) = 13 And map.GridCodes(yPos, xPos - 1) = 13 Then
+                        map.GridCodes(yPos, xPos) = 18
                     End If
                 ElseIf input.Key = ConsoleKey.D2 Then
-                    GridCodes(yPos, xPos) = 24
+                    map.GridCodes(yPos, xPos) = 24
                     Dim largeRoad As LargeRoad = New LargeRoad()
-                    LotObjectMatrix(yPos, xPos) = largeRoad
+                    game.LotObjectMatrix(yPos, xPos) = largeRoad
                 End If
             Case ConsoleKey.D5
                 Console.BackgroundColor = ConsoleColor.Gray
@@ -1317,41 +1428,41 @@ Public Class Lot
                 input = Console.ReadKey(True)
                 If input.Key = ConsoleKey.D1 Then
                     Dim coalStation As CoalStation = New CoalStation()
-                    LotObjectMatrix(yPos, xPos) = coalStation
-                    GridCodes(yPos, xPos) = 41
+                    game.LotObjectMatrix(yPos, xPos) = coalStation
+                    map.GridCodes(yPos, xPos) = 41
                 ElseIf input.Key = ConsoleKey.D2 Then
                     Dim windFarm As WindFarm = New WindFarm()
-                    LotObjectMatrix(yPos, xPos) = windFarm
-                    GridCodes(yPos, xPos) = 40
+                    game.LotObjectMatrix(yPos, xPos) = windFarm
+                    map.GridCodes(yPos, xPos) = 40
                 End If
             Case ConsoleKey.D6
                 Console.WriteLine("Small park[1]($15) | Large park[2]($35)")
                 input = Console.ReadKey(True)
                 If input.Key = ConsoleKey.D1 Then
                     Dim smallPark As SmallPark = New SmallPark()
-                    LotObjectMatrix(yPos, xPos) = smallPark
-                    GridCodes(yPos, xPos) = 6
+                    game.LotObjectMatrix(yPos, xPos) = smallPark
+                    map.GridCodes(yPos, xPos) = 6
                 ElseIf input.Key = ConsoleKey.D2 Then
                     Dim largePark As LargePark = New LargePark()
-                    LotObjectMatrix(yPos, xPos) = largePark
+                    game.LotObjectMatrix(yPos, xPos) = largePark
                     'find a way to clone objects
-                    LotObjectMatrix(yPos, xPos + 1) = Nothing
-                    LotObjectMatrix(yPos + 1, xPos) = Nothing
-                    LotObjectMatrix(yPos + 1, xPos + 1) = Nothing
-                    GridCodes(yPos, xPos) = 7
-                    GridCodes(yPos, xPos + 1) = 8
-                    GridCodes(yPos + 1, xPos) = 9
-                    GridCodes(yPos + 1, xPos + 1) = 10
+                    game.LotObjectMatrix(yPos, xPos + 1) = Nothing
+                    game.LotObjectMatrix(yPos + 1, xPos) = Nothing
+                    game.LotObjectMatrix(yPos + 1, xPos + 1) = Nothing
+                    map.GridCodes(yPos, xPos) = 7
+                    map.GridCodes(yPos, xPos + 1) = 8
+                    map.GridCodes(yPos + 1, xPos) = 9
+                    map.GridCodes(yPos + 1, xPos + 1) = 10
                 End If
             Case ConsoleKey.D7
-                GridCodes(yPos, xPos) = 37
+                map.GridCodes(yPos, xPos) = 37
                 Dim policeStation As PoliceStation = New PoliceStation()
-                LotObjectMatrix(yPos, xPos) = policeStation
+                game.LotObjectMatrix(yPos, xPos) = policeStation
             Case ConsoleKey.D8
-                GridCodes(yPos, xPos) = 33
-                GridCodes(yPos, xPos + 1) = 34
-                GridCodes(yPos + 1, xPos) = 35
-                GridCodes(yPos + 1, xPos + 1) = 36
+                map.GridCodes(yPos, xPos) = 33
+                map.GridCodes(yPos, xPos + 1) = 34
+                map.GridCodes(yPos + 1, xPos) = 35
+                map.GridCodes(yPos + 1, xPos + 1) = 36
             Case ConsoleKey.D9
                 Console.BackgroundColor = ConsoleColor.Gray
                 Console.ForegroundColor = ConsoleColor.Black
@@ -1359,19 +1470,19 @@ Public Class Lot
                 Console.ResetColor()
                 input = Console.ReadKey(True)
                 If input.Key = ConsoleKey.D1 Then
-                    GridCodes(yPos, xPos) = 39
+                    map.GridCodes(yPos, xPos) = 39
                 ElseIf input.Key = ConsoleKey.D2 Then
-                    GridCodes(yPos, xPos) = 38
+                    map.GridCodes(yPos, xPos) = 38
                 End If
         End Select
-        map.PrintMap(14, 16)
+        game.PrintMap(14, 16, map, game)
     End Sub
-    Public Sub Demolish(ByRef GridCodes, ByRef yPos, ByRef xPos, ByRef map)
-        GridCodes(yPos, xPos) = -1
-        map.Printmap(14, 16)
+    Public Sub Demolish(ByRef yPos, ByRef xPos, ByRef game, ByRef map)
+        map.GridCodes(yPos, xPos) = -1
+        game.PrintMap(14, 16, map, game)
         Dim grass As Grass = New Grass()
-        LotObjectMatrix.fi
-        LotObjectMatrix(yPos, xPos) = grass
+        game.LotObjectMatrix.add
+        game.LotObjectMatrix(yPos, xPos) = grass
     End Sub
 
     Protected Function ChangeLandValue()

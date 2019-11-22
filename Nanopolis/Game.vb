@@ -1,7 +1,6 @@
 ﻿'goal: set up building object list,calculate land value
 Imports System.IO
 Imports Newtonsoft.Json
-Imports System.Collections.Generic
 Module Module1
     Sub Main()
         MsgBox("Welcome to Nanopolis!" & vbCrLf & "Developed by Maksim Al-Utaibi" & vbCrLf & "Make sure to maximise the console window when playing.", vbOKOnly)
@@ -26,7 +25,7 @@ Module Module1
         Console.WriteLine("[6] Quit to desktop")
         Dim MenuCode As ConsoleKeyInfo = Console.ReadKey(True)
         If MenuCode.Key = ConsoleKey.D1 Then
-            NewGame()
+            NewGame(True, Nothing)
         ElseIf MenuCode.Key = ConsoleKey.D2 Then
             LoadGame(Nothing, True)
         ElseIf MenuCode.Key = ConsoleKey.D3 Then
@@ -41,7 +40,7 @@ Module Module1
             StartMenu()
         End If
     End Sub
-    Sub MainMenu(map)
+    Sub MainMenu(game)
         Console.Clear()
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
@@ -57,21 +56,21 @@ Module Module1
         Console.WriteLine("[ESC] Return to game")
         Dim MenuCode As ConsoleKeyInfo = Console.ReadKey(True)
         If MenuCode.Key = ConsoleKey.D1 Then
-            NewGame()
+            NewGame(False, game)
         ElseIf MenuCode.Key = ConsoleKey.D2 Then
-            LoadGame(map, False)
+            LoadGame(game, False)
         ElseIf MenuCode.Key = ConsoleKey.D3 Then
             Tutorial()
         ElseIf MenuCode.Key = ConsoleKey.D4 Then
-            KeyBindMenu(map, False)
+            KeyBindMenu(game, False)
         ElseIf MenuCode.Key = ConsoleKey.D5 Then
-            GraphicsMenu(map, False)
+            GraphicsMenu(game, False)
         ElseIf MenuCode.Key = ConsoleKey.D6 Then
             Stop
         ElseIf MenuCode.Key = ConsoleKey.Escape Then
-            map.printmap(0, 16)
+            game.PrintMap(0, 16)
         Else
-            MainMenu(map)
+            MainMenu(game)
         End If
     End Sub
     Function GraphicsMenu(map, isStart)
@@ -128,66 +127,22 @@ Module Module1
         Console.ReadLine()
         StartMenu()
     End Sub
-    Public Sub NewGame()
-        Randomize()
-        Dim grassProb As Integer
-        Dim waterProb As Integer
-        Dim forestProb As Integer
-        Dim totalProb As Integer
-        Console.WriteLine("Create a plain map?[y/n]")
-        Dim plainMapChoice As ConsoleKeyInfo = Console.ReadKey(True)
-        If plainMapChoice.Key = ConsoleKey.N Then
-            Dim map As Map = New Map()
-            Try
-                Console.WriteLine("Set map parameters:")
-                Console.WriteLine("Likelihood of water(0-100): ")
-                waterProb = Console.ReadLine()
-                totalProb += waterProb
-                Console.WriteLine("Likelihood of grass fields(0-100): ")
-                grassProb = Console.ReadLine()
-                totalProb += grassProb
-                Console.WriteLine("Likelihood of forest(0-100): ")
-                forestProb = Console.ReadLine()
-                totalProb += forestProb
-            Catch ex As Exception
-                Console.WriteLine(ex.Message)
+    Public Sub NewGame(IsStart, CurrentGame)
+        Console.WriteLine("Are you sure? No [ESC] | Yes [ENTER]")
+        Dim Input As ConsoleKeyInfo = Console.ReadKey(True)
+        If Input.Key = ConsoleKey.Enter Then
+            Dim game As Game = New Game()
+            game.NewMap(game, IsStart)
+        Else
+            If IsStart = True Then
                 StartMenu()
-            End Try
-            Console.WriteLine("Generating map...")
-            For i As Integer = 0 To 29
-                For j As Integer = 0 To 32
-                    Dim GeneratedTile As Single = Rnd()
-                    GeneratedTile = GeneratedTile * totalProb
-                    If GeneratedTile < waterProb Then
-                        Dim water As Water = New Water()
-                        Map.GridCodes(i, j) = 38
-                        Lot.LotObjectMatrix.Add(water)
-                    ElseIf GeneratedTile > waterProb And GeneratedTile <= (grassProb + waterProb) Then
-                        Dim grass As Grass = New Grass()
-                        Map.GridCodes(i, j) = -1
-                        Lot.LotObjectMatrix(i, j) = grass
-                    ElseIf GeneratedTile > (grassProb + waterProb) Then
-                        Dim forest As Forest = New Forest()
-                        Map.GridCodes(i, j) = 39
-                        Lot.LotObjectMatrix(i, j) = forest
-                    End If
-                Next
-            Next
-            map.PrintMap(14, 16)
-        ElseIf plainMapChoice.Key = ConsoleKey.Y Then
-            Dim map As Map = New Map
-            For i As Integer = 0 To 29
-                For j As Integer = 0 To 32
-                    Map.GridCodes(i, j) = -1
-                Next
-            Next
-            map.PrintMap(14, 16)
-        ElseIf plainMapChoice.Key = ConsoleKey.Escape Then
-            StartMenu()
-        Else NewGame()
+            Else
+                MainMenu(CurrentGame)
+            End If
         End If
+
     End Sub
-    Sub SaveGame(map)
+    Sub SaveGame(game, map)
         Console.WriteLine("Return[ESC]")
         Dim filename As String
         Console.BackgroundColor = ConsoleColor.Gray
@@ -198,13 +153,13 @@ Module Module1
         filename = filename & ".txt"
         Try
             Dim FileWriter As New System.IO.StreamWriter(filename)
-            FileWriter.WriteLine(Map.GridCodes.ToString)
+            FileWriter.WriteLine(map.GridCodes.ToString)
             FileWriter.Close()
         Catch ex As Exception
-            MainMenu(map)
+            MainMenu(game)
         End Try
         Console.Clear()
-        map.PrintMap(0, 16)
+        game.PrintMap(0, 16)
     End Sub
     Sub NextTurn()
         'game computes all the changes on the map eg. changes to land value and population etc.
