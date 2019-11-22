@@ -47,7 +47,48 @@ Public Class Game
 
     End Sub
     Sub LoadTextures()
-
+        Dim grassTexture As Texture
+        Dim constructionTexture As Texture
+        Dim smallResidentialTexture As Texture
+        Dim largeResidentialTexture As Texture
+        Dim smallCommercialTexture1 As Texture
+        Dim smallCommercialTexture2 As Texture
+        Dim largeCommercialTexture As Texture
+        Dim smallParkTexture As Texture
+        Dim largeParkTexture1 As Texture
+        Dim largeParkTexture2 As Texture
+        Dim largeParkTexture3 As Texture
+        Dim largeParkTexture4 As Texture
+        Dim smallRoadHorizontalTexture As Texture
+        Dim smallRoadVerticalTexture As Texture
+        Dim smallRoad4WayTexture As Texture
+        Dim smallRoadUpRightLeftTexture As Texture
+        Dim smallRoadRightDownLeftTexture As Texture
+        Dim smallRoadUpDownLeftTexture As Texture
+        Dim smallRoadUpRightDownTexture As Texture
+        Dim smallRoadUpLeftTexture As Texture
+        Dim smallRoadUpRightTexture As Texture
+        Dim smallRoadDownLeftTexture As Texture
+        Dim smallRoadRightDownTexture As Texture
+        Dim largeRoadHorizontalTexture As Texture
+        Dim largeRoadVerticalTexture As Texture
+        Dim largeRoadRightDownLeftTexture As Texture
+        Dim largeRoadUpRightLeftTexture As Texture
+        Dim largeRoadUpLeftTexture As Texture
+        Dim largeRoadUpRightTexture As Texture
+        Dim largeRoadDownLeftTexture As Texture
+        Dim largeRoadDownRightTexture As Texture
+        Dim industrialTexture As Texture
+        Dim parliamentTexture1 As Texture
+        Dim parliamentTexture2 As Texture
+        Dim parliamentTexture3 As Texture
+        Dim parliamentTexture4 As Texture
+        Dim policeTexture As Texture
+        Dim waterTexture As Texture
+        Dim forestTexture As Texture
+        Dim windFarmTexture As Texture
+        Dim coalStationTexture As Texture
+        Dim largeRoadUpDownLeftTexture As Texture
     End Sub
     Sub NewMap(game, IsStart)
         Randomize()
@@ -384,6 +425,13 @@ Public Class Game
                                 Console.ForegroundColor = ConsoleColor.White
                                 Console.Write("OOo  ")
                                 Console.ResetColor()
+                            Case 42
+                                Console.BackgroundColor = ConsoleColor.DarkGray
+                                Console.ForegroundColor = ConsoleColor.White
+                                Console.Write("/ :|")
+                                Console.BackgroundColor = ConsoleColor.Green
+                                Console.Write(" ")
+                                Console.ResetColor()
                         End Select
                     ElseIf CurrentLine = 1 Then
                         Select Case map.GridCodes(pos.y, pos.x)
@@ -681,6 +729,13 @@ Public Class Game
                                 Console.BackgroundColor = ConsoleColor.Green
                                 Console.Write("  ")
                                 Console.ResetColor()
+                            Case 42
+                                Console.ForegroundColor = ConsoleColor.DarkGray
+                                Console.BackgroundColor = ConsoleColor.White
+                                Console.Write("-  |")
+                                Console.ForegroundColor = ConsoleColor.Green
+                                Console.Write(" ")
+                                Console.ResetColor()
                         End Select
                     ElseIf CurrentLine = 2 Then
                         Select Case map.GridCodes(pos.y, pos.x)
@@ -970,6 +1025,13 @@ Public Class Game
                                 Console.BackgroundColor = ConsoleColor.Gray
                                 Console.Write("_||__")
                                 Console.ResetColor()
+                            Case 42
+                                Console.BackgroundColor = ConsoleColor.DarkGray
+                                Console.ForegroundColor = ConsoleColor.White
+                                Console.Write("   |")
+                                Console.BackgroundColor = ConsoleColor.Green
+                                Console.Write(" ")
+                                Console.ResetColor()
                         End Select
                     ElseIf CurrentLine = 3 Then
                         Select Case map.GridCodes(pos.y, pos.x)
@@ -1254,6 +1316,13 @@ Public Class Game
                             Case 41
                                 Console.BackgroundColor = ConsoleColor.Gray
                                 Console.Write("|___|")
+                                Console.ResetColor()
+                            Case 42
+                                Console.BackgroundColor = ConsoleColor.DarkGray
+                                Console.ForegroundColor = ConsoleColor.White
+                                Console.Write("\ :|")
+                                Console.BackgroundColor = ConsoleColor.Green
+                                Console.Write(" ")
                                 Console.ResetColor()
                         End Select
                     End If

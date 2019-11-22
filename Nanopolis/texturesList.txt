@@ -9,7 +9,7 @@
         Console.WriteLine(“. . .”)
         Console.WriteLine(“ . . ”)
         '0
-        Console.WriteLine("Construction crane left:")
+        Console.WriteLine("Construction:")
         Console.WriteLine("___|]")
         Console.WriteLine("I  | ")
         Console.WriteLine("   | ")
@@ -132,7 +132,7 @@
         Console.WriteLine("_____")
         Console.WriteLine("-----")
         Console.WriteLine("_____")
-        Console.WriteLine("	    ")
+        Console.WriteLine("	")
         '23
         Console.WriteLine("Hi vol road, vertical:")
         Console.WriteLine(" |:| ")
@@ -158,11 +158,11 @@
         Console.WriteLine("_____")
         Console.WriteLine(" 	")
         '27
-        Console.WriteLine("Hi vol road, left down up t-junction:")
-        Console.WriteLine("/ : \")
-        Console.WriteLine("-   -")
-        Console.WriteLine(" 	")
-        Console.WriteLine("\ : /")
+        Console.WriteLine("Hi vol road, right down up t-junction:")
+        Console.WriteLine(" |: \")
+        Console.WriteLine(" |  -")
+        Console.WriteLine(" |	")
+        Console.WriteLine(" |: /")
         '28
         Console.WriteLine("Hi vol road, up left turn:")
         Console.WriteLine("/ :| ")
@@ -234,7 +234,12 @@
         Console.WriteLine(" oo  ")
         Console.WriteLine("_||__")
         Console.WriteLine("|___|")
-
+	'42
+	Console.WriteLine("High vol road up down left")
+	Console.WriteLine("/ :| ")
+	Console.WriteLine("-  | ")
+	Console.WriteLine("   | ")
+	Console.WriteLine("\ :| ")
         Console.ReadLine()
     End Sub
 
