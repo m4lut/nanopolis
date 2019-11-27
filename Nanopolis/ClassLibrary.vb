@@ -1,4 +1,5 @@
-﻿Structure Position
+﻿
+Structure Position
     Public x As Integer
     Public y As Integer
 End Structure
@@ -43,7 +44,7 @@ End Structure
 Public Class Game
     Public CityGovernment As Government
     Public LotObjectMatrix(30, 33) As Lot
-    Sub Play(ByRef Game, ByRef Map)
+    Sub Play(ByVal Game, ByRef Map)
         Dim pos As Position
 
     End Sub
@@ -93,6 +94,7 @@ Public Class Game
     End Sub
     Sub NewMap(game, IsStart)
         Randomize()
+        Dim thisGame As Game = New Game()
         Dim map As Map = New Map()
         Dim grassProb As Integer
         Dim waterProb As Integer
@@ -124,20 +126,20 @@ Public Class Game
                     If GeneratedTile < waterProb Then
                         Dim water As Water = New Water()
                         Map.GridCodes(i, j) = 38
-                        game.LotObjectMatrix(i, j) = water
+                        thisGame.LotObjectMatrix(i, j) = water
                     ElseIf GeneratedTile > waterProb And GeneratedTile <= (grassProb + waterProb) Then
                         Dim grass As Grass = New Grass()
                         Map.GridCodes(i, j) = -1
-                        game.LotObjectMatrix(i, j) = grass
+                        thisGame.LotObjectMatrix(i, j) = grass
                     ElseIf GeneratedTile > (grassProb + waterProb) Then
                         Dim forest As Forest = New Forest()
                         Map.GridCodes(i, j) = 39
-                        game.LotObjectMatrix(i, j) = forest
+                        thisGame.LotObjectMatrix(i, j) = forest
                     End If
                 Next
             Next
-            Dim newGame As Game = New Game()
-
+            Dim cityGovernment As Government = New Government()
+            game.CityGovernment = cityGovernment
             game.PrintMap(14, 16, map, game)
         ElseIf plainMapChoice.Key = ConsoleKey.Y Then
             For i As Integer = 0 To 29
@@ -145,10 +147,10 @@ Public Class Game
                     Map.GridCodes(i, j) = -1
                 Next
             Next
-            Dim newGame As Game = New Game()
-            Dim government As Government = New Government
-            game.CityGovernment = government
-            game.PrintMap(14, 16, map, game)
+            Dim cityGovernment As Government = New Government()
+            cityGovernment.EstablishTreasury()
+            thisGame.CityGovernment = cityGovernment
+            thisGame.PrintMap(14, 16, map, thisGame)
         ElseIf plainMapChoice.Key = ConsoleKey.Escape Then
             StartMenu()
         Else
@@ -159,10 +161,10 @@ Public Class Game
             End If
         End If
     End Sub
-    Sub ComputeLandValue()
+    Sub ComputeLandValue(pos)
         Dim TempLandValue As Integer
     End Sub
-    Public Sub PrintMap(ByRef SelectorY, ByRef SelectorX, map, game)
+    Public Sub PrintMap(ByRef SelectorY, ByRef SelectorX, map, ByRef game)
         Console.Clear()
         Dim pos As Position
         For pos.y = 0 To 24
@@ -1337,7 +1339,7 @@ Public Class Game
         Console.Write("Y" & Int(SelectorY))
         Console.Write("X" & Int(SelectorX))
         Console.WriteLine()
-        Console.WriteLine(CityGovernment.GetTreasury)
+        Console.WriteLine(game.cityGovernment.GetTreasury)
         map.MapSelection(SelectorY, SelectorX, map, game)
     End Sub
 End Class
@@ -1345,7 +1347,7 @@ End Class
 Public Class Map
     Public Shared GridCodes(30, 33) As Integer
     Public Shared NextTurnGridCodes(30, 33) As Integer
-    Public Sub MapSelection(ByRef SelectorY, ByRef SelectorX, ByRef map, ByRef Game)
+    Public Sub MapSelection(ByRef SelectorY, ByRef SelectorX, ByRef map, ByRef game)
         Console.TreatControlCAsInput = True
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
@@ -1359,31 +1361,31 @@ Public Class Map
             Key = Console.ReadKey(True).Key
             If Key = ConsoleModifiers.Control AndAlso Key = ConsoleKey.A Then
                 SelectorX -= 5
-                Game.PrintMap(SelectorY, SelectorX, map, Game)
+                game.PrintMap(SelectorY, SelectorX, map, game)
             ElseIf Key = ConsoleModifiers.Control AndAlso Key = ConsoleKey.D Then
                 SelectorX += 5
-                Game.PrintMap(SelectorY, SelectorX, map, Game)
+                game.PrintMap(SelectorY, SelectorX, map, game)
             ElseIf Key = ConsoleModifiers.Control AndAlso Key = ConsoleKey.S Then
                 SelectorY += 5
-                Game.PrintMap(SelectorY, SelectorX, map, Game)
+                game.PrintMap(SelectorY, SelectorX, map, game)
             ElseIf Key = ConsoleModifiers.Control AndAlso Key = ConsoleKey.W Then
                 SelectorY -= 5
-                Game.PrintMap(SelectorY, SelectorX, map, Game)
+                game.PrintMap(SelectorY, SelectorX, map, game)
             ElseIf Key = ConsoleModifiers.Control AndAlso Key = ConsoleKey.Enter Then
                 Selected = True
             End If
             If Key = ConsoleKey.A Then
                 SelectorX -= 1
-                Game.PrintMap(SelectorY, SelectorX, map, Game)
+                game.PrintMap(SelectorY, SelectorX, map, game)
             ElseIf Key = ConsoleKey.D Then
                 SelectorX += 1
-                Game.PrintMap(SelectorY, SelectorX, map, Game)
+                game.PrintMap(SelectorY, SelectorX, map, game)
             ElseIf Key = ConsoleKey.S Then
                 SelectorY += 1
-                Game.PrintMap(SelectorY, SelectorX, map, Game)
+                game.PrintMap(SelectorY, SelectorX, map, game)
             ElseIf Key = ConsoleKey.W Then
                 SelectorY -= 1
-                Game.PrintMap(SelectorY, SelectorX, map, Game)
+                game.PrintMap(SelectorY, SelectorX, map, game)
             ElseIf Key = ConsoleKey.Enter Then
                 Selected = True
             ElseIf Key = ConsoleKey.Escape Then
@@ -1395,11 +1397,11 @@ Public Class Map
             Console.ResetColor()
             Choice = Console.ReadKey(True).Key
             If Choice = ConsoleKey.D Then
-                lot.Demolish(SelectorY, SelectorX, Game, map)
+                lot.Demolish(SelectorY, SelectorX, game, map)
             ElseIf Choice = ConsoleKey.B Then
-                lot.Build(SelectorY, SelectorX, Game, map)
+                lot.Build(SelectorY, SelectorX, game, map)
             ElseIf Choice = ConsoleKey.C Then
-                Game.MapSelection(SelectorY, SelectorX, map, Game)
+                game.MapSelection(SelectorY, SelectorX, map, game)
             ElseIf Choice = ConsoleKey.Escape Then
                 MainMenu(map)
             End If
@@ -1433,14 +1435,14 @@ Public Class Lot
                     smallResidential.yPos = yPos
                     smallResidential.xPos = xPos
                     game.LotObjectMatrix(yPos, xPos) = smallResidential
-                    game.CityGovernment.Spend(15)
+                    game.cityGovernment.Spend(15)
                 ElseIf input.Key = ConsoleKey.D2 Then
                     map.GridCodes(yPos, xPos) = 2
                     Dim largeResidential As LargeResidential = New LargeResidential()
                     largeResidential.yPos = yPos
                     largeResidential.xPos = xPos
                     game.LotObjectMatrix(yPos, xPos) = largeResidential
-                    game.CityGovernment.Spend(25)
+                    game.cityGovernment.Spend(25)
                 End If
             Case ConsoleKey.D2
                 Console.BackgroundColor = ConsoleColor.Gray
@@ -1453,15 +1455,14 @@ Public Class Lot
                     Dim smallCommercial As SmallCommercial = New SmallCommercial()
                     smallCommercial.yPos = yPos
                     smallCommercial.xPos = xPos
-                    game.LotObjectMatrix.Insert()
-                    game.CityGovernment.Spend(20)
+                    game.cityGovernment.Spend(20)
                 ElseIf input.Key = ConsoleKey.D2 Then
                     map.GridCodes(yPos, xPos) = 5
                     Dim largeCommercial As LargeCommercial = New LargeCommercial()
                     largeCommercial.yPos = yPos
                     largeCommercial.xPos = xPos
                     game.LotObjectMatrix(yPos, xPos) = largeCommercial
-                    game.CityGovernment.Spend(30)
+                    game.cityGovernment.Spend(30)
                 End If
             Case ConsoleKey.D3
                 map.GridCodes(yPos, xPos) = 32
@@ -1469,7 +1470,7 @@ Public Class Lot
                 industry.yPos = yPos
                 industry.xPos = xPos
                 game.LotObjectMatrix(yPos, xPos) = industry
-                game.CityGovernment.Spend(30)
+                game.cityGovernment.Spend(30)
             Case ConsoleKey.D4
                 Console.BackgroundColor = ConsoleColor.Gray
                 Console.ForegroundColor = ConsoleColor.Black
@@ -1495,12 +1496,12 @@ Public Class Lot
                     ElseIf map.GridCodes(yPos - 1, xPos) = 13 And map.GridCodes(yPos, xPos - 1) = 13 Then
                         map.GridCodes(yPos, xPos) = 18
                     End If
-                    game.CityGovernment.Spend(10)
+                    game.cityGovernment.Spend(10)
                 ElseIf input.Key = ConsoleKey.D2 Then
                     map.GridCodes(yPos, xPos) = 24
                     Dim largeRoad As LargeRoad = New LargeRoad()
                     game.LotObjectMatrix(yPos, xPos) = largeRoad
-                    game.CityGovernment.Spend(20)
+                    game.cityGovernment.Spend(20)
                 End If
             Case ConsoleKey.D5
                 Console.BackgroundColor = ConsoleColor.Gray
@@ -1512,12 +1513,12 @@ Public Class Lot
                     Dim coalStation As CoalStation = New CoalStation()
                     game.LotObjectMatrix(yPos, xPos) = coalStation
                     map.GridCodes(yPos, xPos) = 41
-                    game.CityGovernment.Spend(150)
+                    game.cityGovernment.Spend(150)
                 ElseIf input.Key = ConsoleKey.D2 Then
                     Dim windFarm As WindFarm = New WindFarm()
                     game.LotObjectMatrix(yPos, xPos) = windFarm
                     map.GridCodes(yPos, xPos) = 40
-                    game.CityGovernment.Spend(225)
+                    game.cityGovernment.Spend(225)
                 End If
             Case ConsoleKey.D6
                 Console.WriteLine("Small park[1]($15) | Large park[2]($40)")
@@ -1526,7 +1527,7 @@ Public Class Lot
                     Dim smallPark As SmallPark = New SmallPark()
                     game.LotObjectMatrix(yPos, xPos) = smallPark
                     map.GridCodes(yPos, xPos) = 6
-                    game.CityGovernment.Spend(15)
+                    game.cityGovernment.Spend(15)
                 ElseIf input.Key = ConsoleKey.D2 Then
                     Dim largePark As LargePark = New LargePark()
                     game.LotObjectMatrix(yPos, xPos) = largePark
@@ -1538,13 +1539,13 @@ Public Class Lot
                     map.GridCodes(yPos, xPos + 1) = 8
                     map.GridCodes(yPos + 1, xPos) = 9
                     map.GridCodes(yPos + 1, xPos + 1) = 10
-                    game.CityGovernment.Spend(40)
+                    game.cityGovernment.Spend(40)
                 End If
             Case ConsoleKey.D7
                 map.GridCodes(yPos, xPos) = 37
                 Dim policeStation As PoliceStation = New PoliceStation()
                 game.LotObjectMatrix(yPos, xPos) = policeStation
-                game.CityGovernment.Spend(75)
+                game.cityGovernment.Spend(75)
             Case ConsoleKey.D8
                 map.GridCodes(yPos, xPos) = 33
                 map.GridCodes(yPos, xPos + 1) = 34
@@ -1558,10 +1559,10 @@ Public Class Lot
                 input = Console.ReadKey(True)
                 If input.Key = ConsoleKey.D1 Then
                     map.GridCodes(yPos, xPos) = 39
-                    game.CityGovernment.Spend(5)
+                    game.cityGovernment.Spend(5)
                 ElseIf input.Key = ConsoleKey.D2 Then
                     map.GridCodes(yPos, xPos) = 38
-                    game.CityGovernment.Spend(30)
+                    game.cityGovernment.Spend(30)
                 End If
         End Select
         game.PrintMap(14, 16, map, game)
@@ -1570,7 +1571,6 @@ Public Class Lot
         map.GridCodes(yPos, xPos) = -1
         game.PrintMap(14, 16, map, game)
         Dim grass As Grass = New Grass()
-        game.LotObjectMatrix.add
         game.LotObjectMatrix(yPos, xPos) = grass
     End Sub
 
@@ -1687,8 +1687,8 @@ Public Class WindFarm
 End Class
 Public Class Government
     Const StartingTreasury As Integer = 20000
-    Protected Treasury As Integer
-    Public Sub New()
+    Public Treasury As Integer
+    Sub EstablishTreasury()
         Treasury = StartingTreasury
     End Sub
     Public Function GetTreasury()
@@ -1697,7 +1697,7 @@ Public Class Government
     Public Sub Spend(amount)
         Treasury -= amount
     End Sub
-    Public Sub EarnRevenue()
-
+    Public Sub Earn(amount)
+        Treasury += amount
     End Sub
 End Class
