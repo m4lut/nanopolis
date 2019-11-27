@@ -139,6 +139,7 @@ Public Class Game
                 Next
             Next
             Dim cityGovernment As Government = New Government()
+            cityGovernment.EstablishGovernment()
             game.CityGovernment = cityGovernment
             game.PrintMap(14, 16, map, game)
         ElseIf plainMapChoice.Key = ConsoleKey.Y Then
@@ -148,7 +149,7 @@ Public Class Game
                 Next
             Next
             Dim cityGovernment As Government = New Government()
-            cityGovernment.EstablishTreasury()
+            cityGovernment.EstablishGovernment()
             thisGame.CityGovernment = cityGovernment
             thisGame.PrintMap(14, 16, map, thisGame)
         ElseIf plainMapChoice.Key = ConsoleKey.Escape Then
@@ -1551,6 +1552,7 @@ Public Class Lot
                 map.GridCodes(yPos, xPos + 1) = 34
                 map.GridCodes(yPos + 1, xPos) = 35
                 map.GridCodes(yPos + 1, xPos + 1) = 36
+                game.cityGovernment.EstablishParliament()
             Case ConsoleKey.D9
                 Console.BackgroundColor = ConsoleColor.Gray
                 Console.ForegroundColor = ConsoleColor.Black
@@ -1570,6 +1572,9 @@ Public Class Lot
     Public Sub Demolish(ByRef yPos, ByRef xPos, ByRef game, ByRef map)
         map.GridCodes(yPos, xPos) = -1
         game.PrintMap(14, 16, map, game)
+        If map.GridCodes(yPos, xPos) = 33 Or map.GridCodes(yPos, xPos) = 34 Or map.GridCodes(yPos, xPos) = 35 Or map.GridCodes(yPos, xPos) = 36 Then
+            game.cityGovernment.RemoveParliament()
+        End If
         Dim grass As Grass = New Grass()
         game.LotObjectMatrix(yPos, xPos) = grass
     End Sub
@@ -1687,9 +1692,14 @@ Public Class WindFarm
 End Class
 Public Class Government
     Const StartingTreasury As Integer = 20000
+    Const StartingExecPower As Integer = 100
     Public Treasury As Integer
-    Sub EstablishTreasury()
+    Public ExecutivePower As Integer
+    Public HasParliament As Boolean
+    Public ApprovalRate As Integer
+    Sub EstablishGovernment()
         Treasury = StartingTreasury
+        ExecutivePower = StartingExecPower
     End Sub
     Public Function GetTreasury()
         Return Treasury
@@ -1699,5 +1709,11 @@ Public Class Government
     End Sub
     Public Sub Earn(amount)
         Treasury += amount
+    End Sub
+    Sub EstablishParliament()
+        HasParliament = True
+    End Sub
+    Sub RemoveParliament()
+        HasParliament = False
     End Sub
 End Class
