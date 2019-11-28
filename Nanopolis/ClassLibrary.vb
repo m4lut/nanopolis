@@ -1697,6 +1697,8 @@ Public Class Government
     Public ExecutivePower As Integer
     Public HasParliament As Boolean
     Public ApprovalRate As Integer
+    Public SalesTaxRate As Integer
+    Public EnvironmentStatus As Integer
     Sub EstablishGovernment()
         Treasury = StartingTreasury
         ExecutivePower = StartingExecPower
