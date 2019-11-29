@@ -1414,7 +1414,16 @@ Public Class Lot
     Private xPos As Integer
     Private yPos As Integer
     Private Cost As Integer
-    Private RealLandValue As Integer
+    Protected RealLandValue As Integer
+    Private workPlace As Position
+    Private shoppingPlace As Position
+    Sub GeneratePlace(WorkOrShopping, ByRef LotObjectMatrix)
+        Randomize()
+        Dim offset As Position
+        offset.x = Math.Round(Rnd())
+        offset.y = Rnd()
+
+    End Sub
     Public Sub Build(ByRef yPos, ByRef xPos, ByRef game, ByRef map)
         Randomize()
         Dim ShopType As Integer = Math.Round((Rnd()) + 3)
