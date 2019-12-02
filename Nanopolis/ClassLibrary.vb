@@ -43,7 +43,7 @@ Structure Texture
 End Structure
 Public Class Game
     Public CityGovernment As Government
-    Public LotObjectMatrix(30, 33) As Lot
+    Public LotObjectMatrix(24, 31) As Lot
     Sub NextWeek(ByVal Game, ByRef Map)
         Dim pos As Position
         pos.x = 0
@@ -168,7 +168,7 @@ Public Class Game
             End If
         End If
     End Sub
-    Sub ComputeLandValue(pos, lotobjectarray)
+    Sub ComputeLandValue(pos, ByRef lotobjectmatrix)
         Dim TempLandValue(2, 2) As Integer
     End Sub
     Public Sub PrintMap(ByRef SelectorY, ByRef SelectorX, map, ByRef game)
@@ -1368,31 +1368,31 @@ Public Class Map
         While Selected = False
             Key = Console.ReadKey(True).Key
             If Key = ConsoleModifiers.Control AndAlso Key = ConsoleKey.A Then
-                Pos.X -= 5
+                Pos.x -= 5
                 game.PrintMap(Pos, map, game)
             ElseIf Key = ConsoleModifiers.Control AndAlso Key = ConsoleKey.D Then
-                Pos.X += 5
+                Pos.x += 5
                 game.PrintMap(Pos, map, game)
             ElseIf Key = ConsoleModifiers.Control AndAlso Key = ConsoleKey.S Then
-                Pos.Y += 5
+                Pos.y += 5
                 game.PrintMap(Pos, map, game)
             ElseIf Key = ConsoleModifiers.Control AndAlso Key = ConsoleKey.W Then
-                Pos.Y -= 5
+                Pos.y -= 5
                 game.PrintMap(Pos, map, game)
             ElseIf Key = ConsoleModifiers.Control AndAlso Key = ConsoleKey.Enter Then
                 Selected = True
             End If
             If Key = ConsoleKey.A Then
-                Pos.X -= 1
+                Pos.x -= 1
                 game.PrintMap(Pos, map, game)
             ElseIf Key = ConsoleKey.D Then
-                Pos.X += 1
+                Pos.x += 1
                 game.PrintMap(Pos, map, game)
             ElseIf Key = ConsoleKey.S Then
-                Pos.Y += 1
+                Pos.y += 1
                 game.PrintMap(Pos, map, game)
             ElseIf Key = ConsoleKey.W Then
-                Pos.Y -= 1
+                Pos.y -= 1
                 game.PrintMap(Pos, map, game)
             ElseIf Key = ConsoleKey.Enter Then
                 Selected = True
@@ -1418,21 +1418,32 @@ Public Class Map
 End Class
 
 Public Class Lot
-    Protected Pos As Position
-    Private Cost As Integer
-    Protected RealLandValue As Integer
-    Private workPlace As Position
-    Private shoppingPlace As Position
-    Private ConnectedToRoad As Boolean
-    Sub RoadConnectionCheck(pos)
+    Public Pos As Position
+    Protected ActualLandValue As Integer
+    Public WorkPlace As Position
+    Public ShoppingPlace As Position
+    Public ConnectedToRoad As Boolean
+    Public Abandoned As Boolean
 
-    End Sub
-    Sub GeneratePlace(WorkOrShopping, ByRef LotObjectMatrix)
+    Function RoadConnectionCheck(pos, ByRef lotobjectmatrix)
+        If lotobjectmatrix() Then
+            Return True
+        Else
+            Return False
+        End If
+    End Function
+    Sub GenerateWorkOrShoppingPlace(FindingWork, ByRef LotObjectMatrix, ByRef workPlace, ByRef shoppingPlace, pos)
         Randomize()
         Dim offset As Position
         offset.x = Math.Round(Rnd())
         offset.y = Rnd()
-
+        If FindingWork Then
+            workPlace.y = pos.y + offset.y
+            workPlace.x = pos.x + offset.x
+        Else
+            shoppingPlace.y = pos.y + offset.y
+            shoppingPlace = pos.x + offset.x
+        End If
     End Sub
     Public Sub Build(ByRef Pos, ByRef game, ByRef map)
         Randomize()
@@ -1598,10 +1609,10 @@ Public Class Lot
         game.LotObjectMatrix(Pos.y, Pos.x) = grass
     End Sub
 
-    Protected Function SetLandValue()
+    Private Function SetLandValue(pos, BaseLandValue, Modifier)
 
     End Function
-    Protected Function GetLandValue()
+    Private Function GetLandValue()
 
     End Function
 
@@ -1612,19 +1623,17 @@ Public Class Roads
 End Class
 Public Class SmallRoad
     Inherits Roads
-    Shadows Const Cost As Integer = 10
+    Shadows Const BaseLandValue As Integer = 0
 End Class
 Public Class LargeRoad
     Inherits Roads
-    Shadows Const Cost As Integer = 20
+    Shadows Const BaseLandValue As Integer = 0
 End Class
 Public Class Nature
     Inherits Lot
-
 End Class
 Public Class Grass
     Inherits Nature
-
     Shadows Const BaseLandValue As Integer = 0
 
 End Class
@@ -1644,26 +1653,35 @@ End Class
 Public Class SmallResidential
     Inherits ResidentialLot
     Shadows Const BaseLandValue As Integer = 15
-    Shadows Const Cost As Integer = 15
 End Class
 Public Class LargeResidential
     Inherits ResidentialLot
     Shadows Const BaseLandValue As Integer = 30
-    Shadows Const Cost As Integer = 25
 End Class
 Public Class CommercialLot
     Inherits Lot
+    Shadows Const BaseLandValue As Integer = 15
+    Const BaseRevenue As Integer = 0
+    Public Revenue As Integer
+    Public NumberOfWorkers As Integer
+    Sub EstablishStore()
+        Revenue = BaseRevenue
+        ActualLandValue = BaseLandValue
+    End Sub
+    Sub GainRevenue()
 
+    End Sub
+    Sub PaySalesTax()
+
+    End Sub
 End Class
 Public Class SmallCommercial
     Inherits CommercialLot
     Shadows Const BaseLandValue As Integer = 40
-    Shadows Const Cost As Integer = 20
 End Class
 Public Class LargeCommercial
     Inherits CommercialLot
     Shadows Const BaseLandValue As Integer = 50
-    Shadows Const Cost As Integer = 30
 End Class
 Public Class Park
     Inherits Lot
@@ -1672,12 +1690,10 @@ End Class
 Public Class SmallPark
     Inherits Park
     Shadows Const BaseLandValue As Integer = 15
-    Shadows Const Cost As Integer = 15
 End Class
 Public Class LargePark
     Inherits Park
     Shadows Const BaseLandValue As Integer = 35
-    Shadows Const Cost As Integer = 35
 End Class
 Public Class Industry
     Inherits Lot
@@ -1702,12 +1718,10 @@ End Class
 Public Class CoalStation
     Inherits PowerPlant
     Shadows Const BaseLandValue As Integer = 5
-    Shadows Const Cost As Integer = 150
 End Class
 Public Class WindFarm
     Inherits PowerPlant
     Shadows Const BaseLandValue As Integer = 5
-    Shadows Const Cost As Integer = 225
 End Class
 Public Class Government
     Const StartingTreasury As Integer = 20000
@@ -1736,5 +1750,11 @@ Public Class Government
     End Sub
     Sub RemoveParliament()
         HasParliament = False
+    End Sub
+    Public Sub ShowPolicyMenu()
+
+    End Sub
+    Sub ShowPolicyAlert()
+
     End Sub
 End Class
