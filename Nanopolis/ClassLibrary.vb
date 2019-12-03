@@ -1435,8 +1435,38 @@ Public Class Lot
     Sub GenerateWorkOrShoppingPlace(FindingWork, ByRef LotObjectMatrix, ByRef workPlace, ByRef shoppingPlace, pos)
         Randomize()
         Dim offset As Position
-        offset.x = Math.Round(Rnd())
-        offset.y = Rnd()
+        Dim Right As Boolean
+        Dim Up As Boolean
+        Dim RightAmount As Integer
+        Dim UpAmuont As Integer
+        Dim RandomDirection1 As Single
+        Dim RandomDirection2 As Single
+        RandomDirection1 = Rnd()
+        If RandomDirection1 >= 0.5 Then
+            Right = True
+        Else
+            Right = False
+        End If
+        If RandomDirection2 >= 0.5 Then
+            Up = True
+        Else
+            Up = False
+        End If
+        Dim RandomY As Single
+        Dim RandomX As Single
+        RandomY = Rnd()
+        If RandomY > 0.65 And RandomY < 0.95 Then
+            RightAmount = 2
+        ElseIf RandomY > 0.95 And randomy < 0.99 Then
+            RightAmount = 3
+        ElseIf RandomY > 0.99 Then
+            RightAmount = 4
+        Else
+            RightAmount = 0
+        End If
+        RandomX = Rnd()
+        offset.x = RandomX
+        offset.y = RandomY
         If FindingWork Then
             workPlace.y = pos.y + offset.y
             workPlace.x = pos.x + offset.x
@@ -1619,7 +1649,10 @@ Public Class Lot
 End Class
 Public Class Roads
     Inherits Lot
-
+    Public TrafficJamIndex As Integer
+    Public Function CalcTJI(size, roadgraph)
+        Return TrafficJamIndex
+    End Function
 End Class
 Public Class SmallRoad
     Inherits Roads
