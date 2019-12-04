@@ -1437,42 +1437,134 @@ Public Class Lot
         Dim offset As Position
         Dim Right As Boolean
         Dim Up As Boolean
-        Dim RightAmount As Integer
-        Dim UpAmuont As Integer
-        Dim RandomDirection1 As Single
-        Dim RandomDirection2 As Single
-        RandomDirection1 = Rnd()
-        If RandomDirection1 >= 0.5 Then
-            Right = True
-        Else
-            Right = False
-        End If
-        If RandomDirection2 >= 0.5 Then
-            Up = True
-        Else
-            Up = False
-        End If
+        Dim RightComponent As Integer
+        Dim UpComponent As Integer
+        Dim RandomDirectionX As Single
+        Dim RandomDirectionY As Single
         Dim RandomY As Single
         Dim RandomX As Single
-        RandomY = Rnd()
-        If RandomY > 0.65 And RandomY < 0.95 Then
-            RightAmount = 2
-        ElseIf RandomY > 0.95 And randomy < 0.99 Then
-            RightAmount = 3
-        ElseIf RandomY > 0.99 Then
-            RightAmount = 4
-        Else
-            RightAmount = 0
-        End If
-        RandomX = Rnd()
-        offset.x = RandomX
-        offset.y = RandomY
+        RandomDirectionX = Rnd()
         If FindingWork Then
-            workPlace.y = pos.y + offset.y
-            workPlace.x = pos.x + offset.x
+            If RandomDirectionX >= 0.5 Then
+                Right = True
+            Else
+                Right = False
+            End If
+            RandomDirectionY = Rnd()
+            If RandomDirectionY >= 0.5 Then
+                Up = True
+            Else
+                Up = False
+            End If
+
+            RandomY = Rnd()
+            If RandomY > 0.35 And RandomY <= 0.6 Then
+                UpComponent = 2
+            ElseIf RandomY > 0.6 And RandomY <= 0.8 Then
+                UpComponent = 3
+            ElseIf RandomY > 0.8 And RandomY <= 0.9 Then
+                UpComponent = 4
+            ElseIf RandomY > 0.9 And RandomY <= 0.95 Then
+                UpComponent = 5
+            ElseIf RandomY > 0.95 And RandomY <= 0.97 Then
+                UpComponent = 6
+            ElseIf RandomY > 0.97 Then
+                UpComponent = Int(Rnd() * 100) + 6
+            Else
+                UpComponent = 1
+            End If
+            RandomX = Rnd()
+            If RandomX > 0.35 And RandomX <= 0.6 Then
+                RightComponent = 2
+            ElseIf RandomX > 0.6 And RandomX <= 0.8 Then
+                RightComponent = 3
+            ElseIf RandomX > 0.8 And RandomX <= 0.9 Then
+                RightComponent = 4
+            ElseIf RandomX > 0.9 And RandomX <= 0.95 Then
+                RightComponent = 5
+            ElseIf RandomX > 0.95 And RandomX <= 0.97 Then
+                RightComponent = 6
+            ElseIf RandomX > 0.97 Then
+                RightComponent = Int(Rnd() * 100) + 6
+            Else
+                RightComponent = 1
+            End If
+            If Right Then
+                RightComponent *= 1
+            Else
+                RightComponent *= -1
+            End If
+            If Up Then
+                UpComponent *= 1
+            Else
+                UpComponent *= -1
+            End If
+            offset.x = RightComponent
+            offset.y = UpComponent
         Else
-            shoppingPlace.y = pos.y + offset.y
-            shoppingPlace = pos.x + offset.x
+            RandomDirectionX = Rnd()
+            If RandomDirectionX >= 0.5 Then
+                Right = True
+            Else
+                Right = False
+            End If
+            RandomDirectionY = Rnd()
+            If RandomDirectionY >= 0.5 Then
+                Up = True
+            Else
+                Up = False
+            End If
+            RandomY = Rnd()
+            If RandomY > 0.35 And RandomY <= 0.6 Then
+                UpComponent = 2
+            ElseIf RandomY > 0.6 And RandomY <= 0.8 Then
+                UpComponent = 3
+            ElseIf RandomY > 0.8 And RandomY <= 0.9 Then
+                UpComponent = 4
+            ElseIf RandomY > 0.9 And RandomY <= 0.95 Then
+                UpComponent = 5
+            ElseIf RandomY > 0.95 And RandomY <= 0.97 Then
+                UpComponent = 6
+            ElseIf RandomY > 0.97 Then
+                UpComponent = Int(Rnd() * 100) + 6
+            Else
+                UpComponent = 1
+            End If
+            RandomX = Rnd()
+            If RandomX > 0.35 And RandomX <= 0.6 Then
+                RightComponent = 2
+            ElseIf RandomX > 0.6 And RandomX <= 0.8 Then
+                RightComponent = 3
+            ElseIf RandomX > 0.8 And RandomX <= 0.9 Then
+                RightComponent = 4
+            ElseIf RandomX > 0.9 And RandomX <= 0.95 Then
+                RightComponent = 5
+            ElseIf RandomX > 0.95 And RandomX <= 0.97 Then
+                RightComponent = 6
+            ElseIf RandomX > 0.97 Then
+                RightComponent = Int(Rnd() * 100) + 6
+            Else
+                RightComponent = 1
+            End If
+            If Right Then
+                RightComponent *= 1
+            Else
+                RightComponent *= -1
+            End If
+            If Up Then
+                UpComponent *= 1
+            Else
+                UpComponent *= -1
+            End If
+            offset.x = RightComponent
+            offset.y = UpComponent
+            If FindingWork Then
+                workPlace.y = pos.y + offset.y
+                workPlace.x = pos.x + offset.x
+            Else
+                shoppingPlace.y = pos.y + offset.y
+                shoppingPlace.x = pos.x + offset.x
+            End If
         End If
     End Sub
     Public Sub Build(ByRef Pos, ByRef game, ByRef map)
