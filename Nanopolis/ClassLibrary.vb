@@ -1418,13 +1418,14 @@ Public Class Map
 End Class
 
 Public Class Lot
+    Const Width As Integer = 1
+    Const Height As Integer = 1
     Public Pos As Position
     Protected ActualLandValue As Integer
     Public WorkPlace As Position
     Public ShoppingPlace As Position
     Public ConnectedToRoad As Boolean
     Public Abandoned As Boolean
-
     Function RoadConnectionCheck(pos, ByRef lotobjectmatrix)
         If lotobjectmatrix() Then
             Return True
@@ -1705,6 +1706,10 @@ Public Class Lot
                 map.GridCodes(Pos.y + 1, Pos.x) = 35
                 map.GridCodes(Pos.y + 1, Pos.x + 1) = 36
                 game.cityGovernment.EstablishParliament()
+                Dim parliament As Parliament = New Parliament()
+                Dim parliamentCloneRight As Parliament = New Parliament()
+                Dim parliamentCloneDown As ParliamentPointer = New ParliamentPointer()
+                game.LotObjectMatrix(Pos.y, Pos.x) = parliament
             Case ConsoleKey.D9
                 Console.BackgroundColor = ConsoleColor.Gray
                 Console.ForegroundColor = ConsoleColor.Black
@@ -1819,6 +1824,12 @@ End Class
 Public Class LargePark
     Inherits Park
     Shadows Const BaseLandValue As Integer = 35
+    Shadows Const Height As Integer = 2
+    Shadows Const Width As Integer = 2
+End Class
+Public Class LargeParkPointer
+    Inherits Park
+    Public PointingTo As String
 End Class
 Public Class Industry
     Inherits Lot
@@ -1827,6 +1838,12 @@ End Class
 Public Class Parliament
     Inherits Lot
     Shadows Const BaseLandValue As Integer = 25
+    Shadows Const Width As Integer = 2
+    Shadows Const Height As Integer = 2
+End Class
+Public Class ParliamentPointer
+    Inherits Lot
+    Public PointingTo As String
 End Class
 Public Class Construction
     Inherits Lot
