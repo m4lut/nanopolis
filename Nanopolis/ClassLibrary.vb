@@ -1,5 +1,4 @@
-﻿
-Public Structure Position
+﻿Public Structure Position
     Public x As Integer
     Public y As Integer
 End Structure
@@ -1349,8 +1348,10 @@ Public Class Game
         Console.WriteLine(game.cityGovernment.GetTreasury)
         map.MapSelection(SelectorY, SelectorX, map, game)
     End Sub
+    Protected Overrides Sub Finalize()
+        MyBase.Finalize()
+    End Sub
 End Class
-
 Public Class Map
     Public Pos As Position
     Public Shared GridCodes(30, 33) As Integer
@@ -1416,22 +1417,28 @@ Public Class Map
         End While
     End Sub
 End Class
-
 Public Class Lot
     Const Width As Integer = 1
     Const Height As Integer = 1
     Public Pos As Position
-    Protected ActualLandValue As Integer
+    Public LandValueModifier As Integer
+    Public ActualLandValue As Integer
     Public WorkPlace As Position
     Public ShoppingPlace As Position
     Public ConnectedToRoad As Boolean
     Public Abandoned As Boolean
-    Function RoadConnectionCheck(pos, ByRef lotobjectmatrix)
-        If lotobjectmatrix() Then
-            Return True
-        Else
-            Return False
-        End If
+    Public WeeksUntilAbandoned As Boolean = 3
+    Function RoadConnectionCheck(Position, ByRef LotObjectMatrix)
+        For j As Integer = -1 To 1
+            For i As Integer = -1 To 1
+                If LotObjectMatrix(Position.y, Position.x).IsSmallRoad Or LotObjectMatrix(Position.y, Position.x).IsLargeRoad Then
+                    Return True
+                ElseIf i = 0 And j = 0 Then
+                    Continue For
+                End If
+            Next
+        Next
+        Return False
     End Function
     Sub GenerateWorkOrShoppingPlace(FindingWork, ByRef LotObjectMatrix, ByRef workPlace, ByRef shoppingPlace, pos)
         Randomize()
@@ -1444,129 +1451,138 @@ Public Class Lot
         Dim RandomDirectionY As Single
         Dim RandomY As Single
         Dim RandomX As Single
+        Dim Found As Boolean = False
         RandomDirectionX = Rnd()
-        If FindingWork Then
-            If RandomDirectionX >= 0.5 Then
-                Right = True
-            Else
-                Right = False
-            End If
-            RandomDirectionY = Rnd()
-            If RandomDirectionY >= 0.5 Then
-                Up = True
-            Else
-                Up = False
-            End If
-
-            RandomY = Rnd()
-            If RandomY > 0.35 And RandomY <= 0.6 Then
-                UpComponent = 2
-            ElseIf RandomY > 0.6 And RandomY <= 0.8 Then
-                UpComponent = 3
-            ElseIf RandomY > 0.8 And RandomY <= 0.9 Then
-                UpComponent = 4
-            ElseIf RandomY > 0.9 And RandomY <= 0.95 Then
-                UpComponent = 5
-            ElseIf RandomY > 0.95 And RandomY <= 0.97 Then
-                UpComponent = 6
-            ElseIf RandomY > 0.97 Then
-                UpComponent = Int(Rnd() * 100) + 6
-            Else
-                UpComponent = 1
-            End If
-            RandomX = Rnd()
-            If RandomX > 0.35 And RandomX <= 0.6 Then
-                RightComponent = 2
-            ElseIf RandomX > 0.6 And RandomX <= 0.8 Then
-                RightComponent = 3
-            ElseIf RandomX > 0.8 And RandomX <= 0.9 Then
-                RightComponent = 4
-            ElseIf RandomX > 0.9 And RandomX <= 0.95 Then
-                RightComponent = 5
-            ElseIf RandomX > 0.95 And RandomX <= 0.97 Then
-                RightComponent = 6
-            ElseIf RandomX > 0.97 Then
-                RightComponent = Int(Rnd() * 100) + 6
-            Else
-                RightComponent = 1
-            End If
-            If Right Then
-                RightComponent *= 1
-            Else
-                RightComponent *= -1
-            End If
-            If Up Then
-                UpComponent *= 1
-            Else
-                UpComponent *= -1
-            End If
-            offset.x = RightComponent
-            offset.y = UpComponent
-        Else
-            RandomDirectionX = Rnd()
-            If RandomDirectionX >= 0.5 Then
-                Right = True
-            Else
-                Right = False
-            End If
-            RandomDirectionY = Rnd()
-            If RandomDirectionY >= 0.5 Then
-                Up = True
-            Else
-                Up = False
-            End If
-            RandomY = Rnd()
-            If RandomY > 0.35 And RandomY <= 0.6 Then
-                UpComponent = 2
-            ElseIf RandomY > 0.6 And RandomY <= 0.8 Then
-                UpComponent = 3
-            ElseIf RandomY > 0.8 And RandomY <= 0.9 Then
-                UpComponent = 4
-            ElseIf RandomY > 0.9 And RandomY <= 0.95 Then
-                UpComponent = 5
-            ElseIf RandomY > 0.95 And RandomY <= 0.97 Then
-                UpComponent = 6
-            ElseIf RandomY > 0.97 Then
-                UpComponent = Int(Rnd() * 100) + 6
-            Else
-                UpComponent = 1
-            End If
-            RandomX = Rnd()
-            If RandomX > 0.35 And RandomX <= 0.6 Then
-                RightComponent = 2
-            ElseIf RandomX > 0.6 And RandomX <= 0.8 Then
-                RightComponent = 3
-            ElseIf RandomX > 0.8 And RandomX <= 0.9 Then
-                RightComponent = 4
-            ElseIf RandomX > 0.9 And RandomX <= 0.95 Then
-                RightComponent = 5
-            ElseIf RandomX > 0.95 And RandomX <= 0.97 Then
-                RightComponent = 6
-            ElseIf RandomX > 0.97 Then
-                RightComponent = Int(Rnd() * 100) + 6
-            Else
-                RightComponent = 1
-            End If
-            If Right Then
-                RightComponent *= 1
-            Else
-                RightComponent *= -1
-            End If
-            If Up Then
-                UpComponent *= 1
-            Else
-                UpComponent *= -1
-            End If
-            offset.x = RightComponent
-            offset.y = UpComponent
+        While Found = False
             If FindingWork Then
-                workPlace.y = pos.y + offset.y
-                workPlace.x = pos.x + offset.x
+                If RandomDirectionX >= 0.5 Then
+                    Right = True
+                Else
+                    Right = False
+                End If
+                RandomDirectionY = Rnd()
+                If RandomDirectionY >= 0.5 Then
+                    Up = True
+                Else
+                    Up = False
+                End If
+                RandomY = Rnd()
+                If RandomY > 0.35 And RandomY <= 0.6 Then
+                    UpComponent = 2
+                ElseIf RandomY > 0.6 And RandomY <= 0.8 Then
+                    UpComponent = 3
+                ElseIf RandomY > 0.8 And RandomY <= 0.9 Then
+                    UpComponent = 4
+                ElseIf RandomY > 0.9 And RandomY <= 0.95 Then
+                    UpComponent = 5
+                ElseIf RandomY > 0.95 And RandomY <= 0.97 Then
+                    UpComponent = 6
+                ElseIf RandomY > 0.97 Then
+                    UpComponent = Int(Rnd() * 100) + 6
+                Else
+                    UpComponent = 1
+                End If
+                RandomX = Rnd()
+                If RandomX > 0.35 And RandomX <= 0.6 Then
+                    RightComponent = 2
+                ElseIf RandomX > 0.6 And RandomX <= 0.8 Then
+                    RightComponent = 3
+                ElseIf RandomX > 0.8 And RandomX <= 0.9 Then
+                    RightComponent = 4
+                ElseIf RandomX > 0.9 And RandomX <= 0.95 Then
+                    RightComponent = 5
+                ElseIf RandomX > 0.95 And RandomX <= 0.97 Then
+                    RightComponent = 6
+                ElseIf RandomX > 0.97 Then
+                    RightComponent = Int(Rnd() * 100) + 6
+                Else
+                    RightComponent = 1
+                End If
+                If Right Then
+                    RightComponent *= 1
+                Else
+                    RightComponent *= -1
+                End If
+                If Up Then
+                    UpComponent *= 1
+                Else
+                    UpComponent *= -1
+                End If
+                offset.x = RightComponent
+                offset.y = UpComponent
             Else
-                shoppingPlace.y = pos.y + offset.y
-                shoppingPlace.x = pos.x + offset.x
+                RandomDirectionX = Rnd()
+                If RandomDirectionX >= 0.5 Then
+                    Right = True
+                Else
+                    Right = False
+                End If
+                RandomDirectionY = Rnd()
+                If RandomDirectionY >= 0.5 Then
+                    Up = True
+                Else
+                    Up = False
+                End If
+                RandomY = Rnd()
+                If RandomY > 0.35 And RandomY <= 0.6 Then
+                    UpComponent = 2
+                ElseIf RandomY > 0.6 And RandomY <= 0.8 Then
+                    UpComponent = 3
+                ElseIf RandomY > 0.8 And RandomY <= 0.9 Then
+                    UpComponent = 4
+                ElseIf RandomY > 0.9 And RandomY <= 0.95 Then
+                    UpComponent = 5
+                ElseIf RandomY > 0.95 And RandomY <= 0.97 Then
+                    UpComponent = 6
+                ElseIf RandomY > 0.97 Then
+                    UpComponent = Int(Rnd() * 100) + 6
+                Else
+                    UpComponent = 1
+                End If
+                RandomX = Rnd()
+                If RandomX > 0.35 And RandomX <= 0.6 Then
+                    RightComponent = 2
+                ElseIf RandomX > 0.6 And RandomX <= 0.8 Then
+                    RightComponent = 3
+                ElseIf RandomX > 0.8 And RandomX <= 0.9 Then
+                    RightComponent = 4
+                ElseIf RandomX > 0.9 And RandomX <= 0.95 Then
+                    RightComponent = 5
+                ElseIf RandomX > 0.95 And RandomX <= 0.97 Then
+                    RightComponent = 6
+                ElseIf RandomX > 0.97 Then
+                    RightComponent = Int(Rnd() * 100) + 6
+                Else
+                    RightComponent = 1
+                End If
+                If Right Then
+                    RightComponent *= 1
+                Else
+                    RightComponent *= -1
+                End If
+                If Up Then
+                    UpComponent *= 1
+                Else
+                    UpComponent *= -1
+                End If
+                offset.x = RightComponent
+                offset.y = UpComponent
+                If FindingWork Then
+                    workPlace.y = pos.y + offset.y
+                    workPlace.x = pos.x + offset.x
+                Else
+                    shoppingPlace.y = pos.y + offset.y
+                    shoppingPlace.x = pos.x + offset.x
+                End If
+                If LotObjectMatrix(workPlace.y, workPlace.x).IsCommercialLot And FindingWork Then
+                    Found = True
+                ElseIf LotObjectMatrix(shoppingPlace.y, shoppingPlace.x).IsCommercialLot And FindingWork = False Then
+                    Found = True
+                ElseIf LotObjectMatrix(shoppingPlace.y, shoppingPlace.x).IsIndustry And FindingWork = False Then
+                    Found = True
+                End If
             End If
-        End If
+        End While
     End Sub
     Public Sub Build(ByRef Pos, ByRef game, ByRef map)
         Randomize()
@@ -1684,8 +1700,10 @@ Public Class Lot
                     game.cityGovernment.Spend(15)
                 ElseIf input.Key = ConsoleKey.D2 Then
                     Dim largePark As LargePark = New LargePark()
+                    Dim largeParkRightPointer As LargeParkPointer = New LargeParkPointer()
+                    Dim largeParkDownPointer As LargeParkPointer = New LargeParkPointer()
+                    Dim largeParkLowerRightPointer As LargeParkPointer = New LargeParkPointer()
                     game.LotObjectMatrix(Pos.y, Pos.x) = largePark
-                    'find a way to clone objects
                     game.LotObjectMatrix(Pos.y, Pos.x + 1) = Nothing
                     game.LotObjectMatrix(Pos.y + 1, Pos.x) = Nothing
                     game.LotObjectMatrix(Pos.y + 1, Pos.x + 1) = Nothing
@@ -1707,8 +1725,9 @@ Public Class Lot
                 map.GridCodes(Pos.y + 1, Pos.x + 1) = 36
                 game.cityGovernment.EstablishParliament()
                 Dim parliament As Parliament = New Parliament()
-                Dim parliamentCloneRight As Parliament = New Parliament()
-                Dim parliamentCloneDown As ParliamentPointer = New ParliamentPointer()
+                Dim parliamentPointerRight As Parliament = New Parliament()
+                Dim parliamentPointerDown As ParliamentPointer = New ParliamentPointer()
+                Dim parliamentPointerLowerRight As ParliamentPointer = New ParliamentPointer()
                 game.LotObjectMatrix(Pos.y, Pos.x) = parliament
             Case ConsoleKey.D9
                 Console.BackgroundColor = ConsoleColor.Gray
@@ -1735,19 +1754,32 @@ Public Class Lot
         Dim grass As Grass = New Grass()
         game.LotObjectMatrix(Pos.y, Pos.x) = grass
     End Sub
-
-    Private Function SetLandValue(pos, BaseLandValue, Modifier)
-
+    Protected Function CalculateLandValue(Position, LotObjectMatrix)
+        Dim tempLandValue As Integer
+        Dim NoOfParliamentPointers As Integer = 0
+        Dim NoOfLargeParkPointers As Integer = 0
+        For j As Integer = -1 To 1
+            For i As Integer = -1 To 1
+                If NoOfLargeParkPointers <> 0 And LotObjectMatrix(Position.y + j, Position.x + i).IsLargeParkPointer Then
+                    Continue For
+                End If
+                If NoOfParliamentPointers <> 0 And LotObjectMatrix(Position.y + j, Position.x + i).IsParliamentPointer Then
+                    Continue For
+                End If
+                tempLandValue += LotObjectMatrix(Position.y + j, Position.x + i).LandValueModifier
+            Next
+        Next
+        LotObjectMatrix(Position.y, Position.x).ActualLandValue = tempLandValue
+        Return LotObjectMatrix
     End Function
-    Private Function GetLandValue()
-
+    Protected Function GetLandValue()
+        Return ActualLandValue
     End Function
-
 End Class
 Public Class Roads
     Inherits Lot
     Public TrafficJamIndex As Integer
-    Public Function CalcTJI(size, roadgraph)
+    Public Function CalcTJI(Size, RoadGraph)
         Return TrafficJamIndex
     End Function
 End Class
@@ -1775,10 +1807,13 @@ End Class
 Public Class Forest
     Inherits Nature
     Shadows Const BaseLandValue As Integer = 0
-
 End Class
 Public Class ResidentialLot
     Inherits Lot
+    Private DwellerAmount As Integer
+    Private WorkingClassProportion As Integer
+    Private MiddleClassProportion As Integer
+    Private UpperClassProportion As Integer
 End Class
 Public Class SmallResidential
     Inherits ResidentialLot
