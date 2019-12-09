@@ -167,9 +167,6 @@ Public Class Game
             End If
         End If
     End Sub
-    Sub ComputeLandValue(pos, ByRef lotobjectmatrix)
-        Dim TempLandValue(2, 2) As Integer
-    End Sub
     Public Sub PrintMap(ByRef SelectorY, ByRef SelectorX, map, ByRef game)
         Console.Clear()
         Dim pos As Position
@@ -1418,7 +1415,8 @@ Public Class Map
     End Sub
 End Class
 Public Class Lot
-    Const BaseLandValue As Integer = 100
+    Const BaseWeeksUntilAbandoned As Integer = 5
+    Const BaseLandValue As Integer = 50
     Const Width As Integer = 1
     Const Height As Integer = 1
     Public Pos As Position
@@ -1428,7 +1426,20 @@ Public Class Lot
     Public ShoppingPlace As Position
     Public ConnectedToRoad As Boolean
     Public Abandoned As Boolean
-    Public WeeksUntilAbandoned As Boolean = 3
+    Public WeeksUntilAbandoned As Boolean
+    Public Sub SetAbandonedWeeks(ByRef Game, Pos, ByRef Map)
+        If (BaseLandValue - InternalLandValueModifier) >= 0 Then
+            WeeksUntilAbandoned = BaseWeeksUntilAbandoned
+        Else
+            WeeksUntilAbandoned -= 1
+        End If
+        If WeeksUntilAbandoned <= 0 Then
+            AbandonBuilding(Game, Pos, Map)
+        End If
+    End Sub
+    Public Overridable Sub AbandonBuilding(ByRef Game, Pos, ByRef Map)
+        Me.Demolish(Pos, Game, Map)
+    End Sub
     Function RoadConnectionCheck(Position, ByRef LotObjectMatrix)
         For j As Integer = -1 To 1
             For i As Integer = -1 To 1
@@ -1746,48 +1757,74 @@ Public Class Lot
         End Select
         game.PrintMap(14, 16, map, game)
     End Sub
-    Public Sub Demolish(ByRef Pos, ByRef game, ByRef map)
+    Public Sub Demolish(ByRef Pos, ByRef Game, ByRef map)
         map.GridCodes(Pos.y, Pos.x) = -1
-        game.PrintMap(14, 16, map, game)
+        Game.PrintMap(14, 16, map, Game)
         If map.GridCodes(Pos.y, Pos.x) = 33 Or map.GridCodes(Pos.y, Pos.x) = 34 Or map.GridCodes(Pos.y, Pos.x) = 35 Or map.GridCodes(Pos.y, Pos.x) = 36 Then
-            game.cityGovernment.RemoveParliament()
+            Game.cityGovernment.RemoveParliament()
         End If
         Dim grass As Grass = New Grass()
-        game.LotObjectMatrix(Pos.y, Pos.x) = grass
+        Game.LotObjectMatrix(Pos.y, Pos.x) = grass
     End Sub
-    Function CalculateLandValue(Position, LotObjectMatrix)
-        Dim tempModifier As Integer
-        Dim NoOfParliamentPointers As Integer = 0
-        Dim NoOfLargeParkPointers As Integer = 0
-        For j As Integer = -1 To 1
-            For i As Integer = -1 To 1
-                If NoOfLargeParkPointers <> 0 And LotObjectMatrix(Position.y + j, Position.x + i).IsLargeParkPointer Then
-                    NoOfLargeParkPointers += 1
-                    Continue For
+    Sub CalculateCrimeRate(Position, LotObjectMatrix)
+        Dim tempCrimeRate As Integer = 0
+        For j As Integer = -2 To 2
+            For i As Integer = -2 To 2
+                If LotObjectMatrix(Position.y + j, Position.x + i).IsPoliceStation Then
+                    tempCrimeRate -= 50
                 End If
-                If NoOfParliamentPointers <> 0 And LotObjectMatrix(Position.y + j, Position.x + i).IsParliamentPointer Then
-                    NoOfParliamentPointers += 1
-                    Continue For
-                End If
-                tempModifier += LotObjectMatrix(Position.y + j, Position.x + i).ExternalLandValueModifier
             Next
         Next
-        LotObjectMatrix(Position.y, Position.x).InternalLandValueModifier = tempModifier
-        Return LotObjectMatrix
+    End Sub
+    Function CalculateLandValueFromExternal(Pos, ByRef LotObjectMatrix)
+        Dim tempModifier As Integer
+        Dim noOfParliamentPointers As Integer = 0
+        Dim noOfLargeParkPointers As Integer = 0
+        For j As Integer = -2 To 2
+            For i As Integer = -2 To 2
+                If noOfLargeParkPointers <> 0 And LotObjectMatrix(Pos.y + j, Pos.x + i).IsLargeParkPointer Then
+                    noOfLargeParkPointers += 1
+                    Continue For
+                End If
+                If noOfParliamentPointers <> 0 And LotObjectMatrix(Pos.y + j, Pos.x + i).IsParliamentPointer Then
+                    noOfParliamentPointers += 1
+                    Continue For
+                End If
+            Next
+        Next
+        Return tempModifier
     End Function
+    Function CalculateLandValueFromInternal(Pos, LotObjectMatrix)
+        Dim tempModifier As Integer = 0
+        Dim tji As Integer
+        Dim Road As Type
+        If LotObjectMatrix(Pos.y, Pos.x).IsRoad = True Then
+            LotObjectMatrix(Pos.y, Pos.x).CalcTJI
+            tempModifier += tji
+        ElseIf LotObjectMatrix(Pos.y, Pos.x).IsNotRoad Then
+        End If
+    End Function
+    Sub CalculateLandValue(Pos, ByRef LotObjectMatrix, ByRef IntModifier)
+        Dim modifierFromExt As Integer = CalculateLandValueFromExternal(Pos, LotObjectMatrix)
+        Dim modifierFromInt As Integer = CalculateLandValueFromInternal(Pos, LotObjectMatrix)
+        IntModifier = modifierFromExt + modifierFromInt
+        LotObjectMatrix(Pos.y, Pos.x).InternalLandValueModifier = IntModifier
+    End Sub
 End Class
 Public Class Roads
     Inherits Lot
     Public TrafficJamIndex As Integer
-    Public Function CalcTJI(RoadGraph)
+    Public Function CalcTJI(ByRef Game, RoadGraph)
         Return TrafficJamIndex
     End Function
 End Class
 Public Class SmallRoad
     Inherits Roads
+    Shadows Const Capacity As Integer = 80
 End Class
 Public Class LargeRoad
     Inherits Roads
+    Shadows Const Capacity As Integer = 180
 End Class
 Public Class Nature
     Inherits Lot
@@ -1798,16 +1835,19 @@ Public Class Grass
 End Class
 Public Class Water
     Inherits Nature
+    Public Shadows ExternalLandValueModifier As Integer = 10
 End Class
 Public Class Forest
     Inherits Nature
+    Public Shadows ExternalLandValueModifier As Integer = 5
 End Class
 Public Class ResidentialLot
     Inherits Lot
-    Private DwellerAmount As Integer
-    Private WorkingClassProportion As Integer
-    Private MiddleClassProportion As Integer
-    Private UpperClassProportion As Integer
+    Public DwellerAmount As Integer
+    Public WorkingClassProportion As Integer
+    Public MiddleClassProportion As Integer
+    Public UpperClassProportion As Integer
+    Public UnemployedProportion As Integer
 End Class
 Public Class SmallResidential
     Inherits ResidentialLot
@@ -1894,7 +1934,16 @@ Public Class Government
     Public HasParliament As Boolean
     Public ApprovalRate As Integer
     Public SalesTaxRate As Integer
+    Public LowerIncomeTax As Integer
+    Public MiddleIncomeTax As Integer
+    Public UpperIncomeTax As Integer
     Public EnvironmentStatus As Integer
+    Public CivilLibertyIndex As Integer
+    Public CityUnemploymentRate As Integer
+    Public CityPollutionIndex As Integer
+    Public CityLiteracyRate As Integer
+    Public CityEconomicInequality As Integer
+    Public EconomicMobility As Integer
     Sub EstablishGovernment()
         Treasury = StartingTreasury
         ExecutivePower = StartingExecPower
