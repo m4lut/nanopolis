@@ -1418,11 +1418,11 @@ Public Class Map
     End Sub
 End Class
 Public Class Lot
+    Const BaseLandValue As Integer = 10
     Const Width As Integer = 1
     Const Height As Integer = 1
     Public Pos As Position
     Public LandValueModifier As Integer
-    Public ActualLandValue As Integer
     Public WorkPlace As Position
     Public ShoppingPlace As Position
     Public ConnectedToRoad As Boolean
@@ -1755,7 +1755,7 @@ Public Class Lot
         game.LotObjectMatrix(Pos.y, Pos.x) = grass
     End Sub
     Protected Function CalculateLandValue(Position, LotObjectMatrix)
-        Dim tempLandValue As Integer
+        Dim tempModifier As Integer
         Dim NoOfParliamentPointers As Integer = 0
         Dim NoOfLargeParkPointers As Integer = 0
         For j As Integer = -1 To 1
@@ -1766,14 +1766,11 @@ Public Class Lot
                 If NoOfParliamentPointers <> 0 And LotObjectMatrix(Position.y + j, Position.x + i).IsParliamentPointer Then
                     Continue For
                 End If
-                tempLandValue += LotObjectMatrix(Position.y + j, Position.x + i).LandValueModifier
+                tempModifier += LotObjectMatrix(Position.y + j, Position.x + i).LandValueModifier
             Next
         Next
-        LotObjectMatrix(Position.y, Position.x).ActualLandValue = tempLandValue
+        LotObjectMatrix(Position.y, Position.x).LandValueModifier = tempModifier
         Return LotObjectMatrix
-    End Function
-    Protected Function GetLandValue()
-        Return ActualLandValue
     End Function
 End Class
 Public Class Roads
@@ -1785,28 +1782,21 @@ Public Class Roads
 End Class
 Public Class SmallRoad
     Inherits Roads
-    Shadows Const BaseLandValue As Integer = 0
 End Class
 Public Class LargeRoad
     Inherits Roads
-    Shadows Const BaseLandValue As Integer = 0
 End Class
 Public Class Nature
     Inherits Lot
 End Class
 Public Class Grass
     Inherits Nature
-    Shadows Const BaseLandValue As Integer = 0
-
 End Class
 Public Class Water
     Inherits Nature
-    Shadows Const BaseLandValue As Integer = 0
-
 End Class
 Public Class Forest
     Inherits Nature
-    Shadows Const BaseLandValue As Integer = 0
 End Class
 Public Class ResidentialLot
     Inherits Lot
@@ -1817,21 +1807,17 @@ Public Class ResidentialLot
 End Class
 Public Class SmallResidential
     Inherits ResidentialLot
-    Shadows Const BaseLandValue As Integer = 15
 End Class
 Public Class LargeResidential
     Inherits ResidentialLot
-    Shadows Const BaseLandValue As Integer = 30
 End Class
 Public Class CommercialLot
     Inherits Lot
-    Shadows Const BaseLandValue As Integer = 15
     Const BaseRevenue As Integer = 0
     Public Revenue As Integer
     Public NumberOfWorkers As Integer
     Sub EstablishStore()
         Revenue = BaseRevenue
-        ActualLandValue = BaseLandValue
     End Sub
     Sub GainRevenue()
 
@@ -1842,11 +1828,9 @@ Public Class CommercialLot
 End Class
 Public Class SmallCommercial
     Inherits CommercialLot
-    Shadows Const BaseLandValue As Integer = 40
 End Class
 Public Class LargeCommercial
     Inherits CommercialLot
-    Shadows Const BaseLandValue As Integer = 50
 End Class
 Public Class Park
     Inherits Lot
@@ -1854,11 +1838,9 @@ Public Class Park
 End Class
 Public Class SmallPark
     Inherits Park
-    Shadows Const BaseLandValue As Integer = 15
 End Class
 Public Class LargePark
     Inherits Park
-    Shadows Const BaseLandValue As Integer = 35
     Shadows Const Height As Integer = 2
     Shadows Const Width As Integer = 2
 End Class
@@ -1868,25 +1850,22 @@ Public Class LargeParkPointer
 End Class
 Public Class Industry
     Inherits Lot
-    Shadows Const BaseLandValue As Integer = 5
 End Class
 Public Class Parliament
     Inherits Lot
-    Shadows Const BaseLandValue As Integer = 25
     Shadows Const Width As Integer = 2
     Shadows Const Height As Integer = 2
 End Class
 Public Class ParliamentPointer
     Inherits Lot
-    Public PointingTo As String
+    Public PointingToY As Integer
+    Public PointingToX As Integer
 End Class
 Public Class Construction
     Inherits Lot
-    Shadows Const BaseLandValue As Integer = 0
 End Class
 Public Class PoliceStation
     Inherits Lot
-    Shadows Const BaseLandValue As Integer = 5
 End Class
 Public Class PowerPlant
     Inherits Lot
@@ -1894,11 +1873,9 @@ Public Class PowerPlant
 End Class
 Public Class CoalStation
     Inherits PowerPlant
-    Shadows Const BaseLandValue As Integer = 5
 End Class
 Public Class WindFarm
     Inherits PowerPlant
-    Shadows Const BaseLandValue As Integer = 5
 End Class
 Public Class Government
     Const StartingTreasury As Integer = 20000
