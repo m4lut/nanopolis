@@ -1418,11 +1418,12 @@ Public Class Map
     End Sub
 End Class
 Public Class Lot
-    Const BaseLandValue As Integer = 10
+    Const BaseLandValue As Integer = 100
     Const Width As Integer = 1
     Const Height As Integer = 1
     Public Pos As Position
-    Public LandValueModifier As Integer
+    Public InternalLandValueModifier As Integer
+    Public Shadows ExternalLandValueModifier As Integer = 0
     Public WorkPlace As Position
     Public ShoppingPlace As Position
     Public ConnectedToRoad As Boolean
@@ -1754,29 +1755,31 @@ Public Class Lot
         Dim grass As Grass = New Grass()
         game.LotObjectMatrix(Pos.y, Pos.x) = grass
     End Sub
-    Protected Function CalculateLandValue(Position, LotObjectMatrix)
+    Function CalculateLandValue(Position, LotObjectMatrix)
         Dim tempModifier As Integer
         Dim NoOfParliamentPointers As Integer = 0
         Dim NoOfLargeParkPointers As Integer = 0
         For j As Integer = -1 To 1
             For i As Integer = -1 To 1
                 If NoOfLargeParkPointers <> 0 And LotObjectMatrix(Position.y + j, Position.x + i).IsLargeParkPointer Then
+                    NoOfLargeParkPointers += 1
                     Continue For
                 End If
                 If NoOfParliamentPointers <> 0 And LotObjectMatrix(Position.y + j, Position.x + i).IsParliamentPointer Then
+                    NoOfParliamentPointers += 1
                     Continue For
                 End If
-                tempModifier += LotObjectMatrix(Position.y + j, Position.x + i).LandValueModifier
+                tempModifier += LotObjectMatrix(Position.y + j, Position.x + i).ExternalLandValueModifier
             Next
         Next
-        LotObjectMatrix(Position.y, Position.x).LandValueModifier = tempModifier
+        LotObjectMatrix(Position.y, Position.x).InternalLandValueModifier = tempModifier
         Return LotObjectMatrix
     End Function
 End Class
 Public Class Roads
     Inherits Lot
     Public TrafficJamIndex As Integer
-    Public Function CalcTJI(Size, RoadGraph)
+    Public Function CalcTJI(RoadGraph)
         Return TrafficJamIndex
     End Function
 End Class
@@ -1788,6 +1791,7 @@ Public Class LargeRoad
 End Class
 Public Class Nature
     Inherits Lot
+    Public Shadows ExternalLandValueModifier As Integer = 0
 End Class
 Public Class Grass
     Inherits Nature
@@ -1838,21 +1842,26 @@ Public Class Park
 End Class
 Public Class SmallPark
     Inherits Park
+    Public Shadows ExternalLandValueModifier As Integer = 15
 End Class
 Public Class LargePark
     Inherits Park
+    Public Shadows ExternalLandValueModifier As Integer = 30
     Shadows Const Height As Integer = 2
     Shadows Const Width As Integer = 2
 End Class
 Public Class LargeParkPointer
     Inherits Park
-    Public PointingTo As String
+    Public PointingToY As Integer
+    Public PointingToX As Integer
 End Class
 Public Class Industry
     Inherits Lot
+    Public Shadows ExternalLandValueModifier As Integer = -15
 End Class
 Public Class Parliament
     Inherits Lot
+    Public Shadows ExternalLandValueModifier As Integer = 50
     Shadows Const Width As Integer = 2
     Shadows Const Height As Integer = 2
 End Class
