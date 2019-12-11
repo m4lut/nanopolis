@@ -140,7 +140,6 @@ Module Module1
                 MainMenu(CurrentGame)
             End If
         End If
-
     End Sub
     Sub SaveGame(game, map)
         Console.WriteLine("Return[ESC]")

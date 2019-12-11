@@ -42,7 +42,7 @@ Structure Texture
 End Structure
 Public Class Game
     Public CityGovernment As Government
-    Public LotObjectMatrix(24, 31) As Lot
+    Public LotObjectMatrix(24, 32) As Lot
     Sub NextWeek(ByVal Game, ByRef Map)
         Dim pos As Position
         pos.x = 0
@@ -124,7 +124,7 @@ Public Class Game
                 StartMenu()
             End Try
             Console.WriteLine("Generating map...")
-            For i As Integer = 0 To 29
+            For i As Integer = 0 To 24
                 For j As Integer = 0 To 32
                     Dim GeneratedTile As Single = Rnd()
                     GeneratedTile = GeneratedTile * totalProb
@@ -145,10 +145,10 @@ Public Class Game
             Next
             Dim cityGovernment As Government = New Government()
             cityGovernment.EstablishGovernment()
-            game.CityGovernment = cityGovernment
-            game.PrintMap(14, 16, map, game)
+            thisGame.CityGovernment = cityGovernment
+            thisGame.PrintMap(14, 16, map, thisGame)
         ElseIf plainMapChoice.Key = ConsoleKey.Y Then
-            For i As Integer = 0 To 29
+            For i As Integer = 0 To 24
                 For j As Integer = 0 To 32
                     Map.GridCodes(i, j) = -1
                 Next
@@ -167,7 +167,7 @@ Public Class Game
             End If
         End If
     End Sub
-    Public Sub PrintMap(ByRef SelectorY, ByRef SelectorX, map, ByRef game)
+    Public Sub PrintMap(ByRef SelectorY, ByRef SelectorX, ByRef map, ByRef game)
         Console.Clear()
         Dim pos As Position
         For pos.y = 0 To 24
@@ -1343,6 +1343,8 @@ Public Class Game
         Console.Write("X" & Int(SelectorX))
         Console.WriteLine()
         Console.WriteLine(game.cityGovernment.GetTreasury)
+        Dim buildingType As Type = game.LotObjectMatrix(SelectorY, SelectorX).GetType
+        Console.WriteLine(buildingType)
         map.MapSelection(SelectorY, SelectorX, map, game)
     End Sub
     Protected Overrides Sub Finalize()
@@ -1351,8 +1353,8 @@ Public Class Game
 End Class
 Public Class Map
     Public Pos As Position
-    Public Shared GridCodes(30, 33) As Integer
-    Public Shared NextTurnGridCodes(30, 33) As Integer
+    Public Shared GridCodes(24, 32) As Integer
+    Public Shared NextTurnGridCodes(24, 32) As Integer
     Public Sub MapSelection(ByRef Pos, ByRef map, ByRef game)
         Console.TreatControlCAsInput = True
         Console.BackgroundColor = ConsoleColor.Gray
@@ -1402,7 +1404,7 @@ Public Class Map
             Console.WriteLine("Demolish[D] | Build[B] | Cancel[C]")
             Console.ResetColor()
             Choice = Console.ReadKey(True).Key
-            If Choice = ConsoleKey.D Then
+            If Choice = ConsoleKey.C Then
                 lot.Demolish(Pos, game, map)
             ElseIf Choice = ConsoleKey.B Then
                 lot.Build(Pos, game, map)
@@ -1427,6 +1429,10 @@ Public Class Lot
     Public ConnectedToRoad As Boolean
     Public Abandoned As Boolean
     Public WeeksUntilAbandoned As Boolean
+    Public Shared TypeDict As Dictionary(Of String, Type)
+    Protected Sub InitializeTypeDict()
+
+    End Sub
     Public Sub SetAbandonedWeeks(ByRef Game, Pos, ByRef Map)
         If (BaseLandValue - InternalLandValueModifier) >= 0 Then
             WeeksUntilAbandoned = BaseWeeksUntilAbandoned
@@ -1440,18 +1446,18 @@ Public Class Lot
     Public Overridable Sub AbandonBuilding(ByRef Game, Pos, ByRef Map)
         Me.Demolish(Pos, Game, Map)
     End Sub
-    Function RoadConnectionCheck(Position, ByRef LotObjectMatrix)
-        For j As Integer = -1 To 1
-            For i As Integer = -1 To 1
-                If LotObjectMatrix(Position.y, Position.x).IsSmallRoad Or LotObjectMatrix(Position.y, Position.x).IsLargeRoad Then
-                    Return True
-                ElseIf i = 0 And j = 0 Then
-                    Continue For
-                End If
-            Next
-        Next
-        Return False
-    End Function
+    'Function RoadConnectionCheck(Position, ByRef LotObjectMatrix)
+    'For j As Integer = -1 To 1
+    'For i As Integer = -1 To 1
+    'If LotObjectMatrix(Position.y, Position.x).IsSmallRoad Or LotObjectMatrix(Position.y, Position.x).IsLargeRoad Then
+    'Return True
+    'ElseIf i = 0 And j = 0 Then
+    'Continue For
+    'End If
+    'Next
+    'Next
+    'Return False
+    'End Function
     Sub GenerateWorkOrShoppingPlace(FindingWork, ByRef LotObjectMatrix, ByRef workPlace, ByRef shoppingPlace, pos)
         Randomize()
         Dim offset As Position
@@ -1586,13 +1592,13 @@ Public Class Lot
                     shoppingPlace.y = pos.y + offset.y
                     shoppingPlace.x = pos.x + offset.x
                 End If
-                If LotObjectMatrix(workPlace.y, workPlace.x).IsCommercialLot And FindingWork Then
-                    Found = True
-                ElseIf LotObjectMatrix(shoppingPlace.y, shoppingPlace.x).IsCommercialLot And FindingWork = False Then
-                    Found = True
-                ElseIf LotObjectMatrix(shoppingPlace.y, shoppingPlace.x).IsIndustry And FindingWork = False Then
-                    Found = True
-                End If
+                'If LotObjectMatrix(workPlace.y, workPlace.x).IsCommercialLot And FindingWork Then
+                'Found = True
+                'ElseIf LotObjectMatrix(shoppingPlace.y, shoppingPlace.x).IsCommercialLot And FindingWork = False Then
+                ' Found = True
+                'ElseIf LotObjectMatrix(shoppingPlace.y, shoppingPlace.x).IsIndustry And FindingWork = False Then
+                'Found = True
+                'End If
             End If
         End While
     End Sub
@@ -1637,6 +1643,7 @@ Public Class Lot
                     Dim smallCommercial As SmallCommercial = New SmallCommercial()
                     smallCommercial.Pos.y = Pos.y
                     smallCommercial.Pos.x = Pos.x
+                    game.LotObjectMatrix(Pos.y, Pos.x) = smallCommercial
                     game.cityGovernment.Spend(20)
                 ElseIf input.Key = ConsoleKey.D2 Then
                     map.GridCodes(Pos.y, Pos.x) = 5
@@ -1716,9 +1723,9 @@ Public Class Lot
                     Dim largeParkDownPointer As LargeParkPointer = New LargeParkPointer()
                     Dim largeParkLowerRightPointer As LargeParkPointer = New LargeParkPointer()
                     game.LotObjectMatrix(Pos.y, Pos.x) = largePark
-                    game.LotObjectMatrix(Pos.y, Pos.x + 1) = Nothing
-                    game.LotObjectMatrix(Pos.y + 1, Pos.x) = Nothing
-                    game.LotObjectMatrix(Pos.y + 1, Pos.x + 1) = Nothing
+                    game.LotObjectMatrix(Pos.y, Pos.x + 1) = largeParkRightPointer
+                    game.LotObjectMatrix(Pos.y + 1, Pos.x) = largeParkDownPointer
+                    game.LotObjectMatrix(Pos.y + 1, Pos.x + 1) = largeParkLowerRightPointer
                     map.GridCodes(Pos.y, Pos.x) = 7
                     map.GridCodes(Pos.y, Pos.x + 1) = 8
                     map.GridCodes(Pos.y + 1, Pos.x) = 9
@@ -1741,6 +1748,9 @@ Public Class Lot
                 Dim parliamentPointerDown As ParliamentPointer = New ParliamentPointer()
                 Dim parliamentPointerLowerRight As ParliamentPointer = New ParliamentPointer()
                 game.LotObjectMatrix(Pos.y, Pos.x) = parliament
+                game.LotObjectMatrix(Pos.y, Pos.x + 1) = parliamentPointerRight
+                game.LotObjectMatrix(Pos.y + 1, Pos.x) = parliamentPointerDown
+                game.LotObjectMatrix(Pos.y + 1, Pos.x + 1) = parliamentPointerLowerRight
             Case ConsoleKey.D9
                 Console.BackgroundColor = ConsoleColor.Gray
                 Console.ForegroundColor = ConsoleColor.Black
@@ -1748,10 +1758,14 @@ Public Class Lot
                 Console.ResetColor()
                 input = Console.ReadKey(True)
                 If input.Key = ConsoleKey.D1 Then
+                    Dim forest As Forest = New Forest()
                     map.GridCodes(Pos.y, Pos.x) = 39
+                    game.LotObjectMatrix(Pos.y, Pos.x) = forest
                     game.cityGovernment.Spend(5)
                 ElseIf input.Key = ConsoleKey.D2 Then
+                    Dim water As Water = New Water()
                     map.GridCodes(Pos.y, Pos.x) = 38
+                    game.LotObjectMatrix(Pos.y, Pos.x) = water
                     game.cityGovernment.Spend(30)
                 End If
         End Select
@@ -1766,50 +1780,50 @@ Public Class Lot
         Dim grass As Grass = New Grass()
         Game.LotObjectMatrix(Pos.y, Pos.x) = grass
     End Sub
-    Sub CalculateCrimeRate(Position, LotObjectMatrix)
-        Dim tempCrimeRate As Integer = 0
-        For j As Integer = -2 To 2
-            For i As Integer = -2 To 2
-                If LotObjectMatrix(Position.y + j, Position.x + i).IsPoliceStation Then
-                    tempCrimeRate -= 50
-                End If
-            Next
-        Next
-    End Sub
-    Function CalculateLandValueFromExternal(Pos, ByRef LotObjectMatrix)
-        Dim tempModifier As Integer
-        Dim noOfParliamentPointers As Integer = 0
-        Dim noOfLargeParkPointers As Integer = 0
-        For j As Integer = -2 To 2
-            For i As Integer = -2 To 2
-                If noOfLargeParkPointers <> 0 And LotObjectMatrix(Pos.y + j, Pos.x + i).IsLargeParkPointer Then
-                    noOfLargeParkPointers += 1
-                    Continue For
-                End If
-                If noOfParliamentPointers <> 0 And LotObjectMatrix(Pos.y + j, Pos.x + i).IsParliamentPointer Then
-                    noOfParliamentPointers += 1
-                    Continue For
-                End If
-            Next
-        Next
-        Return tempModifier
-    End Function
-    Function CalculateLandValueFromInternal(Pos, LotObjectMatrix)
-        Dim tempModifier As Integer = 0
-        Dim tji As Integer
-        Dim Road As Type
-        If LotObjectMatrix(Pos.y, Pos.x).IsRoad = True Then
-            LotObjectMatrix(Pos.y, Pos.x).CalcTJI
-            tempModifier += tji
-        ElseIf LotObjectMatrix(Pos.y, Pos.x).IsNotRoad Then
-        End If
-    End Function
-    Sub CalculateLandValue(Pos, ByRef LotObjectMatrix, ByRef IntModifier)
-        Dim modifierFromExt As Integer = CalculateLandValueFromExternal(Pos, LotObjectMatrix)
-        Dim modifierFromInt As Integer = CalculateLandValueFromInternal(Pos, LotObjectMatrix)
-        IntModifier = modifierFromExt + modifierFromInt
-        LotObjectMatrix(Pos.y, Pos.x).InternalLandValueModifier = IntModifier
-    End Sub
+    'Sub CalculateCrimeRate(Position, LotObjectMatrix)
+    'Dim tempCrimeRate As Integer = 0
+    'For j As Integer = -2 To 2
+    'For i As Integer = -2 To 2
+    'If LotObjectMatrix(Position.y + j, Position.x + i).IsPoliceStation Then
+    '                tempCrimeRate -= 50
+    'End If
+    'Next
+    'Next
+    'End Sub
+    'Function CalculateLandValueFromExternal(Pos, ByRef LotObjectMatrix)
+    'Dim tempModifier As Integer
+    'Dim noOfParliamentPointers As Integer = 0
+    'Dim noOfLargeParkPointers As Integer = 0
+    'For j As Integer = -2 To 2
+    'For i As Integer = -2 To 2
+    'If noOfLargeParkPointers <> 0 And LotObjectMatrix(Pos.y + j, Pos.x + i).IsLargeParkPointer Then
+    '                noOfLargeParkPointers += 1
+    'Continue For
+    'End If
+    'If noOfParliamentPointers <> 0 And LotObjectMatrix(Pos.y + j, Pos.x + i).IsParliamentPointer Then
+    '                noOfParliamentPointers += 1
+    'Continue For
+    'End If
+    'Next
+    'Next
+    'Return tempModifier
+    'End Function
+    'Function CalculateLandValueFromInternal(Pos, LotObjectMatrix)
+    'Dim tempModifier As Integer = 0
+    'Dim tji As Integer
+    'Dim Road As Type
+    'If LotObjectMatrix(Pos.y, Pos.x).IsRoad = True Then
+    '       LotObjectMatrix(Pos.y, Pos.x).CalcTJI
+    '      tempModifier += tji
+    'ElseIf LotObjectMatrix(Pos.y, Pos.x).IsNotRoad Then
+    'End If
+    'End Function
+    'Sub CalculateLandValue(Pos, ByRef LotObjectMatrix, ByRef IntModifier)
+    'Dim modifierFromExt As Integer = CalculateLandValueFromExternal(Pos, LotObjectMatrix)
+    'Dim modifierFromInt As Integer = CalculateLandValueFromInternal(Pos, LotObjectMatrix)
+    'IntModifier = modifierFromExt + modifierFromInt
+    'LotObjectMatrix(Pos.y, Pos.x).InternalLandValueModifier = IntModifier
+    'End Sub
 End Class
 Public Class Roads
     Inherits Lot
