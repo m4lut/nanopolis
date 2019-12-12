@@ -85,7 +85,7 @@ Public Class Game
         Dim largeRoadUpRightTexture As Texture
         Dim largeRoadDownLeftTexture As Texture
         Dim largeRoadDownRightTexture As Texture
-        Dim industrialTexture As Texture
+        Dim industryTexture As Texture
         Dim parliamentTexture1 As Texture
         Dim parliamentTexture2 As Texture
         Dim parliamentTexture3 As Texture
@@ -99,6 +99,9 @@ Public Class Game
     End Sub
     Sub NewMap(game, IsStart)
         Randomize()
+        Dim pos As Position
+        pos.y = 16
+        pos.x = 13
         Dim thisGame As Game = New Game()
         Dim map As Map = New Map()
         Dim grassProb As Integer
@@ -146,17 +149,19 @@ Public Class Game
             Dim cityGovernment As Government = New Government()
             cityGovernment.EstablishGovernment()
             thisGame.CityGovernment = cityGovernment
-            thisGame.PrintMap(14, 16, map, thisGame)
+            thisGame.PrintMap(pos, map, thisGame)
         ElseIf plainMapChoice.Key = ConsoleKey.Y Then
             For i As Integer = 0 To 24
                 For j As Integer = 0 To 32
                     Map.GridCodes(i, j) = -1
+                    Dim grass As Grass = New Grass()
+                    thisGame.LotObjectMatrix(i, j) = grass
                 Next
             Next
             Dim cityGovernment As Government = New Government()
             cityGovernment.EstablishGovernment()
             thisGame.CityGovernment = cityGovernment
-            thisGame.PrintMap(14, 16, map, thisGame)
+            thisGame.PrintMap(pos, map, thisGame)
         ElseIf plainMapChoice.Key = ConsoleKey.Escape Then
             StartMenu()
         Else
@@ -166,15 +171,15 @@ Public Class Game
                 NewGame(True, Nothing)
             End If
         End If
+
     End Sub
-    Public Sub PrintMap(ByRef SelectorY, ByRef SelectorX, ByRef map, ByRef game)
+    Public Sub PrintMap(ByRef Pos, ByRef map, ByRef game)
         Console.Clear()
-        Dim pos As Position
-        For pos.y = 0 To 24
+        For y As Integer = 0 To 24
             For CurrentLine As Integer = 0 To 3
-                For pos.x = 0 To 32
+                For x As Integer = 0 To 32
                     If CurrentLine = 0 Then
-                        Select Case map.GridCodes(pos.y, pos.x)
+                        Select Case map.GridCodes(Pos.y, Pos.x)
                             Case -1
                                 Console.BackgroundColor = ConsoleColor.Green
                                 Console.ForegroundColor = ConsoleColor.DarkGreen
@@ -443,7 +448,7 @@ Public Class Game
                                 Console.ResetColor()
                         End Select
                     ElseIf CurrentLine = 1 Then
-                        Select Case map.GridCodes(pos.y, pos.x)
+                        Select Case map.GridCodes(Pos.y, Pos.x)
                             Case -1
                                 Console.BackgroundColor = ConsoleColor.Green
                                 Console.ForegroundColor = ConsoleColor.DarkGreen
@@ -747,7 +752,7 @@ Public Class Game
                                 Console.ResetColor()
                         End Select
                     ElseIf CurrentLine = 2 Then
-                        Select Case map.GridCodes(pos.y, pos.x)
+                        Select Case map.GridCodes(Pos.y, Pos.x)
                             Case -1
                                 Console.BackgroundColor = ConsoleColor.Green
                                 Console.ForegroundColor = ConsoleColor.DarkGreen
@@ -1043,7 +1048,7 @@ Public Class Game
                                 Console.ResetColor()
                         End Select
                     ElseIf CurrentLine = 3 Then
-                        Select Case map.GridCodes(pos.y, pos.x)
+                        Select Case map.GridCodes(Pos.y, Pos.x)
                             Case -1
                                 Console.BackgroundColor = ConsoleColor.Green
                                 Console.ForegroundColor = ConsoleColor.DarkGreen
@@ -1339,13 +1344,16 @@ Public Class Game
                 Console.WriteLine()
             Next
         Next
-        Console.Write("Y" & Int(SelectorY))
-        Console.Write("X" & Int(SelectorX))
+        Console.Write("Y" & Int(Pos.y))
+        Console.Write("X" & Int(Pos.x))
         Console.WriteLine()
         Console.WriteLine(game.cityGovernment.GetTreasury)
-        Dim buildingType As Type = game.LotObjectMatrix(SelectorY, SelectorX).GetType
+        Dim pointerPos As Position
+        pointerPos.y = Pos.y
+        pointerPos.x = Pos.x
+        Dim buildingType As Type = game.LotObjectMatrix(Pos.y, Pos.x).GetType
         Console.WriteLine(buildingType)
-        map.MapSelection(SelectorY, SelectorX, map, game)
+        map.MapSelection(pointerPos, map, game)
     End Sub
     Protected Overrides Sub Finalize()
         MyBase.Finalize()
@@ -1429,9 +1437,27 @@ Public Class Lot
     Public ConnectedToRoad As Boolean
     Public Abandoned As Boolean
     Public WeeksUntilAbandoned As Boolean
-    Public Shared TypeDict As Dictionary(Of String, Type)
+    Public Shared TypeDict As Dictionary(Of String, String)
     Protected Sub InitializeTypeDict()
-
+        TypeDict.Add("grass", "Nanopolis.Grass")
+        TypeDict.Add("construction", "Nanopolis.Construction")
+        TypeDict.Add("smallResidential", "Nanopolis.SmallResidential")
+        TypeDict.Add("largeResidential", "Nanopolis.LargeResidential")
+        TypeDict.Add("smallCommercial", "Nanopolis.SmallCommercial")
+        TypeDict.Add("largeCommercial", "Nanopolis.LargeCommercial")
+        TypeDict.Add("smallPark", "Nanopolis.SmallPark")
+        TypeDict.Add("largePark", "Nanopolis.LargePark")
+        TypeDict.Add("largeParkPointer", "Nanopolis.LargeParkPointer")
+        TypeDict.Add("smallRoad", "Nanopolis.SmallRoad")
+        TypeDict.Add("largeRoad", "Nanopolis.LargeRoad")
+        TypeDict.Add("industry", "Nanopolis.Industry")
+        TypeDict.Add("parliament", "Nanopolis.Parliament")
+        TypeDict.Add("parliamentPointer", "Nanopolis.ParliamentPointer")
+        TypeDict.Add("policeStation", "Nanopolis.PoliceStation")
+        TypeDict.Add("water", "Nanopolis.Water")
+        TypeDict.Add("forest", "Nanopolis.Forest")
+        TypeDict.Add("windFarm", "Nanopolis.WindFarm")
+        TypeDict.Add("coalStation", "Nanopolis.CoalStation")
     End Sub
     Public Sub SetAbandonedWeeks(ByRef Game, Pos, ByRef Map)
         If (BaseLandValue - InternalLandValueModifier) >= 0 Then
@@ -1769,16 +1795,20 @@ Public Class Lot
                     game.cityGovernment.Spend(30)
                 End If
         End Select
-        game.PrintMap(14, 16, map, game)
+        Dim pointerPos As Position
+        pointerPos.y = 14
+        pointerPos.x = 16
+        game.PrintMap(pointerPos, map, game)
     End Sub
     Public Sub Demolish(ByRef Pos, ByRef Game, ByRef map)
         map.GridCodes(Pos.y, Pos.x) = -1
-        Game.PrintMap(14, 16, map, Game)
+        Dim pointerPos As Position
         If map.GridCodes(Pos.y, Pos.x) = 33 Or map.GridCodes(Pos.y, Pos.x) = 34 Or map.GridCodes(Pos.y, Pos.x) = 35 Or map.GridCodes(Pos.y, Pos.x) = 36 Then
             Game.cityGovernment.RemoveParliament()
         End If
         Dim grass As Grass = New Grass()
         Game.LotObjectMatrix(Pos.y, Pos.x) = grass
+        Game.PrintMap(pointerPos, map, Game)
     End Sub
     'Sub CalculateCrimeRate(Position, LotObjectMatrix)
     'Dim tempCrimeRate As Integer = 0
@@ -1892,7 +1922,6 @@ Public Class LargeCommercial
 End Class
 Public Class Park
     Inherits Lot
-
 End Class
 Public Class SmallPark
     Inherits Park
@@ -1936,9 +1965,11 @@ Public Class PowerPlant
 End Class
 Public Class CoalStation
     Inherits PowerPlant
+    Shadows Const PowerOutputMW As Integer = 1000
 End Class
 Public Class WindFarm
     Inherits PowerPlant
+    Shadows Const PowerOutputMW As Integer = 500
 End Class
 Public Class Government
     Const StartingTreasury As Integer = 20000

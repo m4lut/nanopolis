@@ -133,6 +133,7 @@ Module Module1
         If Input.Key = ConsoleKey.Enter Then
             Dim game As Game = New Game()
             game.NewMap(game, IsStart)
+            Console.WriteLine("game created")
         Else
             If IsStart = True Then
                 StartMenu()
