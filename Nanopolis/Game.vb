@@ -25,22 +25,22 @@ Module Module1
         Console.WriteLine("[6] Quit to desktop")
         Dim MenuCode As ConsoleKeyInfo = Console.ReadKey(True)
         If MenuCode.Key = ConsoleKey.D1 Then
-            NewGame(True, Nothing)
+            NewGame(True, Nothing, Nothing)
         ElseIf MenuCode.Key = ConsoleKey.D2 Then
-            LoadGame(Nothing, True)
+            LoadGame(Nothing, Nothing, True)
         ElseIf MenuCode.Key = ConsoleKey.D3 Then
             Tutorial()
         ElseIf MenuCode.Key = ConsoleKey.D4 Then
-            KeyBindMenu(Nothing, True)
+            KeyBindMenu(Nothing, True, Nothing)
         ElseIf MenuCode.Key = ConsoleKey.D5 Then
-            GraphicsMenu(Nothing, True)
+            GraphicsMenu(Nothing, True, Nothing)
         ElseIf MenuCode.Key = ConsoleKey.D6 Then
             Stop
         Else
             StartMenu()
         End If
     End Sub
-    Sub MainMenu(game)
+    Sub MainMenu(game, map)
         Console.Clear()
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
@@ -56,24 +56,27 @@ Module Module1
         Console.WriteLine("[ESC] Return to game")
         Dim MenuCode As ConsoleKeyInfo = Console.ReadKey(True)
         If MenuCode.Key = ConsoleKey.D1 Then
-            NewGame(False, game)
+            NewGame(False, game, map)
         ElseIf MenuCode.Key = ConsoleKey.D2 Then
-            LoadGame(game, False)
+            LoadGame(game, map, False)
         ElseIf MenuCode.Key = ConsoleKey.D3 Then
             Tutorial()
         ElseIf MenuCode.Key = ConsoleKey.D4 Then
-            KeyBindMenu(game, False)
+            KeyBindMenu(map, False, game)
         ElseIf MenuCode.Key = ConsoleKey.D5 Then
-            GraphicsMenu(game, False)
+            GraphicsMenu(map, False, game)
         ElseIf MenuCode.Key = ConsoleKey.D6 Then
             Stop
         ElseIf MenuCode.Key = ConsoleKey.Escape Then
-            game.PrintMap(0, 16)
+            Dim pos As Position
+            pos.y = 13
+            pos.x = 16
+            game.PrintMap(pos, map, game)
         Else
-            MainMenu(game)
+            MainMenu(game, map)
         End If
     End Sub
-    Function GraphicsMenu(map, isStart)
+    Function GraphicsMenu(map, isStart, game)
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
         Console.WriteLine("--GRAPHICS OPTIONS--")
@@ -83,11 +86,11 @@ Module Module1
             If isStart = True Then
                 StartMenu()
             Else
-                MainMenu(map)
+                MainMenu(game, map)
             End If
         End If
     End Function
-    Sub KeyBindMenu(map, isStart)
+    Sub KeyBindMenu(map, isStart, game)
         Console.Clear()
         Console.WriteLine("--KEY BINDINGS--")
         Dim input As ConsoleKeyInfo = Console.ReadKey(True)
@@ -95,11 +98,11 @@ Module Module1
             If isStart = True Then
                 StartMenu()
             Else
-                MainMenu(map)
+                MainMenu(map, game)
             End If
         End If
     End Sub
-    Sub LoadGame(map, isStart)
+    Sub LoadGame(game, map, isStart)
         Console.WriteLine("Return[ESC]")
         Dim PathName As String
         Console.BackgroundColor = ConsoleColor.Gray
@@ -119,7 +122,7 @@ Module Module1
             If isStart = True Then
                 StartMenu()
             Else
-                MainMenu(map)
+                MainMenu(game, map)
             End If
         End Try
     End Sub
@@ -127,7 +130,7 @@ Module Module1
         Console.ReadLine()
         StartMenu()
     End Sub
-    Public Sub NewGame(IsStart, CurrentGame)
+    Public Sub NewGame(IsStart, CurrentGame, Map)
         Console.WriteLine("Are you sure? No [ESC] | Yes [ENTER]")
         Dim Input As ConsoleKeyInfo = Console.ReadKey(True)
         If Input.Key = ConsoleKey.Enter Then
@@ -138,7 +141,7 @@ Module Module1
             If IsStart = True Then
                 StartMenu()
             Else
-                MainMenu(CurrentGame)
+                MainMenu(CurrentGame, Map)
             End If
         End If
     End Sub
@@ -156,7 +159,7 @@ Module Module1
             FileWriter.WriteLine(map.GridCodes.ToString)
             FileWriter.Close()
         Catch ex As Exception
-            MainMenu(game)
+            MainMenu(game, map)
         End Try
         Console.Clear()
         game.PrintMap(0, 16)
