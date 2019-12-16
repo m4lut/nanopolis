@@ -50,6 +50,9 @@ Public Class Game
         Dim noOfLargeParkPointers As Integer = 0
         For j As Integer = -2 To 2
             For i As Integer = -2 To 2
+                If (Pos.y + j) < 0 Or (Pos.y + j) > 24 Or (Pos.x + i) < 0 Or (Pos.x + i) > 34 Then
+                    Continue For
+                End If
                 If noOfLargeParkPointers <> 0 And Game.LotObjectMatrix(Pos.y + j, Pos.x + i).LotIs("Nanopolis.LargeParkPointer", Game, Pos.y + j, Pos.x + i) Then
                     noOfLargeParkPointers += 1
                     Continue For
@@ -1394,8 +1397,8 @@ Public Class Game
             Next
         Next
         Console.Write("Y" & Int(Pos.y))
-        Console.Write("X" & Int(Pos.x))
-        Console.WriteLine()
+        Console.WriteLine(", X" & Int(Pos.x))
+        Console.WriteLine("Land Value: " & game.LotObjectMatrix(Pos.y, Pos.x).LandValue)
         Console.WriteLine(game.cityGovernment.GetTreasury)
         Dim buildingType As Type = game.LotObjectMatrix(Pos.y, Pos.x).GetType
         Console.WriteLine(buildingType)
@@ -1484,6 +1487,7 @@ Public Class Lot
     Public ConnectedToRoad As Boolean
     Public Abandoned As Boolean
     Public WeeksUntilAbandoned As Boolean
+    Public LandValue As Integer = 50
     Public Sub SetAbandonedWeeks(ByRef Game, Pos, ByRef Map)
         If (BaseLandValue - InternalLandValueModifier) >= 0 Then
             WeeksUntilAbandoned = BaseWeeksUntilAbandoned
