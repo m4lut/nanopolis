@@ -93,13 +93,13 @@ Public Class Game
         TypeDict.Add("Nanopolis.WindFarm", "windFarm")
         TypeDict.Add("Nanopolis.CoalStation", "coalStation")
     End Sub
-    Sub NextWeek(ByRef Game, ByRef Map)
+    Sub FinishWeek(ByRef Game, ByRef Map)
         Dim pos As Position
         pos.x = 0
         pos.y = 0
         For pos.y = 0 To 24
             For pos.x = 0 To 32
-                Game.CalculateLandValueFromExternal(pos, Game)
+                Game.CalculateLandValue(pos, Game)
 
             Next
         Next
@@ -153,7 +153,7 @@ Public Class Game
         Dim pos As Position
         pos.y = 12
         pos.x = 16
-        Dim thisGame As Game = New Game()
+        Dim newGame As Game = New Game()
         Dim map As Map = New Map()
         Dim grassProb As Integer
         Dim waterProb As Integer
@@ -185,45 +185,45 @@ Public Class Game
                     If GeneratedTile < waterProb Then
                         Dim water As Water = New Water()
                         Map.GridCodes(i, j) = 38
-                        thisGame.LotObjectMatrix(i, j) = water
+                        newGame.LotObjectMatrix(i, j) = water
                     ElseIf GeneratedTile > waterProb And GeneratedTile <= (grassProb + waterProb) Then
                         Dim grass As Grass = New Grass()
                         Map.GridCodes(i, j) = -1
-                        thisGame.LotObjectMatrix(i, j) = grass
+                        newGame.LotObjectMatrix(i, j) = grass
                     ElseIf GeneratedTile > (grassProb + waterProb) Then
                         Dim forest As Forest = New Forest()
                         Map.GridCodes(i, j) = 39
-                        thisGame.LotObjectMatrix(i, j) = forest
+                        newGame.LotObjectMatrix(i, j) = forest
                     End If
+                    newGame.LotObjectMatrix(i, j).LandValue = game.LotObjectMatrix(i, j).BaseLandValue
                 Next
             Next
             Dim cityGovernment As Government = New Government()
             cityGovernment.EstablishGovernment()
-            thisGame.CityGovernment = cityGovernment
-            thisGame.InitializeTypeDict()
-            thisGame.PrintMap(pos, map, thisGame)
+            newGame.CityGovernment = cityGovernment
+            newGame.InitializeTypeDict()
+            newGame.PrintMap(pos, map, newGame)
         ElseIf plainMapChoice.Key = ConsoleKey.Y Then
             For i As Integer = 0 To 24
                 For j As Integer = 0 To 32
                     Map.GridCodes(i, j) = -1
                     Dim grass As Grass = New Grass()
-                    thisGame.LotObjectMatrix(i, j) = grass
+                    newGame.LotObjectMatrix(i, j) = grass
                 Next
             Next
             Dim cityGovernment As Government = New Government()
             cityGovernment.EstablishGovernment()
-            thisGame.CityGovernment = cityGovernment
-            thisGame.PrintMap(pos, map, thisGame)
+            newGame.CityGovernment = cityGovernment
+            newGame.PrintMap(pos, map, newGame)
         ElseIf plainMapChoice.Key = ConsoleKey.Escape Then
             StartMenu()
         Else
             If IsStart = False Then
-                NewGame(False, game, map)
+                game.NewGame(False, game, map)
             Else
-                NewGame(True, Nothing, Nothing)
+                game.NewGame(True, Nothing, Nothing)
             End If
         End If
-
     End Sub
     Public Sub PrintMap(ByRef Pos, ByRef map, ByRef game)
         Console.Clear()
@@ -1419,42 +1419,42 @@ Public Class Map
         Console.ResetColor()
         Dim lot As Lot = New Lot()
         Dim Selected As Boolean = False
-        Dim Key As ConsoleKey
+        Dim Key1 As ConsoleModifier
+        Dim Key2 As ConsoleKey
         Dim Choice As ConsoleKey
         While Selected = False
-            Key = Console.ReadKey(True).Key
-            If Key = ConsoleModifiers.Control AndAlso Key = ConsoleKey.A Then
-                Pos.x -= 5
-                Game.PrintMap(Pos, Map, Game)
-            ElseIf Key = ConsoleModifiers.Control AndAlso Key = ConsoleKey.D Then
-                Pos.x += 5
-                Game.PrintMap(Pos, Map, Game)
-            ElseIf Key = ConsoleModifiers.Control AndAlso Key = ConsoleKey.S Then
-                Pos.y += 5
-                Game.PrintMap(Pos, Map, Game)
-            ElseIf Key = ConsoleModifiers.Control AndAlso Key = ConsoleKey.W Then
-                Pos.y -= 5
-                Game.PrintMap(Pos, Map, Game)
-            ElseIf Key = ConsoleModifiers.Control AndAlso Key = ConsoleKey.Enter Then
-                Selected = True
-            End If
-            If Key = ConsoleKey.A Then
+            Key2 = Console.ReadKey(True).Key
+            'If Key1 = ConsoleModifiers.Shift Then
+            'If Key1 = ConsoleKey.A Then
+            'Pos.x -= 5
+            'Game.PrintMap(Pos, Map, Game)
+            'ElseIf Key1 = ConsoleKey.D Then
+            'Pos.x += 5
+            'Game.PrintMap(Pos, Map, Game)
+            'ElseIf Key1 = ConsoleKey.S Then
+            'Pos.y += 5
+            'Game.PrintMap(Pos, Map, Game)
+            'ElseIf Key1 = ConsoleKey.W Then
+            'Pos.y -= 5
+            'Game.PrintMap(Pos, Map, Game)
+            'End If
+            If Key1 = ConsoleKey.A Then
                 Pos.x -= 1
                 Game.PrintMap(Pos, Map, Game)
-            ElseIf Key = ConsoleKey.D Then
+            ElseIf Key1 = ConsoleKey.D Then
                 Pos.x += 1
                 Game.PrintMap(Pos, Map, Game)
-            ElseIf Key = ConsoleKey.S Then
+            ElseIf Key1 = ConsoleKey.S Then
                 Pos.y += 1
                 Game.PrintMap(Pos, Map, Game)
-            ElseIf Key = ConsoleKey.W Then
+            ElseIf Key1 = ConsoleKey.W Then
                 Pos.y -= 1
                 Game.PrintMap(Pos, Map, Game)
-            ElseIf Key = ConsoleKey.Enter Then
+            ElseIf Key1 = ConsoleKey.Enter Then
                 Selected = True
-            ElseIf Key = ConsoleKey.N Then
-                Game.NextWeek(Game, Map)
-            ElseIf Key = ConsoleKey.Escape Then
+            ElseIf Key1 = ConsoleKey.N Then
+                Game.FinishWeek(Game, Map)
+            ElseIf Key1 = ConsoleKey.Escape Then
                 MainMenu(Game, Map)
             End If
             Console.BackgroundColor = ConsoleColor.Gray
@@ -1476,7 +1476,7 @@ Public Class Map
 End Class
 Public Class Lot
     Const BaseWeeksUntilAbandoned As Integer = 5
-    Const BaseLandValue As Integer = 50
+    Public Const BaseLandValue As Integer = 25
     Const Width As Integer = 1
     Const Height As Integer = 1
     Public Pos As Position
@@ -1487,7 +1487,7 @@ Public Class Lot
     Public ConnectedToRoad As Boolean
     Public Abandoned As Boolean
     Public WeeksUntilAbandoned As Boolean
-    Public LandValue As Integer = 50
+    Public LandValue As Integer = BaseLandValue
     Public Sub SetAbandonedWeeks(ByRef Game, Pos, ByRef Map)
         If (BaseLandValue - InternalLandValueModifier) >= 0 Then
             WeeksUntilAbandoned = BaseWeeksUntilAbandoned
@@ -1858,11 +1858,12 @@ Public Class Lot
             Console.ReadLine()
         End If
     End Function
-    Sub CalculateLandValue(Pos, ByRef LotObjectMatrix, ByRef IntModifier, ByRef Game)
-        Dim modifierFromExt As Integer = Game.CalculateLandValueFromExternal(Pos, LotObjectMatrix)
-        Dim modifierFromInt As Integer = CalculateLandValueFromInternal(Pos, LotObjectMatrix)
-        IntModifier = modifierFromExt + modifierFromInt
-        LotObjectMatrix(Pos.y, Pos.x).InternalLandValueModifier = IntModifier
+    Sub CalculateLandValue(Pos, ByRef Game)
+        Dim modifierFromExt As Integer = Game.CalculateLandValueFromExternal(Pos, Game.LotObjectMatrix)
+        Dim modifierFromInt As Integer = CalculateLandValueFromInternal(Pos, Game.LotObjectMatrix)
+        Game.LotObjectMatrix(Pos.y, Pos.x).LandValueModifier = modifierFromExt + modifierFromInt
+        Game.LotObjectMatrix(Pos.y, Pos.x).InternalLandValueModifier = Game.LotObjectMatrix(Pos.y, Pos.x).LandValueModifier
+        Game.LotObjectMatrix(Pos.y, Pos.x).LandValue = BaseLandValue + Game.LotObjectMatrix(Pos.y, Pos.x).LandValueModifier
     End Sub
 End Class
 Public Class Roads
