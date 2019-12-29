@@ -12,6 +12,13 @@
     Public Abandoned As Boolean
     Public WeeksUntilAbandoned As Boolean
     Public LandValue As Integer = BaseLandValue
+    Function LotIs(Type, Game, Y, X) As Boolean
+        If Game.LotObjectMatrix(Y, X).GetType.ToString = Game.TypeDict(Type.ToString).ToString Then
+            Return True
+        Else
+            Return False
+        End If
+    End Function
     Public Sub SetAbandonedWeeks(ByRef Game, Pos, ByRef Map)
         If (BaseLandValue - InternalLandValueModifier) >= 0 Then
             WeeksUntilAbandoned = BaseWeeksUntilAbandoned
@@ -376,7 +383,6 @@
         If Game.LotObjectMatrix(Pos.y, Pos.x).LotIs("Nanopolis.Road", Game, Pos.y, Pos.x) = True Then
             Game.LotObjectMatrix(Pos.y, Pos.x).CalculateTJI
             tempModifier += tji
-
             Return tempModifier
         Else
             Console.WriteLine("calc and value from int (not road)")
@@ -385,7 +391,7 @@
         End If
     End Function
     Sub CalculateLandValue(Pos, ByRef Game)
-        Dim modifierFromExt As Integer = Game.CalculateLandValueFromExternal(Pos, Game.LotObjectMatrix)
+        Dim modifierFromExt As Integer = Game.CalculateLandValueFromExternal(Pos, Game)
         Dim modifierFromInt As Integer = CalculateLandValueFromInternal(Pos, Game.LotObjectMatrix)
         Game.LotObjectMatrix(Pos.y, Pos.x).LandValueModifier = modifierFromExt + modifierFromInt
         Game.LotObjectMatrix(Pos.y, Pos.x).InternalLandValueModifier = Game.LotObjectMatrix(Pos.y, Pos.x).LandValueModifier

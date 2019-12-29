@@ -1,5 +1,4 @@
-﻿'goal: set up building object list,calculate land value
-Imports System.IO
+﻿Imports System.IO
 Imports Newtonsoft.Json
 Module Module1
     Sub Main()
@@ -7,10 +6,6 @@ Module Module1
         Dim map As Map = New Map()
         StartMenu()
     End Sub
-    Function NewMap()
-        Dim map As Map = New Map()
-    End Function
-
     Sub StartMenu()
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
@@ -76,7 +71,7 @@ Module Module1
             MainMenu(game, map)
         End If
     End Sub
-    Function GraphicsMenu(map, isStart, game)
+    Sub GraphicsMenu(map, isStart, game)
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
         Console.WriteLine("--GRAPHICS OPTIONS--")
@@ -89,7 +84,7 @@ Module Module1
                 MainMenu(game, map)
             End If
         End If
-    End Function
+    End Sub
     Sub KeyBindMenu(map, isStart, game)
         Console.Clear()
         Console.WriteLine("--KEY BINDINGS--")
@@ -163,8 +158,4 @@ Module Module1
         Console.Clear()
         game.PrintMap(0, 16)
     End Sub
-    Sub NextTurn()
-        'game computes all the changes on the map eg. changes to land value and population etc.
-    End Sub
-
 End Module

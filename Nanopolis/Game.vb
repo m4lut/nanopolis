@@ -44,6 +44,12 @@ Public Class Game
     Public CityGovernment As Government
     Public LotObjectMatrix(24, 32) As Lot
     Public Shared TypeDict As Dictionary(Of String, String)
+    Public Function CalculateLandValue(Pos, ByRef Game)
+        Dim newLandValue As Integer = 25
+        newLandValue += Game.CalculateLandValueFromExternal(Pos, Game)
+        newLandValue += Game.LotObjectMatrix(Pos.y, Pos.x).CalculateLandValueFromInternal(Pos, Game)
+        Return newLandValue
+    End Function
     Public Function CalculateLandValueFromExternal(Pos, ByRef Game)
         Dim tempModifier As Integer
         Dim noOfParliamentPointers As Integer = 0
@@ -53,11 +59,11 @@ Public Class Game
                 If (Pos.y + j) < 0 Or (Pos.y + j) > 24 Or (Pos.x + i) < 0 Or (Pos.x + i) > 34 Then
                     Continue For
                 End If
-                If noOfLargeParkPointers <> 0 And Game.LotObjectMatrix(Pos.y + j, Pos.x + i).LotIs("Nanopolis.LargeParkPointer", Game, Pos.y + j, Pos.x + i) Then
+                If noOfLargeParkPointers <> 0 And LotObjectMatrix(Pos.y + j, Pos.x + i).LotIs("Nanopolis.LargeParkPointer", Game, Pos.y + j, Pos.x + i) Then
                     noOfLargeParkPointers += 1
                     Continue For
                 End If
-                If noOfParliamentPointers <> 0 And Game.LotObjectMatrix(Pos.y + j, Pos.x + i).LotIs("Nanopolis.ParliamentPointer", Game, Pos.y + j, Pos.x + i) Then
+                If noOfParliamentPointers <> 0 And LotObjectMatrix(Pos.y + j, Pos.x + i).LotIs("Nanopolis.ParliamentPointer", Game, Pos.y + j, Pos.x + i) Then
                     noOfParliamentPointers += 1
                     Continue For
                 End If
@@ -65,33 +71,28 @@ Public Class Game
         Next
         Return tempModifier
     End Function
-    Public Function LotIs(Type, Game, Y, X) As Boolean
-        If Game.LotObjectMatrix(Y, X).GetType.ToString = Game.TypeDict(Type.ToString).ToString Then
-            Return True
-        Else
-            Return False
-        End If
-    End Function
-    Protected Sub InitializeTypeDict()
-        TypeDict.Add("Nanopolis.Grass", "grass")
-        TypeDict.Add("Nanopolis.Construction", "construction")
-        TypeDict.Add("Nanopolis.SmallResidential", "smallResidential")
-        TypeDict.Add("Nanopolis.LargeResidential", "largeResidential")
-        TypeDict.Add("Nanopolis.SmallCommercial", "smallCommercial")
-        TypeDict.Add("Nanopolis.LargeCommercial", "largeCommercial")
-        TypeDict.Add("Nanopolis.SmallPark", "smallPark")
-        TypeDict.Add("Nanopolis.LargePark", "largePark")
-        TypeDict.Add("Nanopolis.LargeParkPointer", "largeParkPointer")
-        TypeDict.Add("Nanopolis.SmallRoad", "smallRoad")
-        TypeDict.Add("Nanopolis.LargeRoad", "largeRoad")
-        TypeDict.Add("Nanopolis.Industry", "industry")
-        TypeDict.Add("Nanopolis.Parliament", "parliament")
-        TypeDict.Add("Nanopolis.ParliamentPointer", "parliamentPointer")
-        TypeDict.Add("Nanopolis.PoliceStation", "policeStation")
-        TypeDict.Add("Nanopolis.Water", "water")
-        TypeDict.Add("Nanopolis.Forest", "forest")
-        TypeDict.Add("Nanopolis.WindFarm", "windFarm")
-        TypeDict.Add("Nanopolis.CoalStation", "coalStation")
+    Public Sub InitializeTypeDict(ByRef NewGame)
+        Dim newTypeDict As Dictionary(Of String, String)
+        newTypeDict.Add("Nanopolis.Grass", "grass")
+        newTypeDict.Add("Nanopolis.Construction", "construction")
+        newTypeDict.Add("Nanopolis.SmallResidential", "smallResidential")
+        newTypeDict.Add("Nanopolis.LargeResidential", "largeResidential")
+        newTypeDict.Add("Nanopolis.SmallCommercial", "smallCommercial")
+        newTypeDict.Add("Nanopolis.LargeCommercial", "largeCommercial")
+        newTypeDict.Add("Nanopolis.SmallPark", "smallPark")
+        newTypeDict.Add("Nanopolis.LargePark", "largePark")
+        newTypeDict.Add("Nanopolis.LargeParkPointer", "largeParkPointer")
+        newTypeDict.Add("Nanopolis.SmallRoad", "smallRoad")
+        newTypeDict.Add("Nanopolis.LargeRoad", "largeRoad")
+        newTypeDict.Add("Nanopolis.Industry", "industry")
+        newTypeDict.Add("Nanopolis.Parliament", "parliament")
+        newTypeDict.Add("Nanopolis.ParliamentPointer", "parliamentPointer")
+        newTypeDict.Add("Nanopolis.PoliceStation", "policeStation")
+        newTypeDict.Add("Nanopolis.Water", "water")
+        newTypeDict.Add("Nanopolis.Forest", "forest")
+        newTypeDict.Add("Nanopolis.WindFarm", "windFarm")
+        newTypeDict.Add("Nanopolis.CoalStation", "coalStation")
+        NewGame.TypeDict = newTypeDict
     End Sub
     Sub FinishWeek(ByRef Game, ByRef Map)
         Dim pos As Position
@@ -99,8 +100,7 @@ Public Class Game
         pos.y = 0
         For pos.y = 0 To 24
             For pos.x = 0 To 32
-                Game.LotObjectMatrix(pos.y, pos.x).CalculateLandValue(pos, Game)
-
+                Game.LotObjectMatrix(pos.y, pos.x).LandValue = Game.LotObjectMatrix(pos.y, pos.x).CalculateLandValue(pos, Game)
             Next
         Next
     End Sub
@@ -201,7 +201,6 @@ Public Class Game
             Dim cityGovernment As Government = New Government()
             cityGovernment.EstablishGovernment()
             newGame.CityGovernment = cityGovernment
-            newGame.InitializeTypeDict()
             newGame.PrintMap(pos, map, newGame)
         ElseIf plainMapChoice.Key = ConsoleKey.Y Then
             For i As Integer = 0 To 24
@@ -1411,11 +1410,11 @@ End Class
 Public Class Map
     Public Shared GridCodes(24, 32) As Integer
     Public Shared NextTurnGridCodes(24, 32) As Integer
-    Public Sub MapSelection(ByRef Pos, ByRef Map, ByRef Game)
+    Sub MapSelection(ByRef Pos, ByRef Map, ByRef Game)
         Console.TreatControlCAsInput = True
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
-        Console.WriteLine("Navigate[WASD] | Select[ENTER] | Next Week[N] | Main Menu[ESC]")
+        Console.WriteLine("Navigate[WASD] | Select[ENTER] | Finish Week[N] | Main Menu[ESC]")
         Console.ResetColor()
         Dim lot As Lot = New Lot()
         Dim Selected As Boolean = False
