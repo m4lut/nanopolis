@@ -12,6 +12,7 @@
     Public Abandoned As Boolean
     Public WeeksUntilAbandoned As Boolean
     Public LandValue As Integer = BaseLandValue
+    Public LandValueModifier As Integer
     Function LotIs(Type, Game, Y, X) As Boolean
         If Game.LotObjectMatrix(Y, X).GetType.ToString = Game.TypeDict(Type.ToString).ToString Then
             Return True
@@ -380,19 +381,17 @@
     Public Function CalculateLandValueFromInternal(Pos, ByRef Game)
         Dim tempModifier As Integer = 0
         Dim tji As Integer = 0
-        If Game.LotObjectMatrix(Pos.y, Pos.x).LotIs("Nanopolis.Road", Game, Pos.y, Pos.x) = True Then
+        If Game.LotObjectMatrix(Pos.y, Pos.x).LotIs("Nanopolis.SmallRoad", Game, Pos.y, Pos.x) = True Or Game.LotObjectMatrix(Pos.y, Pos.x).LotIs("Nanopolis.LargeRoad", Game, Pos.y, Pos.x) Then
             Game.LotObjectMatrix(Pos.y, Pos.x).CalculateTJI
             tempModifier += tji
             Return tempModifier
         Else
-            Console.WriteLine("calc and value from int (not road)")
-            Console.ReadLine()
             Return tempModifier
         End If
     End Function
     Sub CalculateLandValue(Pos, ByRef Game)
         Dim modifierFromExt As Integer = Game.CalculateLandValueFromExternal(Pos, Game)
-        Dim modifierFromInt As Integer = CalculateLandValueFromInternal(Pos, Game.LotObjectMatrix)
+        Dim modifierFromInt As Integer = CalculateLandValueFromInternal(Pos, Game)
         Game.LotObjectMatrix(Pos.y, Pos.x).LandValueModifier = modifierFromExt + modifierFromInt
         Game.LotObjectMatrix(Pos.y, Pos.x).InternalLandValueModifier = Game.LotObjectMatrix(Pos.y, Pos.x).LandValueModifier
         Game.LotObjectMatrix(Pos.y, Pos.x).LandValue = BaseLandValue + Game.LotObjectMatrix(Pos.y, Pos.x).LandValueModifier
@@ -407,11 +406,11 @@ Public Class Roads
 End Class
 Public Class SmallRoad
     Inherits Roads
-    Shadows Const Capacity As Integer = 80
+    Shadows Const Capacity As Integer = 60
 End Class
 Public Class LargeRoad
     Inherits Roads
-    Shadows Const Capacity As Integer = 180
+    Shadows Const Capacity As Integer = 140
 End Class
 Public Class Nature
     Inherits Lot

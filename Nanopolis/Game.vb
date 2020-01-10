@@ -3,23 +3,23 @@
     Public y As Integer
 End Structure
 Structure Texture
-        Private _line0 As List(Of String)
-        Private _line1 As List(Of String)
-        Private _line2 As List(Of String)
-        Private _line3 As List(Of String)
-        Public Property Line0 As List(Of String)
-            Get
-                Return _line0
-            End Get
-            Set(value As List(Of String))
-                _line0 = value
-            End Set
-        End Property
-        Public Property Line1 As List(Of String)
-            Get
-                Return _line1
-            End Get
-            Set(value As List(Of String))
+    Private _line0 As List(Of String)
+    Private _line1 As List(Of String)
+    Private _line2 As List(Of String)
+    Private _line3 As List(Of String)
+    Public Property Line0 As List(Of String)
+        Get
+            Return _line0
+        End Get
+        Set(value As List(Of String))
+            _line0 = value
+        End Set
+    End Property
+    Public Property Line1 As List(Of String)
+        Get
+            Return _line1
+        End Get
+        Set(value As List(Of String))
             _line1 = value
         End Set
     End Property
@@ -44,19 +44,13 @@ Public Class Game
     Public CityGovernment As Government
     Public LotObjectMatrix(24, 32) As Lot
     Public Shared TypeDict As Dictionary(Of String, String)
-    Public Function CalculateLandValue(Pos, ByRef Game)
-        Dim newLandValue As Integer = 25
-        newLandValue += Game.CalculateLandValueFromExternal(Pos, Game)
-        newLandValue += Game.LotObjectMatrix(Pos.y, Pos.x).CalculateLandValueFromInternal(Pos, Game)
-        Return newLandValue
-    End Function
     Public Function CalculateLandValueFromExternal(Pos, ByRef Game)
         Dim tempModifier As Integer
         Dim noOfParliamentPointers As Integer = 0
         Dim noOfLargeParkPointers As Integer = 0
         For j As Integer = -2 To 2
             For i As Integer = -2 To 2
-                If (Pos.y + j) < 0 Or (Pos.y + j) > 24 Or (Pos.x + i) < 0 Or (Pos.x + i) > 34 Then
+                If (Pos.y + j) < 0 Or (Pos.y + j) > 24 Or (Pos.x + i) < 0 Or (Pos.x + i) > 34 Or j = 0 Or i = 0 Then
                     Continue For
                 End If
                 If noOfLargeParkPointers <> 0 And LotObjectMatrix(Pos.y + j, Pos.x + i).LotIs("Nanopolis.LargeParkPointer", Game, Pos.y + j, Pos.x + i) Then
@@ -71,8 +65,8 @@ Public Class Game
         Next
         Return tempModifier
     End Function
-    Public Sub InitializeTypeDict(ByRef NewGame)
-        Dim newTypeDict As Dictionary(Of String, String)
+    Public Function InitializeTypeDict(ByRef NewGame)
+        Dim newTypeDict As New Dictionary(Of String, String)
         newTypeDict.Add("Nanopolis.Grass", "grass")
         newTypeDict.Add("Nanopolis.Construction", "construction")
         newTypeDict.Add("Nanopolis.SmallResidential", "smallResidential")
@@ -93,16 +87,19 @@ Public Class Game
         newTypeDict.Add("Nanopolis.WindFarm", "windFarm")
         newTypeDict.Add("Nanopolis.CoalStation", "coalStation")
         NewGame.TypeDict = newTypeDict
-    End Sub
+    End Function
     Sub FinishWeek(ByRef Game, ByRef Map)
         Dim pos As Position
-        pos.x = 0
-        pos.y = 0
+        'calc middle of map
         For pos.y = 0 To 24
             For pos.x = 0 To 32
                 Game.LotObjectMatrix(pos.y, pos.x).LandValue = Game.LotObjectMatrix(pos.y, pos.x).CalculateLandValue(pos, Game)
             Next
         Next
+        'calc top 2 rows of map
+        pos.y = 12
+        pos.x = 16
+        Game.PrintMap(pos, Map, Game)
     End Sub
     Sub LoadTextures()
         Dim grassTexture As Texture
@@ -154,6 +151,7 @@ Public Class Game
         pos.y = 12
         pos.x = 16
         Dim newGame As Game = New Game()
+        newGame.InitializeTypeDict(newGame)
         Dim map As Map = New Map()
         Dim grassProb As Integer
         Dim waterProb As Integer
@@ -224,13 +222,13 @@ Public Class Game
             End If
         End If
     End Sub
-    Public Sub PrintMap(ByRef Pos, ByRef map, ByRef game)
+    Public Sub PrintMap(ByRef Pos, ByRef Map, ByRef Game)
         Console.Clear()
         For y = 0 To 24
             For CurrentLine As Integer = 0 To 3
                 For x = 0 To 32
                     If CurrentLine = 0 Then
-                        Select Case map.GridCodes(y, x)
+                        Select Case Map.GridCodes(y, x)
                             Case -1
                                 Console.BackgroundColor = ConsoleColor.Green
                                 Console.ForegroundColor = ConsoleColor.DarkGreen
@@ -499,7 +497,7 @@ Public Class Game
                                 Console.ResetColor()
                         End Select
                     ElseIf CurrentLine = 1 Then
-                        Select Case map.GridCodes(y, x)
+                        Select Case Map.GridCodes(y, x)
                             Case -1
                                 Console.BackgroundColor = ConsoleColor.Green
                                 Console.ForegroundColor = ConsoleColor.DarkGreen
@@ -803,7 +801,7 @@ Public Class Game
                                 Console.ResetColor()
                         End Select
                     ElseIf CurrentLine = 2 Then
-                        Select Case map.GridCodes(y, x)
+                        Select Case Map.GridCodes(y, x)
                             Case -1
                                 Console.BackgroundColor = ConsoleColor.Green
                                 Console.ForegroundColor = ConsoleColor.DarkGreen
@@ -1099,7 +1097,7 @@ Public Class Game
                                 Console.ResetColor()
                         End Select
                     ElseIf CurrentLine = 3 Then
-                        Select Case map.GridCodes(y, x)
+                        Select Case Map.GridCodes(y, x)
                             Case -1
                                 Console.BackgroundColor = ConsoleColor.Green
                                 Console.ForegroundColor = ConsoleColor.DarkGreen
@@ -1397,11 +1395,11 @@ Public Class Game
         Next
         Console.Write("Y" & Int(Pos.y))
         Console.WriteLine(", X" & Int(Pos.x))
-        Console.WriteLine("Land Value: " & game.LotObjectMatrix(Pos.y, Pos.x).LandValue)
-        Console.WriteLine(game.cityGovernment.GetTreasury)
-        Dim buildingType As Type = game.LotObjectMatrix(Pos.y, Pos.x).GetType
+        Console.WriteLine("Land Value: " & Game.LotObjectMatrix(Pos.y, Pos.x).LandValue)
+        Console.WriteLine(Game.cityGovernment.GetTreasury)
+        Dim buildingType As Type = Game.LotObjectMatrix(Pos.y, Pos.x).GetType
         Console.WriteLine(buildingType)
-        map.MapSelection(Pos, map, game)
+        Map.MapSelection(Pos, Map, Game)
     End Sub
     Protected Overrides Sub Finalize()
         MyBase.Finalize()
