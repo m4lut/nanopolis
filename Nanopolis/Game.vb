@@ -50,7 +50,7 @@ Public Class Game
         Dim noOfLargeParkPointers As Integer = 0
         For j As Integer = -2 To 2
             For i As Integer = -2 To 2
-                If (Pos.y + j) < 0 Or (Pos.y + j) > 24 Or (Pos.x + i) < 0 Or (Pos.x + i) > 34 Or j = 0 Or i = 0 Then
+                If (Pos.y + j) < 0 Or (Pos.y + j) > 24 Or (Pos.x + i) < 0 Or (Pos.x + i) > 32 Or j = 0 Or i = 0 Then
                     Continue For
                 End If
                 If noOfLargeParkPointers <> 0 And LotObjectMatrix(Pos.y + j, Pos.x + i).LotIs("Nanopolis.LargeParkPointer", Game, Pos.y + j, Pos.x + i) Then
@@ -60,6 +60,18 @@ Public Class Game
                 If noOfParliamentPointers <> 0 And LotObjectMatrix(Pos.y + j, Pos.x + i).LotIs("Nanopolis.ParliamentPointer", Game, Pos.y + j, Pos.x + i) Then
                     noOfParliamentPointers += 1
                     Continue For
+                End If
+                If (LotObjectMatrix(Pos.y, Pos.x).LotIs("Nanopolis.SmallResidential", Game, Pos.y, Pos.x) Or LotObjectMatrix(Pos.y, Pos.x).LotIs("Nanopolis.LargeResidential", Game, Pos.y, Pos.x)) And LotObjectMatrix(Pos.y, Pos.x).LotIs("Nanopolis.Industry", Game, Pos.y + j, Pos.x + i) Then
+                    tempModifier -= 15
+                End If
+                If LotObjectMatrix(Pos.y + j, Pos.x + i).LotIs("Nanopolis.SmallPark", Game, Pos.y + j, Pos.x + i) Then
+                    tempModifier += 15
+                End If
+                If LotObjectMatrix(Pos.y + j, Pos.x + i).LotIs("Nanopolis.LargePark", Game, Pos.y + j, Pos.x + i) Then
+                    tempModifier += 35
+                End If
+                If LotObjectMatrix(Pos.y + j, Pos.x + i).LotIs("Nanopolis.Grass", Game, Pos.y + j, Pos.x + i) Then
+                    tempModifier += 5
                 End If
             Next
         Next
@@ -96,7 +108,6 @@ Public Class Game
                 Game.LotObjectMatrix(pos.y, pos.x).LandValue = Game.LotObjectMatrix(pos.y, pos.x).CalculateLandValue(pos, Game)
             Next
         Next
-        'calc top 2 rows of map
         pos.y = 12
         pos.x = 16
         Game.PrintMap(pos, Map, Game)
