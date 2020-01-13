@@ -53,31 +53,57 @@ Public Class Game
                 If (Pos.y + j) < 0 Or (Pos.y + j) > 24 Or (Pos.x + i) < 0 Or (Pos.x + i) > 32 Or j = 0 Or i = 0 Then
                     Continue For
                 End If
-                If noOfLargeParkPointers <> 0 And LotObjectMatrix(Pos.y + j, Pos.x + i).LotIs("Nanopolis.LargeParkPointer", Game, Pos.y + j, Pos.x + i) Then
+                If noOfLargeParkPointers <> 0 And Game.LotObjectMatrix(Pos.y + j, Pos.x + i).LotIs("Nanopolis.LargeParkPointer", Game, Pos.y + j, Pos.x + i) Then
                     noOfLargeParkPointers += 1
                     Continue For
                 End If
-                If noOfParliamentPointers <> 0 And LotObjectMatrix(Pos.y + j, Pos.x + i).LotIs("Nanopolis.ParliamentPointer", Game, Pos.y + j, Pos.x + i) Then
+                If noOfParliamentPointers <> 0 And Game.LotObjectMatrix(Pos.y + j, Pos.x + i).LotIs("Nanopolis.ParliamentPointer", Game, Pos.y + j, Pos.x + i) Then
                     noOfParliamentPointers += 1
                     Continue For
                 End If
-                If (LotObjectMatrix(Pos.y, Pos.x).LotIs("Nanopolis.SmallResidential", Game, Pos.y, Pos.x) Or LotObjectMatrix(Pos.y, Pos.x).LotIs("Nanopolis.LargeResidential", Game, Pos.y, Pos.x)) And LotObjectMatrix(Pos.y, Pos.x).LotIs("Nanopolis.Industry", Game, Pos.y + j, Pos.x + i) Then
+                If (Game.LotObjectMatrix(Pos.y, Pos.x).LotIs("Nanopolis.SmallResidential", Game, Pos.y, Pos.x) Or Game.LotObjectMatrix(Pos.y, Pos.x).LotIs("Nanopolis.LargeResidential", Game, Pos.y, Pos.x)) And Game.LotObjectMatrix(Pos.y, Pos.x).LotIs("Nanopolis.Industry", Game, Pos.y + j, Pos.x + i) Then
                     tempModifier -= 15
                 End If
-                If LotObjectMatrix(Pos.y + j, Pos.x + i).LotIs("Nanopolis.SmallPark", Game, Pos.y + j, Pos.x + i) Then
+                If Game.LotObjectMatrix(Pos.y + j, Pos.x + i).LotIs("Nanopolis.SmallPark", Game, Pos.y + j, Pos.x + i) Then
                     tempModifier += 15
                 End If
-                If LotObjectMatrix(Pos.y + j, Pos.x + i).LotIs("Nanopolis.LargePark", Game, Pos.y + j, Pos.x + i) Then
+                If Game.LotObjectMatrix(Pos.y + j, Pos.x + i).LotIs("Nanopolis.LargePark", Game, Pos.y + j, Pos.x + i) Then
                     tempModifier += 35
                 End If
-                If LotObjectMatrix(Pos.y + j, Pos.x + i).LotIs("Nanopolis.Grass", Game, Pos.y + j, Pos.x + i) Then
+                If Game.LotObjectMatrix(Pos.y + j, Pos.x + i).LotIs("Nanopolis.Grass", Game, Pos.y + j, Pos.x + i) Then
                     tempModifier += 5
+                    Console.WriteLine("True")
+                    Console.ReadLine()
+                End If
+                If Game.LotObjectMatrix(Pos.y + j, Pos.x + i).LotIs("Nanopolis.Water", Game, Pos.y + j, Pos.x + i) Then
+                    tempModifier += 10
+                End If
+                If Game.LotObjectMatrix(Pos.y + j, Pos.x + i).LotIs("Nanopolis.Forest", Game, Pos.y + j, Pos.x + i) Then
+                    tempModifier += 10
+                End If
+                If Game.LotObjectMatrix(Pos.y + j, Pos.x + i).LotIs("Nanopolis.CoalStation", Game, Pos.y + j, Pos.x + i) Then
+                    tempModifier -= 15
+                End If
+                If Game.LotObjectMatrix(Pos.y, Pos.x).LotIs("Nanopolis.SmallCommercial", Game, Pos.y + j, Pos.x + i) And Game.LotObjectMatrix(Pos.y + j, Pos.x + i).LotIs("Nanopolis.Industry", Game, Pos.y + j, Pos.x + i) Then
+                    tempModifier -= 10
+                End If
+                If Game.LotObjectMatrix(Pos.y + j, Pos.x + i).LotIs("Nanopolis.CoalStation", Game, Pos.y + j, Pos.x + i) Then
+                    tempModifier -= 15
+                End If
+                If noOfParliamentPointers = 0 And Game.LotObjectMatrix(Pos.y + j, Pos.x + i).LotIs("Nanopolis.Parliament", Game, Pos.y + j, Pos.x + i) Then
+                    tempModifier += 40
+                End If
+                If Game.LotObjectMatrix(Pos.y, Pos.x).LotIs("Nanopolis.Industry", Game, Pos.y + j, Pos.x + i) And Game.LotObjectMatrix(Pos.y + j, Pos.x + i).LotIs("Nanopolis.SmallCommercial", Game, Pos.y + j, Pos.x + i) Then
+                    tempModifier += 5
+                End If
+                If Game.LotObjectMatrix(Pos.y, Pos.x).LotIs("Nanopolis.Industry", Game, Pos.y + j, Pos.x + i) And Game.LotObjectMatrix(Pos.y + j, Pos.x + i).LotIs("Nanopolis.LargeCommercial", Game, Pos.y + j, Pos.x + i) Then
+                    tempModifier += 10
                 End If
             Next
         Next
         Return tempModifier
     End Function
-    Public Function InitializeTypeDict(ByRef NewGame)
+    Sub InitializeTypeDict(ByRef NewGame)
         Dim newTypeDict As New Dictionary(Of String, String)
         newTypeDict.Add("Nanopolis.Grass", "grass")
         newTypeDict.Add("Nanopolis.Construction", "construction")
@@ -99,10 +125,9 @@ Public Class Game
         newTypeDict.Add("Nanopolis.WindFarm", "windFarm")
         newTypeDict.Add("Nanopolis.CoalStation", "coalStation")
         NewGame.TypeDict = newTypeDict
-    End Function
+    End Sub
     Sub FinishWeek(ByRef Game, ByRef Map)
         Dim pos As Position
-        'calc middle of map
         For pos.y = 0 To 24
             For pos.x = 0 To 32
                 Game.LotObjectMatrix(pos.y, pos.x).LandValue = Game.LotObjectMatrix(pos.y, pos.x).CalculateLandValue(pos, Game)

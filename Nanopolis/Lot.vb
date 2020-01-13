@@ -13,8 +13,14 @@
     Public WeeksUntilAbandoned As Boolean
     Public LandValue As Integer = BaseLandValue
     Public LandValueModifier As Integer
-    Function LotIs(Type, Game, Y, X) As Boolean
-        If Game.LotObjectMatrix(Y, X).GetType.ToString = Game.TypeDict(Type.ToString).ToString Then
+    Public Function LotIs(Type, Game, Y, X) As Boolean
+        Type = Type.ToString
+        Console.WriteLine(Game.LotObjectMatrix(Y, X).GetType.ToString)
+        Console.WriteLine(Game.TypeDict(Type).ToString)
+        Console.ReadLine()
+        If Game.LotObjectMatrix(Y, X).GetType.ToString = Game.TypeDict(Type).ToString Then
+            Console.WriteLine(Game.LotObjectMatrix(Y, X).GetType.ToString)
+            Console.ReadLine()
             Return True
         Else
             Return False
