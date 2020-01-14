@@ -51,7 +51,7 @@
         Next
         Return False
     End Function
-    Sub GenerateWorkOrShoppingPlace(FindingWork, ByRef LotObjectMatrix, ByRef workPlace, ByRef shoppingPlace, pos)
+    Sub GenerateWorkOrShoppingPlace(FindingWork, ByRef LotObjectMatrix, pos)
         Randomize()
         Dim offset As Position
         Dim Right As Boolean
@@ -179,17 +179,17 @@
                 offset.x = RightComponent
                 offset.y = UpComponent
                 If FindingWork Then
-                    workPlace.y = pos.y + offset.y
-                    workPlace.x = pos.x + offset.x
+                    WorkPlace.y = pos.y + offset.y
+                    WorkPlace.x = pos.x + offset.x
                 Else
-                    shoppingPlace.y = pos.y + offset.y
-                    shoppingPlace.x = pos.x + offset.x
+                    ShoppingPlace.y = pos.y + offset.y
+                    ShoppingPlace.x = pos.x + offset.x
                 End If
-                If LotObjectMatrix(workPlace.y, workPlace.x).LotIs("Nanopolis.CommercialLot",,,) And FindingWork Then
+                If LotObjectMatrix(WorkPlace.y, WorkPlace.x).LotIs("Nanopolis.CommercialLot",,,) And FindingWork Then
                     Found = True
-                ElseIf LotObjectMatrix(shoppingPlace.y, shoppingPlace.x).LotIs("Nanopolis.CommercialLot",,,) And FindingWork = False Then
+                ElseIf LotObjectMatrix(ShoppingPlace.y, ShoppingPlace.x).LotIs("Nanopolis.CommercialLot",,,) And FindingWork = False Then
                     Found = True
-                ElseIf LotObjectMatrix(shoppingPlace.y, shoppingPlace.x).LotIs("Nanopolis.Industry",,,) And FindingWork = False Then
+                ElseIf LotObjectMatrix(ShoppingPlace.y, ShoppingPlace.x).LotIs("Nanopolis.Industry",,,) And FindingWork = False Then
                     Found = True
                 End If
             End If
@@ -217,16 +217,27 @@
                     smallResidential.Pos.x = Pos.x
                     game.LotObjectMatrix(Pos.y, Pos.x) = smallResidential
                     game.cityGovernment.Spend(15)
-                    Console.WriteLine(map.GridCodes(Pos.y, Pos.x))
+                    If game.HasWorkBuildings Then
+                        game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(True, game.LotObjectMatrix, Pos)
+                    End If
+                    If game.HasShoppingPlace Then
+                        game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(False, game.LotObjectMatrix, Pos)
+                    End If
                 ElseIf input.Key = ConsoleKey.D2 Then
-                    map.GridCodes(Pos.y, Pos.x) = 2
+                        map.GridCodes(Pos.y, Pos.x) = 2
                     Dim largeResidential As LargeResidential = New LargeResidential()
                     largeResidential.Pos.y = Pos.y
                     largeResidential.Pos.x = Pos.x
                     game.LotObjectMatrix(Pos.y, Pos.x) = largeResidential
+                    If game.HasWorkBuildings Then
+                        game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(True, game.LotObjectMatrix, Pos)
+                    End If
+                    If game.HasWorkBuildings Then
+                        game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(False, game.LotObjectMatrix, Pos)
+                    End If
                     game.cityGovernment.Spend(25)
-                End If
-            Case ConsoleKey.D2
+                    End If
+                    Case ConsoleKey.D2
                 Console.BackgroundColor = ConsoleColor.Gray
                 Console.ForegroundColor = ConsoleColor.Black
                 Console.WriteLine("Low density[1]($20) | High density[2]($30)")
@@ -238,6 +249,8 @@
                     smallCommercial.Pos.y = Pos.y
                     smallCommercial.Pos.x = Pos.x
                     game.LotObjectMatrix(Pos.y, Pos.x) = smallCommercial
+                    game.HasWorkBuildings = True
+                    game.HasShoppingPlace = True
                     game.cityGovernment.Spend(20)
                 ElseIf input.Key = ConsoleKey.D2 Then
                     map.GridCodes(Pos.y, Pos.x) = 5
@@ -245,6 +258,8 @@
                     largeCommercial.Pos.y = Pos.y
                     largeCommercial.Pos.x = Pos.x
                     game.LotObjectMatrix(Pos.y, Pos.x) = largeCommercial
+                    game.HasShoppingPlace = True
+                    game.HasWorkBuildings = True
                     game.cityGovernment.Spend(30)
                 End If
             Case ConsoleKey.D3
@@ -253,6 +268,7 @@
                 industry.Pos.y = Pos.y
                 industry.Pos.x = Pos.x
                 game.LotObjectMatrix(Pos.y, Pos.x) = industry
+                game.HasWorkBuildings = True
                 game.cityGovernment.Spend(30)
             Case ConsoleKey.D4
                 Console.BackgroundColor = ConsoleColor.Gray
@@ -264,7 +280,7 @@
                     Dim smallRoad As SmallRoad = New SmallRoad()
                     game.LotObjectMatrix(Pos.y, Pos.x) = smallRoad
                     map.GridCodes(Pos.y, Pos.x) = 13
-                    'logic for displaying proper road texture
+                    'some of the logic for displaying proper road texture
                     If map.GridCodes(Pos.y + 1, Pos.x) = 13 Then
                         map.GridCodes(Pos.y + 1, Pos.x) = 14
                         map.GridCodes(Pos.y, Pos.x) = 14
@@ -297,11 +313,13 @@
                     game.LotObjectMatrix(Pos.y, Pos.x) = coalStation
                     map.GridCodes(Pos.y, Pos.x) = 41
                     game.cityGovernment.Spend(150)
+                    game.HasWorkBuildings = True
                 ElseIf input.Key = ConsoleKey.D2 Then
                     Dim windFarm As WindFarm = New WindFarm()
                     game.LotObjectMatrix(Pos.y, Pos.x) = windFarm
                     map.GridCodes(Pos.y, Pos.x) = 40
                     game.cityGovernment.Spend(225)
+                    game.HasWorkBuildings = True
                 End If
             Case ConsoleKey.D6
                 Console.WriteLine("Small park[1]($15) | Large park[2]($40)")
@@ -331,6 +349,7 @@
                 Dim policeStation As PoliceStation = New PoliceStation()
                 game.LotObjectMatrix(Pos.y, Pos.x) = policeStation
                 game.cityGovernment.Spend(75)
+                game.HasWorkBuildings = True
             Case ConsoleKey.D8
                 map.GridCodes(Pos.y, Pos.x) = 33
                 map.GridCodes(Pos.y, Pos.x + 1) = 34
@@ -387,7 +406,7 @@
     Public Function CalculateLandValueFromInternal(Pos, ByRef Game)
         Dim tempModifier As Integer = 0
         Dim tji As Integer = 0
-        If Game.LotObjectMatrix(Pos.y, Pos.x).LotIs("Nanopolis.SmallRoad", Game, Pos.y, Pos.x) = True Or Game.LotObjectMatrix(Pos.y, Pos.x).LotIs("Nanopolis.LargeRoad", Game, Pos.y, Pos.x) Then
+        If Game.LotObjectMatrix(Pos.y, Pos.x).GetType.ToString = "Nanopolis.SmallRoad" Or Game.LotObjectMatrix(Pos.y, Pos.x).GetType.ToString = "Nanopolis.LargeRoad" Then
             Game.LotObjectMatrix(Pos.y, Pos.x).CalculateTJI
             tempModifier += tji
             Return tempModifier
@@ -406,6 +425,7 @@ End Class
 Public Class Roads
     Inherits Lot
     Public TrafficJamIndex As Integer
+    Public TimesReferenced As Integer = 0
     Public Function CalculateTJI(ByRef Game, RoadGraph)
         Return TrafficJamIndex
     End Function
