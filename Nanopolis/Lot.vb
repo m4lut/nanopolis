@@ -523,6 +523,53 @@ Public Class ParliamentPointer
 End Class
 Public Class Construction
     Inherits Lot
+    Public NextTurnLot As String
+    Public PointerDirection As String
+    Sub FinishBuilding(ByRef Game, Pos)
+        Dim nextLotType As String = Game.LotObjectMatrix(Pos.y, Pos.x).NextTurnLot.ToString
+        Select Case nextLotType
+            Case "Nanopolis.SmallResidential"
+                Dim smallResidential As SmallResidential = New SmallResidential()
+                Game.LotObjectMatrix(Pos.y, Pos.x) = smallResidential
+            Case "Nanopolis.LargeResidential"
+                Dim largeResidential As LargeResidential = New LargeResidential()
+                Game.LotObjectMatrix(Pos.y, Pos.x) = largeResidential
+            Case "Nanopolis.SmallCommercial"
+                Dim smallCommercial As SmallCommercial = New SmallCommercial()
+                Game.LotObjectMatrix(Pos.y, Pos.x) = smallCommercial
+            Case "Nanopolis.LargeCommercial"
+                Dim largeCommercial As LargeCommercial = New LargeCommercial()
+                Game.LotObjectMatrix(Pos.y, Pos.x) = largeCommercial
+            Case "Nanopolis.Parliament"
+                Dim parliament As Parliament = New Parliament()
+                Game.LotObjectMatrix(Pos.y, Pos.x) = parliament
+                Game.Government.HasParliament = True
+            Case "Nanopolis.ParliamentPointer"
+                If Game.LotObjectMatrix(Pos.y, Pos.x).PointerDirection = "Up" Then
+                    Dim parliamentPointerDown As ParliamentPointer = New ParliamentPointer()
+                    Game.LotObjectMatrix(Pos.y, Pos.x) = parliamentPointerDown
+                ElseIf Game.LotObjectMatrix(Pos.y, Pos.x) Then
+                    Dim parliamentPointerRight As ParliamentPointer = New ParliamentPointer()
+                    Game.LotObjectMatrix(Pos.y, Pos.x) = parliamentPointerRight
+                Else
+                    Dim parliamentPointerDownRight As ParliamentPointer = New ParliamentPointer()
+                    Game.LotObjectMatrix(Pos.y, Pos.x) = parliamentPointerDownRight
+                End If
+                Game.Government.HasParliament = True
+            Case "Nanopolis.Industry"
+                Dim industry As Industry = New Industry()
+                Game.LotObjectMatrix(Pos.y, Pos.x) = industry
+            Case "Nanopolis.WindFarm"
+                Dim windFarm As WindFarm = New WindFarm()
+                Game.LotObjectMatrix(Pos.y, Pos.x) = windFarm
+            Case "Nanopolis.CoalStation"
+                Dim coalStation As CoalStation = New CoalStation()
+                Game.LotObjectMatrix(Pos.y, Pos.x) = coalStation
+            Case "Nanopolis.PoliceStation"
+                Dim policeStation As PoliceStation = New PoliceStation()
+                Game.LotObjectMatrix(Pos.y, Pos.x) = policeStation
+        End Select
+    End Sub
 End Class
 Public Class PoliceStation
     Inherits Lot

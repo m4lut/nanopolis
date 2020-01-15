@@ -131,6 +131,7 @@ Public Class Game
         For pos.y = 0 To 24
             For pos.x = 0 To 32
                 Game.LotObjectMatrix(pos.y, pos.x).LandValue = Game.LotObjectMatrix(pos.y, pos.x).CalculateLandValue(pos, Game)
+
             Next
         Next
         pos.y = 12
