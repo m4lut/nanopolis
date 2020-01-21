@@ -37,7 +37,7 @@
         End If
     End Sub
     Public Overridable Sub AbandonBuilding(ByRef Game, Pos, ByRef Map)
-        Me.Demolish(Pos, Game, Map)
+        Me.Demolish(Pos, Game)
     End Sub
     Function RoadConnectionCheck(Position, ByRef Game)
         For j As Integer = -1 To 1
@@ -51,6 +51,270 @@
         Next
         Return False
     End Function
+
+    Public Sub Build(ByRef Pos, ByRef Game)
+        Randomize()
+        Dim ShopType As Integer = Math.Round((Rnd()) + 3)
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.WriteLine("Residential[1] | Commercial[2] | Industrial[3]($30) | Road[4] | Power[5] | Park[6] | Police[7]($75) | Parliament[8]($20000) | Nature[9]")
+        Console.ResetColor()
+        Dim input As ConsoleKeyInfo = Console.ReadKey(True)
+        Select Case input.Key
+            Case ConsoleKey.D1
+                Console.BackgroundColor = ConsoleColor.Gray
+                Console.ForegroundColor = ConsoleColor.Black
+                Console.WriteLine("Low density[1]($15) | High density[2]($25)")
+                Console.ResetColor()
+                input = Console.ReadKey(True)
+                If input.Key = ConsoleKey.D1 Then
+                    Map.GridCodes(Pos.y, Pos.x) = 0
+                    Dim construction As Construction = New Construction()
+                    construction.Pos.y = Pos.y
+                    construction.Pos.x = Pos.x
+                    construction.NextTurnLot = "Nanopolis.SmallResidential"
+                    Game.LotObjectMatrix(Pos.y, Pos.x) = construction
+                    Game.CityGovernment.Spend(15)
+                ElseIf input.Key = ConsoleKey.D2 Then
+                    Map.GridCodes(Pos.y, Pos.x) = 0
+                    Dim construction As Construction = New Construction()
+                    construction.Pos.y = Pos.y
+                    construction.Pos.x = Pos.x
+                    construction.NextTurnLot = "Nanopolis.LargeResidential"
+                    Game.LotObjectMatrix(Pos.y, Pos.x) = construction
+                    If Game.HasWorkBuildings Then
+                        Game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(True, Game.LotObjectMatrix, Pos)
+                    End If
+                    If Game.HasWorkBuildings Then
+                        Game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(False, Game.LotObjectMatrix, Pos)
+                    End If
+                    Game.CityGovernment.Spend(25)
+                End If
+            Case ConsoleKey.D2
+                Console.BackgroundColor = ConsoleColor.Gray
+                Console.ForegroundColor = ConsoleColor.Black
+                Console.WriteLine("Low density[1]($20) | High density[2]($30)")
+                Console.ResetColor()
+                input = Console.ReadKey(True)
+                If input.Key = ConsoleKey.D1 Then
+                    Map.GridCodes(Pos.y, Pos.x) = ShopType
+                    Dim construction As Construction = New Construction()
+                    construction.Pos.y = Pos.y
+                    construction.Pos.x = Pos.x
+                    construction.NextTurnLot = "Nanopolis.SmallCommercial"
+                    Game.LotObjectMatrix(Pos.y, Pos.x) = construction
+                    Game.HasWorkBuildings = True
+                    Game.HasShoppingPlace = True
+                    Game.CityGovernment.Spend(20)
+                ElseIf input.Key = ConsoleKey.D2 Then
+                    Map.GridCodes(Pos.y, Pos.x) = 5
+                    Dim construction As Construction = New Construction()
+                    construction.Pos.y = Pos.y
+                    construction.Pos.x = Pos.x
+                    construction.NextTurnLot = "Nanopolis.LargeCommercial"
+                    Game.LotObjectMatrix(Pos.y, Pos.x) = construction
+                    Game.HasShoppingPlace = True
+                    Game.HasWorkBuildings = True
+                    Game.CityGovernment.Spend(30)
+                End If
+            Case ConsoleKey.D3
+                Map.GridCodes(Pos.y, Pos.x) = 32
+                Dim industry As Industry = New Industry()
+                industry.Pos.y = Pos.y
+                industry.Pos.x = Pos.x
+                Game.LotObjectMatrix(Pos.y, Pos.x) = industry
+                Game.HasWorkBuildings = True
+                Game.CityGovernment.Spend(30)
+            Case ConsoleKey.D4
+                Console.BackgroundColor = ConsoleColor.Gray
+                Console.ForegroundColor = ConsoleColor.Black
+                Console.WriteLine("Low volume[1]($10) | High volume[2]($20)")
+                Console.ResetColor()
+                input = Console.ReadKey(True)
+                If input.Key = ConsoleKey.D1 Then
+                    Dim smallRoad As SmallRoad = New SmallRoad()
+                    Game.LotObjectMatrix(Pos.y, Pos.x) = smallRoad
+                    Map.GridCodes(Pos.y, Pos.x) = 13
+                    'some of the logic for displaying proper road texture
+                    If Map.GridCodes(Pos.y + 1, Pos.x) = 13 Then
+                        Map.GridCodes(Pos.y + 1, Pos.x) = 14
+                        Map.GridCodes(Pos.y, Pos.x) = 14
+                    ElseIf Map.GridCodes(Pos.y + 1, Pos.x) = 14 Then
+                        Map.GridCodes(Pos.y, Pos.x) = 13
+                    ElseIf Map.GridCodes(Pos.y + 1, Pos.x) = 13 And Map.GridCodes(Pos.y, Pos.x + 1) = 14 Then
+                        Map.GridCodes(Pos.y, Pos.x) = 21
+                    ElseIf Map.GridCodes(Pos.y + 1, Pos.x) = 13 And Map.GridCodes(Pos.y, Pos.x - 1) = 13 Then
+                        Map.GridCodes(Pos.y, Pos.x) = 20
+                    ElseIf Map.GridCodes(Pos.y - 1, Pos.x) = 13 And Map.GridCodes(Pos.y, Pos.x + 1) = 13 Then
+                        Map.GridCodes(Pos.y, Pos.x) = 19
+                    ElseIf Map.GridCodes(Pos.y - 1, Pos.x) = 13 And Map.GridCodes(Pos.y, Pos.x - 1) = 13 Then
+                        Map.GridCodes(Pos.y, Pos.x) = 18
+                    End If
+                    Game.cityGovernment.Spend(10)
+                ElseIf input.Key = ConsoleKey.D2 Then
+                    Map.GridCodes(Pos.y, Pos.x) = 24
+                    Dim largeRoad As LargeRoad = New LargeRoad()
+                    Game.LotObjectMatrix(Pos.y, Pos.x) = largeRoad
+                    Game.CityGovernment.Spend(20)
+                End If
+            Case ConsoleKey.D5
+                Console.BackgroundColor = ConsoleColor.Gray
+                Console.ForegroundColor = ConsoleColor.Black
+                Console.WriteLine("Coal [1]($150) | Wind Farm[2]($225)")
+                Console.ResetColor()
+                input = Console.ReadKey(True)
+                If input.Key = ConsoleKey.D1 Then
+                    Dim coalStation As CoalStation = New CoalStation()
+                    Game.LotObjectMatrix(Pos.y, Pos.x) = coalStation
+                    Map.GridCodes(Pos.y, Pos.x) = 41
+                    Game.CityGovernment.Spend(150)
+                    Game.HasWorkBuildings = True
+                ElseIf input.Key = ConsoleKey.D2 Then
+                    Dim windFarm As WindFarm = New WindFarm()
+                    Game.LotObjectMatrix(Pos.y, Pos.x) = windFarm
+                    Map.GridCodes(Pos.y, Pos.x) = 40
+                    Game.CityGovernment.Spend(225)
+                    Game.HasWorkBuildings = True
+                End If
+            Case ConsoleKey.D6
+                Console.WriteLine("Small park[1]($15) | Large park[2]($40)")
+                input = Console.ReadKey(True)
+                If input.Key = ConsoleKey.D1 Then
+                    Dim smallPark As SmallPark = New SmallPark()
+                    Game.LotObjectMatrix(Pos.y, Pos.x) = smallPark
+                    Map.GridCodes(Pos.y, Pos.x) = 6
+                    Game.CityGovernment.Spend(15)
+                ElseIf input.Key = ConsoleKey.D2 Then
+                    Dim largePark As LargePark = New LargePark()
+                    Dim largeParkRightPointer As LargeParkPointer = New LargeParkPointer()
+                    Dim largeParkDownPointer As LargeParkPointer = New LargeParkPointer()
+                    Dim largeParkLowerRightPointer As LargeParkPointer = New LargeParkPointer()
+                    Game.LotObjectMatrix(Pos.y, Pos.x) = largePark
+                    Game.LotObjectMatrix(Pos.y, Pos.x + 1) = largeParkRightPointer
+                    Game.LotObjectMatrix(Pos.y + 1, Pos.x) = largeParkDownPointer
+                    Game.LotObjectMatrix(Pos.y + 1, Pos.x + 1) = largeParkLowerRightPointer
+                    Map.GridCodes(Pos.y, Pos.x) = 7
+                    Map.GridCodes(Pos.y, Pos.x + 1) = 8
+                    Map.GridCodes(Pos.y + 1, Pos.x) = 9
+                    Map.GridCodes(Pos.y + 1, Pos.x + 1) = 10
+                    Game.CityGovernment.Spend(40)
+                End If
+            Case ConsoleKey.D7
+                Map.GridCodes(Pos.y, Pos.x) = 37
+                Dim policeStation As PoliceStation = New PoliceStation()
+                Game.LotObjectMatrix(Pos.y, Pos.x) = policeStation
+                Game.CityGovernment.Spend(75)
+                Game.HasWorkBuildings = True
+            Case ConsoleKey.D8
+                Map.GridCodes(Pos.y, Pos.x) = 33
+                Map.GridCodes(Pos.y, Pos.x + 1) = 34
+                Map.GridCodes(Pos.y + 1, Pos.x) = 35
+                Map.GridCodes(Pos.y + 1, Pos.x + 1) = 36
+                Game.CityGovernment.EstablishParliament()
+                Dim parliament As Parliament = New Parliament()
+                Dim parliamentPointerRight As Parliament = New Parliament()
+                Dim parliamentPointerDown As ParliamentPointer = New ParliamentPointer()
+                Dim parliamentPointerLowerRight As ParliamentPointer = New ParliamentPointer()
+                Game.LotObjectMatrix(Pos.y, Pos.x) = parliament
+                Game.LotObjectMatrix(Pos.y, Pos.x + 1) = parliamentPointerRight
+                Game.LotObjectMatrix(Pos.y + 1, Pos.x) = parliamentPointerDown
+                Game.LotObjectMatrix(Pos.y + 1, Pos.x + 1) = parliamentPointerLowerRight
+            Case ConsoleKey.D9
+                Console.BackgroundColor = ConsoleColor.Gray
+                Console.ForegroundColor = ConsoleColor.Black
+                Console.WriteLine("Forest[1]($5) | Water[2]($30)")
+                Console.ResetColor()
+                input = Console.ReadKey(True)
+                If input.Key = ConsoleKey.D1 Then
+                    Dim forest As Forest = New Forest()
+                    Map.GridCodes(Pos.y, Pos.x) = 39
+                    Game.LotObjectMatrix(Pos.y, Pos.x) = forest
+                    Game.CityGovernment.Spend(5)
+                ElseIf input.Key = ConsoleKey.D2 Then
+                    Dim water As Water = New Water()
+                    Map.GridCodes(Pos.y, Pos.x) = 38
+                    Game.LotObjectMatrix(Pos.y, Pos.x) = water
+                    Game.CityGovernment.Spend(30)
+                End If
+        End Select
+        Dim pointerPos As Position
+        pointerPos.y = 12
+        pointerPos.x = 16
+        Game.PrintMap(pointerPos, Game.GameMap)
+    End Sub
+    Public Sub Demolish(ByRef Pos, ByRef Game)
+        Map.GridCodes(Pos.y, Pos.x) = -1
+        Dim grass As Grass = New Grass()
+        Game.LotObjectMatrix(Pos.y, Pos.x) = grass
+        Game.PrintMap(Pos, Game.GameMap)
+    End Sub
+    Public Sub CalculateCrimeRate(Position, ByRef Game)
+        Dim tempCrimeRate As Integer = 0
+        For j As Integer = -2 To 2
+            For i As Integer = -2 To 2
+                If Game.LotObjectMatrix(Position.y + j, Position.x + i).LotIs("Nanopolis.PoliceStation",,,) Then
+                    tempCrimeRate -= 50
+                End If
+            Next
+        Next
+    End Sub
+    Public Function CalculateLandValueFromInternal(Pos, ByRef Game)
+        Dim tempModifier As Integer = 0
+        Dim tji As Integer = 0
+        If Game.LotObjectMatrix(Pos.y, Pos.x).GetType.ToString = "Nanopolis.SmallRoad" Or Game.LotObjectMatrix(Pos.y, Pos.x).GetType.ToString = "Nanopolis.LargeRoad" Then
+            Game.LotObjectMatrix(Pos.y, Pos.x).CalculateTJI
+            tempModifier += tji
+            Return tempModifier
+        Else
+            Return tempModifier
+        End If
+    End Function
+    Sub CalculateLandValue(Pos, ByRef Game)
+        Dim modifierFromExt As Integer = Game.CalculateLandValueFromExternal(Pos, Game)
+        Dim modifierFromInt As Integer = CalculateLandValueFromInternal(Pos, Game)
+        Game.LotObjectMatrix(Pos.y, Pos.x).LandValueModifier = modifierFromExt + modifierFromInt
+        Game.LotObjectMatrix(Pos.y, Pos.x).InternalLandValueModifier = Game.LotObjectMatrix(Pos.y, Pos.x).LandValueModifier
+        Game.LotObjectMatrix(Pos.y, Pos.x).LandValue = BaseLandValue + Game.LotObjectMatrix(Pos.y, Pos.x).ExternalLandValueModifier
+    End Sub
+End Class
+Public Class Roads
+    Inherits Lot
+    Public TrafficJamIndex As Integer
+    Public TimesReferenced As Integer = 0
+    Public Function CalculateTJI(ByRef Game, RoadGraph)
+        Return TrafficJamIndex
+    End Function
+End Class
+Public Class SmallRoad
+    Inherits Roads
+    Shadows Const Capacity As Integer = 60
+End Class
+Public Class LargeRoad
+    Inherits Roads
+    Shadows Const Capacity As Integer = 140
+End Class
+Public Class Nature
+    Inherits Lot
+    Public Shadows ExternalLandValueModifier As Integer = 0
+End Class
+Public Class Grass
+    Inherits Nature
+End Class
+Public Class Water
+    Inherits Nature
+    Public Shadows ExternalLandValueModifier As Integer = 10
+End Class
+Public Class Forest
+    Inherits Nature
+    Public Shadows ExternalLandValueModifier As Integer = 5
+End Class
+Public Class ResidentialLot
+    Inherits Lot
+    Public DwellerAmount As Integer
+    Public WorkingClassProportion As Integer
+    Public MiddleClassProportion As Integer
+    Public UpperClassProportion As Integer
+    Public UnemployedProportion As Integer
     Sub GenerateWorkOrShoppingPlace(FindingWork, ByRef LotObjectMatrix, pos)
         Randomize()
         Dim offset As Position
@@ -195,271 +459,6 @@
             End If
         End While
     End Sub
-    Public Sub Build(ByRef Pos, ByRef game, ByRef map)
-        Randomize()
-        Dim ShopType As Integer = Math.Round((Rnd()) + 3)
-        Console.BackgroundColor = ConsoleColor.Gray
-        Console.ForegroundColor = ConsoleColor.Black
-        Console.WriteLine("Residential[1] | Commercial[2] | Industrial[3]($30) | Road[4] | Power[5] | Park[6] | Police[7]($75) | Parliament[8]($20000) | Nature[9]")
-        Console.ResetColor()
-        Dim input As ConsoleKeyInfo = Console.ReadKey(True)
-        Select Case input.Key
-            Case ConsoleKey.D1
-                Console.BackgroundColor = ConsoleColor.Gray
-                Console.ForegroundColor = ConsoleColor.Black
-                Console.WriteLine("Low density[1]($15) | High density[2]($25)")
-                Console.ResetColor()
-                input = Console.ReadKey(True)
-                If input.Key = ConsoleKey.D1 Then
-                    map.GridCodes(Pos.y, Pos.x) = 1
-                    Dim smallResidential As SmallResidential = New SmallResidential()
-                    smallResidential.Pos.y = Pos.y
-                    smallResidential.Pos.x = Pos.x
-                    game.LotObjectMatrix(Pos.y, Pos.x) = smallResidential
-                    game.cityGovernment.Spend(15)
-                    If game.HasWorkBuildings Then
-                        game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(True, game.LotObjectMatrix, Pos)
-                    End If
-                    If game.HasShoppingPlace Then
-                        game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(False, game.LotObjectMatrix, Pos)
-                    End If
-                ElseIf input.Key = ConsoleKey.D2 Then
-                        map.GridCodes(Pos.y, Pos.x) = 2
-                    Dim largeResidential As LargeResidential = New LargeResidential()
-                    largeResidential.Pos.y = Pos.y
-                    largeResidential.Pos.x = Pos.x
-                    game.LotObjectMatrix(Pos.y, Pos.x) = largeResidential
-                    If game.HasWorkBuildings Then
-                        game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(True, game.LotObjectMatrix, Pos)
-                    End If
-                    If game.HasWorkBuildings Then
-                        game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(False, game.LotObjectMatrix, Pos)
-                    End If
-                    game.cityGovernment.Spend(25)
-                    End If
-                    Case ConsoleKey.D2
-                Console.BackgroundColor = ConsoleColor.Gray
-                Console.ForegroundColor = ConsoleColor.Black
-                Console.WriteLine("Low density[1]($20) | High density[2]($30)")
-                Console.ResetColor()
-                input = Console.ReadKey(True)
-                If input.Key = ConsoleKey.D1 Then
-                    map.GridCodes(Pos.y, Pos.x) = ShopType
-                    Dim smallCommercial As SmallCommercial = New SmallCommercial()
-                    smallCommercial.Pos.y = Pos.y
-                    smallCommercial.Pos.x = Pos.x
-                    game.LotObjectMatrix(Pos.y, Pos.x) = smallCommercial
-                    game.HasWorkBuildings = True
-                    game.HasShoppingPlace = True
-                    game.cityGovernment.Spend(20)
-                ElseIf input.Key = ConsoleKey.D2 Then
-                    map.GridCodes(Pos.y, Pos.x) = 5
-                    Dim largeCommercial As LargeCommercial = New LargeCommercial()
-                    largeCommercial.Pos.y = Pos.y
-                    largeCommercial.Pos.x = Pos.x
-                    game.LotObjectMatrix(Pos.y, Pos.x) = largeCommercial
-                    game.HasShoppingPlace = True
-                    game.HasWorkBuildings = True
-                    game.cityGovernment.Spend(30)
-                End If
-            Case ConsoleKey.D3
-                map.GridCodes(Pos.y, Pos.x) = 32
-                Dim industry As Industry = New Industry()
-                industry.Pos.y = Pos.y
-                industry.Pos.x = Pos.x
-                game.LotObjectMatrix(Pos.y, Pos.x) = industry
-                game.HasWorkBuildings = True
-                game.cityGovernment.Spend(30)
-            Case ConsoleKey.D4
-                Console.BackgroundColor = ConsoleColor.Gray
-                Console.ForegroundColor = ConsoleColor.Black
-                Console.WriteLine("Low volume[1]($10) | High volume[2]($20)")
-                Console.ResetColor()
-                input = Console.ReadKey(True)
-                If input.Key = ConsoleKey.D1 Then
-                    Dim smallRoad As SmallRoad = New SmallRoad()
-                    game.LotObjectMatrix(Pos.y, Pos.x) = smallRoad
-                    map.GridCodes(Pos.y, Pos.x) = 13
-                    'some of the logic for displaying proper road texture
-                    If map.GridCodes(Pos.y + 1, Pos.x) = 13 Then
-                        map.GridCodes(Pos.y + 1, Pos.x) = 14
-                        map.GridCodes(Pos.y, Pos.x) = 14
-                    ElseIf map.GridCodes(Pos.y + 1, Pos.x) = 14 Then
-                        map.GridCodes(Pos.y, Pos.x) = 13
-                    ElseIf map.GridCodes(Pos.y + 1, Pos.x) = 13 And map.GridCodes(Pos.y, Pos.x + 1) = 14 Then
-                        map.GridCodes(Pos.y, Pos.x) = 21
-                    ElseIf map.GridCodes(Pos.y + 1, Pos.x) = 13 And map.GridCodes(Pos.y, Pos.x - 1) = 13 Then
-                        map.GridCodes(Pos.y, Pos.x) = 20
-                    ElseIf map.GridCodes(Pos.y - 1, Pos.x) = 13 And map.GridCodes(Pos.y, Pos.x + 1) = 13 Then
-                        map.GridCodes(Pos.y, Pos.x) = 19
-                    ElseIf map.GridCodes(Pos.y - 1, Pos.x) = 13 And map.GridCodes(Pos.y, Pos.x - 1) = 13 Then
-                        map.GridCodes(Pos.y, Pos.x) = 18
-                    End If
-                    game.cityGovernment.Spend(10)
-                ElseIf input.Key = ConsoleKey.D2 Then
-                    map.GridCodes(Pos.y, Pos.x) = 24
-                    Dim largeRoad As LargeRoad = New LargeRoad()
-                    game.LotObjectMatrix(Pos.y, Pos.x) = largeRoad
-                    game.cityGovernment.Spend(20)
-                End If
-            Case ConsoleKey.D5
-                Console.BackgroundColor = ConsoleColor.Gray
-                Console.ForegroundColor = ConsoleColor.Black
-                Console.WriteLine("Coal [1]($150) | Wind Farm[2]($225)")
-                Console.ResetColor()
-                input = Console.ReadKey(True)
-                If input.Key = ConsoleKey.D1 Then
-                    Dim coalStation As CoalStation = New CoalStation()
-                    game.LotObjectMatrix(Pos.y, Pos.x) = coalStation
-                    map.GridCodes(Pos.y, Pos.x) = 41
-                    game.cityGovernment.Spend(150)
-                    game.HasWorkBuildings = True
-                ElseIf input.Key = ConsoleKey.D2 Then
-                    Dim windFarm As WindFarm = New WindFarm()
-                    game.LotObjectMatrix(Pos.y, Pos.x) = windFarm
-                    map.GridCodes(Pos.y, Pos.x) = 40
-                    game.cityGovernment.Spend(225)
-                    game.HasWorkBuildings = True
-                End If
-            Case ConsoleKey.D6
-                Console.WriteLine("Small park[1]($15) | Large park[2]($40)")
-                input = Console.ReadKey(True)
-                If input.Key = ConsoleKey.D1 Then
-                    Dim smallPark As SmallPark = New SmallPark()
-                    game.LotObjectMatrix(Pos.y, Pos.x) = smallPark
-                    map.GridCodes(Pos.y, Pos.x) = 6
-                    game.cityGovernment.Spend(15)
-                ElseIf input.Key = ConsoleKey.D2 Then
-                    Dim largePark As LargePark = New LargePark()
-                    Dim largeParkRightPointer As LargeParkPointer = New LargeParkPointer()
-                    Dim largeParkDownPointer As LargeParkPointer = New LargeParkPointer()
-                    Dim largeParkLowerRightPointer As LargeParkPointer = New LargeParkPointer()
-                    game.LotObjectMatrix(Pos.y, Pos.x) = largePark
-                    game.LotObjectMatrix(Pos.y, Pos.x + 1) = largeParkRightPointer
-                    game.LotObjectMatrix(Pos.y + 1, Pos.x) = largeParkDownPointer
-                    game.LotObjectMatrix(Pos.y + 1, Pos.x + 1) = largeParkLowerRightPointer
-                    map.GridCodes(Pos.y, Pos.x) = 7
-                    map.GridCodes(Pos.y, Pos.x + 1) = 8
-                    map.GridCodes(Pos.y + 1, Pos.x) = 9
-                    map.GridCodes(Pos.y + 1, Pos.x + 1) = 10
-                    game.cityGovernment.Spend(40)
-                End If
-            Case ConsoleKey.D7
-                map.GridCodes(Pos.y, Pos.x) = 37
-                Dim policeStation As PoliceStation = New PoliceStation()
-                game.LotObjectMatrix(Pos.y, Pos.x) = policeStation
-                game.cityGovernment.Spend(75)
-                game.HasWorkBuildings = True
-            Case ConsoleKey.D8
-                map.GridCodes(Pos.y, Pos.x) = 33
-                map.GridCodes(Pos.y, Pos.x + 1) = 34
-                map.GridCodes(Pos.y + 1, Pos.x) = 35
-                map.GridCodes(Pos.y + 1, Pos.x + 1) = 36
-                game.cityGovernment.EstablishParliament()
-                Dim parliament As Parliament = New Parliament()
-                Dim parliamentPointerRight As Parliament = New Parliament()
-                Dim parliamentPointerDown As ParliamentPointer = New ParliamentPointer()
-                Dim parliamentPointerLowerRight As ParliamentPointer = New ParliamentPointer()
-                game.LotObjectMatrix(Pos.y, Pos.x) = parliament
-                game.LotObjectMatrix(Pos.y, Pos.x + 1) = parliamentPointerRight
-                game.LotObjectMatrix(Pos.y + 1, Pos.x) = parliamentPointerDown
-                game.LotObjectMatrix(Pos.y + 1, Pos.x + 1) = parliamentPointerLowerRight
-            Case ConsoleKey.D9
-                Console.BackgroundColor = ConsoleColor.Gray
-                Console.ForegroundColor = ConsoleColor.Black
-                Console.WriteLine("Forest[1]($5) | Water[2]($30)")
-                Console.ResetColor()
-                input = Console.ReadKey(True)
-                If input.Key = ConsoleKey.D1 Then
-                    Dim forest As Forest = New Forest()
-                    map.GridCodes(Pos.y, Pos.x) = 39
-                    game.LotObjectMatrix(Pos.y, Pos.x) = forest
-                    game.cityGovernment.Spend(5)
-                ElseIf input.Key = ConsoleKey.D2 Then
-                    Dim water As Water = New Water()
-                    map.GridCodes(Pos.y, Pos.x) = 38
-                    game.LotObjectMatrix(Pos.y, Pos.x) = water
-                    game.cityGovernment.Spend(30)
-                End If
-        End Select
-        Dim pointerPos As Position
-        pointerPos.y = 12
-        pointerPos.x = 16
-        game.PrintMap(pointerPos, map, game)
-    End Sub
-    Public Sub Demolish(ByRef Pos, ByRef Game, ByRef map)
-        map.GridCodes(Pos.y, Pos.x) = -1
-        Dim grass As Grass = New Grass()
-        Game.LotObjectMatrix(Pos.y, Pos.x) = grass
-        Game.PrintMap(Pos, map, Game)
-    End Sub
-    Public Sub CalculateCrimeRate(Position, ByRef Game)
-        Dim tempCrimeRate As Integer = 0
-        For j As Integer = -2 To 2
-            For i As Integer = -2 To 2
-                If Game.LotObjectMatrix(Position.y + j, Position.x + i).LotIs("Nanopolis.PoliceStation",,,) Then
-                    tempCrimeRate -= 50
-                End If
-            Next
-        Next
-    End Sub
-    Public Function CalculateLandValueFromInternal(Pos, ByRef Game)
-        Dim tempModifier As Integer = 0
-        Dim tji As Integer = 0
-        If Game.LotObjectMatrix(Pos.y, Pos.x).GetType.ToString = "Nanopolis.SmallRoad" Or Game.LotObjectMatrix(Pos.y, Pos.x).GetType.ToString = "Nanopolis.LargeRoad" Then
-            Game.LotObjectMatrix(Pos.y, Pos.x).CalculateTJI
-            tempModifier += tji
-            Return tempModifier
-        Else
-            Return tempModifier
-        End If
-    End Function
-    Sub CalculateLandValue(Pos, ByRef Game)
-        Dim modifierFromExt As Integer = Game.CalculateLandValueFromExternal(Pos, Game)
-        Dim modifierFromInt As Integer = CalculateLandValueFromInternal(Pos, Game)
-        Game.LotObjectMatrix(Pos.y, Pos.x).LandValueModifier = modifierFromExt + modifierFromInt
-        Game.LotObjectMatrix(Pos.y, Pos.x).InternalLandValueModifier = Game.LotObjectMatrix(Pos.y, Pos.x).LandValueModifier
-        Game.LotObjectMatrix(Pos.y, Pos.x).LandValue = BaseLandValue + Game.LotObjectMatrix(Pos.y, Pos.x).ExternalLandValueModifier
-    End Sub
-End Class
-Public Class Roads
-    Inherits Lot
-    Public TrafficJamIndex As Integer
-    Public TimesReferenced As Integer = 0
-    Public Function CalculateTJI(ByRef Game, RoadGraph)
-        Return TrafficJamIndex
-    End Function
-End Class
-Public Class SmallRoad
-    Inherits Roads
-    Shadows Const Capacity As Integer = 60
-End Class
-Public Class LargeRoad
-    Inherits Roads
-    Shadows Const Capacity As Integer = 140
-End Class
-Public Class Nature
-    Inherits Lot
-    Public Shadows ExternalLandValueModifier As Integer = 0
-End Class
-Public Class Grass
-    Inherits Nature
-End Class
-Public Class Water
-    Inherits Nature
-    Public Shadows ExternalLandValueModifier As Integer = 10
-End Class
-Public Class Forest
-    Inherits Nature
-    Public Shadows ExternalLandValueModifier As Integer = 5
-End Class
-Public Class ResidentialLot
-    Inherits Lot
-    Public DwellerAmount As Integer
-    Public WorkingClassProportion As Integer
-    Public MiddleClassProportion As Integer
-    Public UpperClassProportion As Integer
-    Public UnemployedProportion As Integer
 End Class
 Public Class SmallResidential
     Inherits ResidentialLot
@@ -525,15 +524,26 @@ Public Class Construction
     Inherits Lot
     Public NextTurnLot As String
     Public PointerDirection As String
-    Sub FinishBuilding(ByRef Game, Pos)
-        Dim nextLotType As String = Game.LotObjectMatrix(Pos.y, Pos.x).NextTurnLot.ToString
-        Select Case nextLotType
+    Sub FinishBuilding(ByRef Game, Pos, ByRef Map)
+        Select Case Game.LotObjectMatrix(Pos.y, Pos.x).NextTurnLot.ToString
             Case "Nanopolis.SmallResidential"
                 Dim smallResidential As SmallResidential = New SmallResidential()
                 Game.LotObjectMatrix(Pos.y, Pos.x) = smallResidential
+                If Game.HasWorkBuildings Then
+                    Game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(True, Game.LotObjectMatrix, Pos)
+                End If
+                If Game.HasShoppingPlace Then
+                    Game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(False, Game.LotObjectMatrix, Pos)
+                End If
             Case "Nanopolis.LargeResidential"
                 Dim largeResidential As LargeResidential = New LargeResidential()
                 Game.LotObjectMatrix(Pos.y, Pos.x) = largeResidential
+                If Game.HasWorkBuildings Then
+                    Game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(True, Game.LotObjectMatrix, Pos)
+                End If
+                If Game.HasShoppingPlace Then
+                    Game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(False, Game.LotObjectMatrix, Pos)
+                End If
             Case "Nanopolis.SmallCommercial"
                 Dim smallCommercial As SmallCommercial = New SmallCommercial()
                 Game.LotObjectMatrix(Pos.y, Pos.x) = smallCommercial

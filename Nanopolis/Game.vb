@@ -2,7 +2,7 @@
     Public x As Integer
     Public y As Integer
 End Structure
-Structure Texture
+Public Structure Texture
     Private _line0 As List(Of String)
     Private _line1 As List(Of String)
     Private _line2 As List(Of String)
@@ -41,6 +41,7 @@ Structure Texture
     End Property
 End Structure
 Public Class Game
+    Public GameMap As Map
     Public CityGovernment As Government
     Public LotObjectMatrix(24, 32) As Lot
     Public Shared TypeDict As Dictionary(Of String, String)
@@ -131,7 +132,15 @@ Public Class Game
         For pos.y = 0 To 24
             For pos.x = 0 To 32
                 Game.LotObjectMatrix(pos.y, pos.x).LandValue = Game.LotObjectMatrix(pos.y, pos.x).CalculateLandValue(pos, Game)
-
+                If Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.Construction" Then
+                    Console.WriteLine("NextTurnLot= " & Game.LotObjectMatrix(pos.y, pos.x).NextTurnLot)
+                    Game.LotObjectMatrix(pos.y, pos.x).FinishBuilding(Game, pos)
+                End If
+                If Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.SmallResidential" Or Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.LargeResidential" Then
+                    If Game.HasWorkBuildings = True Then
+                        Game.LotObjectMatrix(pos.y, pos.x).GenerateWorkOrShoppingPlace(True, Game.LotObjectMatrix, pos)
+                    End If
+                End If
             Next
         Next
         pos.y = 12
@@ -182,7 +191,7 @@ Public Class Game
         Dim coalStationTexture As Texture
         Dim largeRoadUpDownLeftTexture As Texture
     End Sub
-    Sub NewMap(game, IsStart)
+    Sub NewMap(ByRef Game, IsStart)
         Randomize()
         Dim pos As Position
         pos.y = 12
@@ -229,13 +238,14 @@ Public Class Game
                         Map.GridCodes(i, j) = 39
                         newGame.LotObjectMatrix(i, j) = forest
                     End If
-                    newGame.LotObjectMatrix(i, j).LandValue = game.LotObjectMatrix(i, j).BaseLandValue
+                    newGame.LotObjectMatrix(i, j).LandValue = Game.LotObjectMatrix(i, j).BaseLandValue
                 Next
             Next
             Dim cityGovernment As Government = New Government()
             cityGovernment.EstablishGovernment()
             newGame.CityGovernment = cityGovernment
-            newGame.PrintMap(pos, map, newGame)
+            newGame.GameMap = map
+            newGame.GameMap.PrintMap(pos, newGame.GameMap)
         ElseIf plainMapChoice.Key = ConsoleKey.Y Then
             For i As Integer = 0 To 24
                 For j As Integer = 0 To 32
@@ -247,18 +257,25 @@ Public Class Game
             Dim cityGovernment As Government = New Government()
             cityGovernment.EstablishGovernment()
             newGame.CityGovernment = cityGovernment
-            newGame.PrintMap(pos, map, newGame)
+            newGame.GameMap.PrintMap(pos, newGame.GameMap)
         ElseIf plainMapChoice.Key = ConsoleKey.Escape Then
             StartMenu()
         Else
             If IsStart = False Then
-                game.NewGame(False, game, map)
+                Game.NewGame(False, Game, map)
             Else
-                game.NewGame(True, Nothing, Nothing)
+                Game.NewGame(True, Nothing, Nothing)
             End If
         End If
     End Sub
-    Public Sub PrintMap(ByRef Pos, ByRef Map, ByRef Game)
+    Protected Overrides Sub Finalize()
+        MyBase.Finalize()
+    End Sub
+End Class
+Public Class Map
+    Protected Textures(42) As Texture
+    Public Shared GridCodes(24, 32) As Integer
+    Public Sub PrintMap(ByRef Pos, ByRef Game)
         Console.Clear()
         For y = 0 To 24
             For CurrentLine As Integer = 0 To 3
@@ -1435,60 +1452,50 @@ Public Class Game
         Console.WriteLine(Game.cityGovernment.GetTreasury)
         Dim buildingType As Type = Game.LotObjectMatrix(Pos.y, Pos.x).GetType
         Console.WriteLine(buildingType)
-        Map.MapSelection(Pos, Map, Game)
+        Game.GameMap.MapSelection(Pos, Game)
     End Sub
-    Protected Overrides Sub Finalize()
-        MyBase.Finalize()
-    End Sub
-End Class
-Public Class Map
-    Public Shared GridCodes(24, 32) As Integer
-    Public Shared NextTurnGridCodes(24, 32) As Integer
-    Sub MapSelection(ByRef Pos, ByRef Map, ByRef Game)
+    Public Sub MapSelection(ByRef Pos, ByRef Game)
         Console.TreatControlCAsInput = True
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
-        Console.WriteLine("Navigate[WASD] | Select[ENTER] | Finish Week[N] | Main Menu[ESC]")
+        Console.WriteLine("Navigate[WASD/Arrow Keys] | Select[ENTER] | Finish Week[N] | Main Menu[ESC]")
         Console.ResetColor()
         Dim lot As Lot = New Lot()
         Dim Selected As Boolean = False
-        Dim Key1 As ConsoleModifiers
-        Dim Key2 As ConsoleKey
+        Dim Key1 As ConsoleKey
         Dim Choice As ConsoleKey
         While Selected = False
-            Key2 = Console.ReadKey(True).Key
-            'If Key1 = ConsoleModifiers.Shift Then
-            'If Key1 = ConsoleKey.A Then
-            'Pos.x -= 5
-            'Game.PrintMap(Pos, Map, Game)
-            'ElseIf Key1 = ConsoleKey.D Then
-            'Pos.x += 5
-            'Game.PrintMap(Pos, Map, Game)
-            'ElseIf Key1 = ConsoleKey.S Then
-            'Pos.y += 5
-            'Game.PrintMap(Pos, Map, Game)
-            'ElseIf Key1 = ConsoleKey.W Then
-            'Pos.y -= 5
-            'Game.PrintMap(Pos, Map, Game)
-            'End If
-            If Key2 = ConsoleKey.A Then
+            Key1 = Console.ReadKey(True).Key
+            If Key1 = ConsoleKey.LeftArrow Then
+                Pos.x -= 5
+                Game.PrintMap(Pos, Game)
+            ElseIf Key1 = ConsoleKey.RightArrow Then
+                Pos.x += 5
+                Game.PrintMap(Pos, Game)
+            ElseIf Key1 = ConsoleKey.DownArrow Then
+                Pos.y += 5
+                Game.PrintMap(Pos, Game)
+            ElseIf Key1 = ConsoleKey.UpArrow Then
+                Pos.y -= 5
+                Game.PrintMap(Pos, Game)
+            ElseIf Key1 = ConsoleKey.A Then
                 Pos.x -= 1
-                Game.PrintMap(Pos, Map, Game)
-            ElseIf Key2 = ConsoleKey.D Then
+                Game.PrintMap(Pos, Game)
+            ElseIf Key1 = ConsoleKey.D Then
                 Pos.x += 1
-                Game.PrintMap(Pos, Map, Game)
-            ElseIf Key2 = ConsoleKey.S Then
+                Game.PrintMap(Pos, Game)
+            ElseIf Key1 = ConsoleKey.S Then
                 Pos.y += 1
-                Game.PrintMap(Pos, Map, Game)
-            ElseIf Key2 = ConsoleKey.W Then
+                Game.PrintMap(Pos, Game)
+            ElseIf Key1 = ConsoleKey.W Then
                 Pos.y -= 1
-                Game.PrintMap(Pos, Map, Game)
-            ElseIf Key2 = ConsoleKey.Enter Then
+                Game.PrintMap(Pos, Game)
+            ElseIf Key1 = ConsoleKey.Enter Then
                 Selected = True
-            ElseIf Key2 = ConsoleKey.N Then
-                Game.FinishWeek(Game, Map)
-            ElseIf Key2 = ConsoleKey.Escape Then
-                MainMenu(Game, Map)
+            ElseIf Key1 = ConsoleKey.N Then
+                Game.FinishWeek(Game)
+            ElseIf Key1 = ConsoleKey.Escape Then
+                MainMenu(Game, Game.GameMap)
             End If
         End While
         Console.BackgroundColor = ConsoleColor.Gray
@@ -1497,13 +1504,13 @@ Public Class Map
         Console.ResetColor()
         Choice = Console.ReadKey(True).Key
         If Choice = ConsoleKey.D Then
-            lot.Demolish(Pos, Game, Map)
+            lot.Demolish(Pos, Game)
         ElseIf Choice = ConsoleKey.B Then
-            lot.Build(Pos, Game, Map)
+            lot.Build(Pos, Game)
         ElseIf Choice = ConsoleKey.C Then
-            Map.MapSelection(Pos, Map, Game)
+            Game.GameMap.MapSelection(Pos, Game)
         ElseIf Choice = ConsoleKey.Escape Then
-            MainMenu(Game, Map)
+            MainMenu(Game, Game.GameMap)
         End If
     End Sub
 End Class
