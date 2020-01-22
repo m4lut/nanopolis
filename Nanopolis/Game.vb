@@ -47,6 +47,20 @@ Public Class Game
     Public Shared TypeDict As Dictionary(Of String, String)
     Public HasWorkBuildings As Boolean = False
     Public HasShoppingPlace As Boolean = False
+    Public Sub NewGame(IsStart, CurrentGame, Map)
+        Console.WriteLine("Are you sure? No [ESC] | Yes [ENTER]")
+        Dim Input As ConsoleKeyInfo = Console.ReadKey(True)
+        If Input.Key = ConsoleKey.Enter Then
+            Dim game As Game = New Game()
+            game.NewMap(game, IsStart)
+        Else
+            If IsStart = True Then
+                StartMenu()
+            Else
+                MainMenu(CurrentGame, Map)
+            End If
+        End If
+    End Sub
     Public Function CalculateLandValueFromExternal(Pos, ByRef Game)
         Dim tempModifier As Integer
         Dim noOfParliamentPointers As Integer = 0
@@ -127,14 +141,14 @@ Public Class Game
         newTypeDict.Add("Nanopolis.CoalStation", "coalStation")
         NewGame.TypeDict = newTypeDict
     End Sub
-    Sub FinishWeek(ByRef Game, ByRef Map)
+    Sub FinishWeek(ByRef Game)
         Dim pos As Position
         For pos.y = 0 To 24
             For pos.x = 0 To 32
                 Game.LotObjectMatrix(pos.y, pos.x).LandValue = Game.LotObjectMatrix(pos.y, pos.x).CalculateLandValue(pos, Game)
                 If Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.Construction" Then
-                    Console.WriteLine("NextTurnLot= " & Game.LotObjectMatrix(pos.y, pos.x).NextTurnLot)
-                    Game.LotObjectMatrix(pos.y, pos.x).FinishBuilding(Game, pos)
+                    Console.WriteLine("NextTurnLot = " & Game.LotObjectMatrix(pos.y, pos.x).NextTurnLot)
+                    Game.LotObjectMatrix(pos.y, pos.x).FinishConstruction(Game, pos)
                 End If
                 If Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.SmallResidential" Or Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.LargeResidential" Then
                     If Game.HasWorkBuildings = True Then
@@ -145,7 +159,7 @@ Public Class Game
         Next
         pos.y = 12
         pos.x = 16
-        Game.PrintMap(pos, Map, Game)
+        Game.PrintMap(pos, Game)
     End Sub
     Sub LoadTextures()
         Dim grassTexture As Texture
@@ -198,6 +212,7 @@ Public Class Game
         pos.x = 16
         Dim newGame As Game = New Game()
         Dim map As Map = New Map()
+        newGame.GameMap = map
         Dim grassProb As Integer
         Dim waterProb As Integer
         Dim forestProb As Integer
@@ -227,7 +242,7 @@ Public Class Game
                     GeneratedTile = GeneratedTile * totalProb
                     If GeneratedTile < waterProb Then
                         Dim water As Water = New Water()
-                        Map.GridCodes(i, j) = 38
+                        newGame.GameMap.GridCodes(i, j) = 38
                         newGame.LotObjectMatrix(i, j) = water
                     ElseIf GeneratedTile > waterProb And GeneratedTile <= (grassProb + waterProb) Then
                         Dim grass As Grass = New Grass()
@@ -245,7 +260,7 @@ Public Class Game
             cityGovernment.EstablishGovernment()
             newGame.CityGovernment = cityGovernment
             newGame.GameMap = map
-            newGame.GameMap.PrintMap(pos, newGame.GameMap)
+            newGame.GameMap.PrintMap(pos, newGame)
         ElseIf plainMapChoice.Key = ConsoleKey.Y Then
             For i As Integer = 0 To 24
                 For j As Integer = 0 To 32
@@ -257,14 +272,14 @@ Public Class Game
             Dim cityGovernment As Government = New Government()
             cityGovernment.EstablishGovernment()
             newGame.CityGovernment = cityGovernment
-            newGame.GameMap.PrintMap(pos, newGame.GameMap)
+            newGame.GameMap.PrintMap(pos, newGame)
         ElseIf plainMapChoice.Key = ConsoleKey.Escape Then
             StartMenu()
         Else
             If IsStart = False Then
-                Game.NewGame(False, Game, map)
+                newGame.NewGame(False, Game, map)
             Else
-                Game.NewGame(True, Nothing, Nothing)
+                newGame.NewGame(True, Nothing, Nothing)
             End If
         End If
     End Sub
@@ -274,14 +289,14 @@ Public Class Game
 End Class
 Public Class Map
     Protected Textures(42) As Texture
-    Public Shared GridCodes(24, 32) As Integer
+    Public GridCodes(24, 32) As Integer
     Public Sub PrintMap(ByRef Pos, ByRef Game)
         Console.Clear()
         For y = 0 To 24
             For CurrentLine As Integer = 0 To 3
                 For x = 0 To 32
                     If CurrentLine = 0 Then
-                        Select Case Map.GridCodes(y, x)
+                        Select Case Game.GameMap.GridCodes(y, x)
                             Case -1
                                 Console.BackgroundColor = ConsoleColor.Green
                                 Console.ForegroundColor = ConsoleColor.DarkGreen
@@ -550,7 +565,7 @@ Public Class Map
                                 Console.ResetColor()
                         End Select
                     ElseIf CurrentLine = 1 Then
-                        Select Case Map.GridCodes(y, x)
+                        Select Case Game.GameMap.GridCodes(y, x)
                             Case -1
                                 Console.BackgroundColor = ConsoleColor.Green
                                 Console.ForegroundColor = ConsoleColor.DarkGreen
@@ -854,7 +869,7 @@ Public Class Map
                                 Console.ResetColor()
                         End Select
                     ElseIf CurrentLine = 2 Then
-                        Select Case Map.GridCodes(y, x)
+                        Select Case Game.GameMap.GridCodes(y, x)
                             Case -1
                                 Console.BackgroundColor = ConsoleColor.Green
                                 Console.ForegroundColor = ConsoleColor.DarkGreen
@@ -1150,7 +1165,7 @@ Public Class Map
                                 Console.ResetColor()
                         End Select
                     ElseIf CurrentLine = 3 Then
-                        Select Case Map.GridCodes(y, x)
+                        Select Case Game.GameMap.GridCodes(y, x)
                             Case -1
                                 Console.BackgroundColor = ConsoleColor.Green
                                 Console.ForegroundColor = ConsoleColor.DarkGreen

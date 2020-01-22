@@ -20,7 +20,7 @@ Module Module1
         Console.WriteLine("[6] Quit to desktop")
         Dim MenuCode As ConsoleKeyInfo = Console.ReadKey(True)
         If MenuCode.Key = ConsoleKey.D1 Then
-            NewGame(True, Nothing, Nothing)
+            CreateNewGame(True, Nothing, Nothing)
         ElseIf MenuCode.Key = ConsoleKey.D2 Then
             LoadGame(Nothing, Nothing, True)
         ElseIf MenuCode.Key = ConsoleKey.D3 Then
@@ -51,7 +51,7 @@ Module Module1
         Console.WriteLine("[ESC] Return to game")
         Dim MenuCode As ConsoleKeyInfo = Console.ReadKey(True)
         If MenuCode.Key = ConsoleKey.D1 Then
-            NewGame(False, game, map)
+            CreateNewGame(False, game, map)
         ElseIf MenuCode.Key = ConsoleKey.D2 Then
             LoadGame(game, map, False)
         ElseIf MenuCode.Key = ConsoleKey.D3 Then
@@ -125,19 +125,9 @@ Module Module1
         Console.ReadLine()
         StartMenu()
     End Sub
-    Public Sub NewGame(IsStart, CurrentGame, Map)
-        Console.WriteLine("Are you sure? No [ESC] | Yes [ENTER]")
-        Dim Input As ConsoleKeyInfo = Console.ReadKey(True)
-        If Input.Key = ConsoleKey.Enter Then
-            Dim game As Game = New Game()
-            game.NewMap(game, IsStart)
-        Else
-            If IsStart = True Then
-                StartMenu()
-            Else
-                MainMenu(CurrentGame, Map)
-            End If
-        End If
+    Sub CreateNewGame(IsStart, ByRef Game, ByRef Map)
+        Dim newGame As Game = New Game()
+        newGame.NewGame(IsStart, Game, Map)
     End Sub
     Sub SaveGame(game, map)
         Console.WriteLine("Return[ESC]")
@@ -147,7 +137,7 @@ Module Module1
         Console.WriteLine("Enter the name for this save file:")
         Console.ResetColor()
         filename = Console.ReadLine()
-        filename = filename & ".txt"
+        filename = filename & ".json"
         Try
             Dim FileWriter As New System.IO.StreamWriter(filename)
             FileWriter.WriteLine(map.GridCodes.ToString)
