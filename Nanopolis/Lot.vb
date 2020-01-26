@@ -1,4 +1,6 @@
 ﻿Public Class Lot
+    Public CrimeRate As Integer = 0
+    Const PowerDemand As Integer = 50
     Const BaseWeeksUntilAbandoned As Integer = 5
     Public Const BaseLandValue As Integer = 25
     Const Width As Integer = 1
@@ -248,16 +250,19 @@
         Game.LotObjectMatrix(Pos.y, Pos.x) = grass
         Game.GameMap.PrintMap(Pos, Game.GameMap)
     End Sub
-    Public Sub CalculateCrimeRate(Position, ByRef Game)
+    Public Function CalculateCrimeRate(Pos, ByRef Game)
         Dim tempCrimeRate As Integer = 0
+        Dim crimeRate As Integer = 0
         For j As Integer = -2 To 2
             For i As Integer = -2 To 2
-                If Game.LotObjectMatrix(Position.y + j, Position.x + i).LotIs("Nanopolis.PoliceStation",,,) Then
+                If Game.LotObjectMatrix(Pos.y + j, Pos.x + i).GetType.ToString = "Nanopolis.PoliceStation" Then
                     tempCrimeRate -= 50
                 End If
             Next
         Next
-    End Sub
+        crimeRate += tempCrimeRate
+        Return crimeRate
+    End Function
     Public Function CalculateLandValueFromInternal(Pos, ByRef Game)
         Dim tempModifier As Integer = 0
         Dim tji As Integer = 0
@@ -486,6 +491,7 @@ Public Class SmallCommercial
 End Class
 Public Class LargeCommercial
     Inherits CommercialLot
+    Public Shadows Const PowerDemand As Integer = 90
 End Class
 Public Class Park
     Inherits Lot
@@ -512,8 +518,8 @@ End Class
 Public Class Parliament
     Inherits Lot
     Public Shadows ExternalLandValueModifier As Integer = 50
-    Shadows Const Width As Integer = 2
-    Shadows Const Height As Integer = 2
+    Public Shadows Const Width As Integer = 2
+    Public Shadows Const Height As Integer = 2
 End Class
 Public Class ParliamentPointer
     Inherits Lot
@@ -522,13 +528,15 @@ Public Class ParliamentPointer
 End Class
 Public Class Construction
     Inherits Lot
+    Shadows Const PowerDemand As Integer = 0
     Public NextTurnLot As String
     Public PointerDirection As String
-    Sub FinishConstruction(ByRef Game, Pos, ByRef Map)
+    Sub FinishConstruction(ByRef Game, Pos)
         Select Case Game.LotObjectMatrix(Pos.y, Pos.x).NextTurnLot.ToString
             Case "Nanopolis.SmallResidential"
                 Dim smallResidential As SmallResidential = New SmallResidential()
                 Game.LotObjectMatrix(Pos.y, Pos.x) = smallResidential
+                Game.GameMap.GridCodes(Pos.y, Pos.x) = 1
                 If Game.HasWorkBuildings Then
                     Game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(True, Game.LotObjectMatrix, Pos)
                 End If
@@ -538,6 +546,7 @@ Public Class Construction
             Case "Nanopolis.LargeResidential"
                 Dim largeResidential As LargeResidential = New LargeResidential()
                 Game.LotObjectMatrix(Pos.y, Pos.x) = largeResidential
+                Game.GameMap.GridCodes(Pos.y, Pos.x) = 2
                 If Game.HasWorkBuildings Then
                     Game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(True, Game.LotObjectMatrix, Pos)
                 End If
@@ -547,12 +556,20 @@ Public Class Construction
             Case "Nanopolis.SmallCommercial"
                 Dim smallCommercial As SmallCommercial = New SmallCommercial()
                 Game.LotObjectMatrix(Pos.y, Pos.x) = smallCommercial
+                Game.GameMap.GridCodes(Pos.y, Pos.x) = 3
             Case "Nanopolis.LargeCommercial"
                 Dim largeCommercial As LargeCommercial = New LargeCommercial()
                 Game.LotObjectMatrix(Pos.y, Pos.x) = largeCommercial
+                Game.GameMap.GridCodes(Pos.y, Pos.x) = 4
             Case "Nanopolis.Parliament"
                 Dim parliament As Parliament = New Parliament()
+                Dim parliamentPointerDown As ParliamentPointer = New ParliamentPointer()
+                Dim parliamentPointerRight As ParliamentPointer = New ParliamentPointer()
+                Dim parliamentPointerDownRight As ParliamentPointer = New ParliamentPointer()
                 Game.LotObjectMatrix(Pos.y, Pos.x) = parliament
+                Game.LotObjectMatrix(Pos.y + 1, Pos.x) = parliamentPointerDown
+                Game.LotObjectMatrix(Pos.y, Pos.x) = parliamentPointerRight
+                Game.LotObjectMatrix(Pos.y, Pos.x) = parliamentPointerDownRight
                 Game.Government.HasParliament = True
             Case "Nanopolis.ParliamentPointer"
                 If Game.LotObjectMatrix(Pos.y, Pos.x).PointerDirection = "Up" Then
@@ -583,16 +600,17 @@ Public Class Construction
 End Class
 Public Class PoliceStation
     Inherits Lot
+    Shadows Const PowerDemand As Integer = 75
 End Class
 Public Class PowerPlant
     Inherits Lot
-
+    Shadows Const PowerDemand As Integer = 0
 End Class
 Public Class CoalStation
     Inherits PowerPlant
-    Shadows Const PowerOutputMW As Integer = 1000
+    Shadows Const PowerOutput As Integer = 1000
 End Class
 Public Class WindFarm
     Inherits PowerPlant
-    Shadows Const PowerOutputMW As Integer = 500
+    Shadows Const PowerOutput As Integer = 500
 End Class

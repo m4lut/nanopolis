@@ -41,6 +41,8 @@ Public Structure Texture
     End Property
 End Structure
 Public Class Game
+    Public TotalPowerOutput As Integer
+    Public TotalPowerDemand As Integer
     Public GameMap As Map
     Public CityGovernment As Government
     Public LotObjectMatrix(24, 32) As Lot
@@ -155,11 +157,12 @@ Public Class Game
                         Game.LotObjectMatrix(pos.y, pos.x).GenerateWorkOrShoppingPlace(True, Game.LotObjectMatrix, pos)
                     End If
                 End If
+                Game.LotObjectMatrix(pos.y, pos.x).CrimeRate = Game.LotObjectMatrix(pos.y, pos.x).CalculateCrimeRate(pos, Game)
             Next
         Next
         pos.y = 12
         pos.x = 16
-        Game.PrintMap(pos, Game)
+        Game.GameMap.PrintMap(pos, Game)
     End Sub
     Sub LoadTextures()
         Dim grassTexture As Texture
@@ -246,11 +249,11 @@ Public Class Game
                         newGame.LotObjectMatrix(i, j) = water
                     ElseIf GeneratedTile > waterProb And GeneratedTile <= (grassProb + waterProb) Then
                         Dim grass As Grass = New Grass()
-                        Map.GridCodes(i, j) = -1
+                        map.GridCodes(i, j) = -1
                         newGame.LotObjectMatrix(i, j) = grass
                     ElseIf GeneratedTile > (grassProb + waterProb) Then
                         Dim forest As Forest = New Forest()
-                        Map.GridCodes(i, j) = 39
+                        map.GridCodes(i, j) = 39
                         newGame.LotObjectMatrix(i, j) = forest
                     End If
                     newGame.LotObjectMatrix(i, j).LandValue = Game.LotObjectMatrix(i, j).BaseLandValue
@@ -264,7 +267,7 @@ Public Class Game
         ElseIf plainMapChoice.Key = ConsoleKey.Y Then
             For i As Integer = 0 To 24
                 For j As Integer = 0 To 32
-                    Map.GridCodes(i, j) = -1
+                    map.GridCodes(i, j) = -1
                     Dim grass As Grass = New Grass()
                     newGame.LotObjectMatrix(i, j) = grass
                 Next
@@ -289,7 +292,7 @@ Public Class Game
 End Class
 Public Class Map
     Protected Textures(42) As Texture
-    Public GridCodes(24, 32) As Integer
+    Public GridCodes(24, 32) As String
     Public Sub PrintMap(ByRef Pos, ByRef Game)
         Console.Clear()
         For y = 0 To 24
@@ -1467,6 +1470,7 @@ Public Class Map
         Console.WriteLine(Game.cityGovernment.GetTreasury)
         Dim buildingType As Type = Game.LotObjectMatrix(Pos.y, Pos.x).GetType
         Console.WriteLine(buildingType)
+        Console.WriteLine("Crime rate: " & Game.LotObjectMatrix(Pos.y, Pos.x).CrimeRate & "/1000")
         Game.GameMap.MapSelection(Pos, Game)
     End Sub
     Public Sub MapSelection(ByRef Pos, ByRef Game)
