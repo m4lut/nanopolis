@@ -13,9 +13,9 @@ Module Module1
         Console.ResetColor()
         Console.WriteLine("Please enter one of the keys below:")
         Console.WriteLine("[1] New game")
-        Console.WriteLine("[2] Load a previously saved game")
-        Console.WriteLine("[3] Start a tutorial game")
-        Console.WriteLine("[4] View key bindings")
+        Console.WriteLine("[2] Load a previously saved game (Not yet implemented!)")
+        Console.WriteLine("[3] Start a tutorial game (Not yet implemented!)")
+        Console.WriteLine("[4] View key bindings (Not yet implemented!)")
         Console.WriteLine("[5] Graphics options")
         Console.WriteLine("[6] Quit to desktop")
         Dim MenuCode As ConsoleKeyInfo = Console.ReadKey(True)
@@ -76,6 +76,9 @@ Module Module1
         Console.ForegroundColor = ConsoleColor.Black
         Console.WriteLine("--GRAPHICS OPTIONS--")
         Console.ResetColor()
+        Console.WriteLine("[1] Change map size")
+        Console.WriteLine("[2] Change texture pack")
+        Console.WriteLine("[ESC] Return")
         Dim input As ConsoleKeyInfo = Console.ReadKey(True)
         If input.Key = ConsoleKey.Escape Then
             If isStart = True Then
@@ -83,6 +86,13 @@ Module Module1
             Else
                 MainMenu(game, map)
             End If
+        ElseIf input.Key = ConsoleKey.D1 Then
+            Console.Clear()
+            Console.
+            Console.WriteLine("[1] Low resolution / high scaling")
+            Console.WriteLine("[2] High resolution")
+            Console.WriteLine("[ESC] Return")
+
         End If
     End Sub
     Sub KeyBindMenu(map, isStart, game)

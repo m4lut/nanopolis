@@ -1,0 +1,13 @@
+C:\Users\Maxra\source\repos\nanopolis\Nanopolis\bin\Debug\Nanopolis.exe.config
+C:\Users\Maxra\source\repos\nanopolis\Nanopolis\bin\Debug\Nanopolis.exe
+C:\Users\Maxra\source\repos\nanopolis\Nanopolis\bin\Debug\Nanopolis.pdb
+C:\Users\Maxra\source\repos\nanopolis\Nanopolis\bin\Debug\Nanopolis.xml
+C:\Users\Maxra\source\repos\nanopolis\Nanopolis\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Maxra\source\repos\nanopolis\Nanopolis\bin\Debug\Newtonsoft.Json.xml
+C:\Users\Maxra\source\repos\nanopolis\Nanopolis\obj\Debug\Nanopolis.vbprojAssemblyReference.cache
+C:\Users\Maxra\source\repos\nanopolis\Nanopolis\obj\Debug\Nanopolis.Resources.resources
+C:\Users\Maxra\source\repos\nanopolis\Nanopolis\obj\Debug\Nanopolis.vbproj.GenerateResource.cache
+C:\Users\Maxra\source\repos\nanopolis\Nanopolis\obj\Debug\Nanopolis.vbproj.CopyComplete
+C:\Users\Maxra\source\repos\nanopolis\Nanopolis\obj\Debug\Nanopolis.exe
+C:\Users\Maxra\source\repos\nanopolis\Nanopolis\obj\Debug\Nanopolis.xml
+C:\Users\Maxra\source\repos\nanopolis\Nanopolis\obj\Debug\Nanopolis.pdb
