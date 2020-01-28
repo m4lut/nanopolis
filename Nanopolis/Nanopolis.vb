@@ -78,6 +78,7 @@ Module Module1
         End If
     End Sub
     Sub GraphicsMenu(map, isStart, game)
+        Console.Clear()
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
         Console.WriteLine("--GRAPHICS OPTIONS--")
@@ -157,16 +158,22 @@ Module Module1
         End If
     End Sub
     Sub LoadGame(game, map, isStart)
-        Console.WriteLine("Return[ESC]")
+        Console.Clear()
         Dim PathName As String
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
-        'Console.Write("Input file name:")
+        Console.Write("Input file name, or type [C] and [RETURN] to return to main menu:")
         Console.ResetColor()
-        PathName = Console.ReadLine()
         Try
+            PathName = Console.ReadLine()
             'insert some JSON serealization here
-            Console.ReadLine()
+            If PathName = "C" Then
+                If isStart = True Then
+                    StartMenu()
+                Else
+                    MainMenu(game, map)
+                End If
+            End If
         Catch ex As Exception
             Console.BackgroundColor = ConsoleColor.Red
             Console.ForegroundColor = ConsoleColor.Black
