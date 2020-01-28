@@ -1,12 +1,18 @@
 ﻿Imports System.IO
 Imports Newtonsoft.Json
+Public Structure GameSettings
+    Public Resolution As String
+    Public TextureFile As String
+    Public IsTutorialGame As Boolean
+End Structure
+
 Module Module1
     Sub Main()
         MsgBox("Welcome to Nanopolis!" & vbCrLf & "Developed by Maksim Al-Utaibi" & vbCrLf & "Make sure to maximise the console window when playing.", vbOKOnly)
         Dim map As Map = New Map()
         StartMenu()
     End Sub
-    Sub StartMenu()
+    Sub StartMenu(Optional GameSettings = Nothing)
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
         Console.WriteLine("---MAIN MENU---" & vbCrLf)
@@ -18,9 +24,9 @@ Module Module1
         Console.WriteLine("[4] View key bindings (Not yet implemented!)")
         Console.WriteLine("[5] Graphics options")
         Console.WriteLine("[6] Quit to desktop")
-        Dim MenuCode As ConsoleKeyInfo = Console.ReadKey(True)
+        Dim MenuCode As ConsoleKeyInfo = Console.ReadKey(False)
         If MenuCode.Key = ConsoleKey.D1 Then
-            CreateNewGame(True, Nothing, Nothing)
+            CreateNewGame(True, Nothing, Nothing, GameSettings)
         ElseIf MenuCode.Key = ConsoleKey.D2 Then
             LoadGame(Nothing, Nothing, True)
         ElseIf MenuCode.Key = ConsoleKey.D3 Then
@@ -49,7 +55,7 @@ Module Module1
         Console.WriteLine("[5] Graphics options")
         Console.WriteLine("[6] Quit to desktop")
         Console.WriteLine("[ESC] Return to game")
-        Dim MenuCode As ConsoleKeyInfo = Console.ReadKey(True)
+        Dim MenuCode As ConsoleKeyInfo = Console.ReadKey(False)
         If MenuCode.Key = ConsoleKey.D1 Then
             CreateNewGame(False, game, map)
         ElseIf MenuCode.Key = ConsoleKey.D2 Then
@@ -88,16 +94,59 @@ Module Module1
             End If
         ElseIf input.Key = ConsoleKey.D1 Then
             Console.Clear()
-            Console.
+            Console.BackgroundColor = ConsoleColor.Gray
+            Console.ForegroundColor = ConsoleColor.Black
+            Console.WriteLine("---CHANGE MAP SIZE---")
+            Console.ResetColor()
             Console.WriteLine("[1] Low resolution / high scaling")
             Console.WriteLine("[2] High resolution")
             Console.WriteLine("[ESC] Return")
-
+            Dim input2 As ConsoleKeyInfo = Console.ReadKey(True)
         End If
     End Sub
     Sub KeyBindMenu(map, isStart, game)
         Console.Clear()
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
         Console.WriteLine("--KEY BINDINGS--")
+        Console.ResetColor()
+        Console.WriteLine("Press [ESC] to return" & vbCrLf)
+        Console.WriteLine("Navigation:")
+        Console.WriteLine("[W] Up one block")
+        Console.WriteLine("[A] Left one block")
+        Console.WriteLine("[S] Down one block")
+        Console.WriteLine("[D] Right one block")
+        Console.WriteLine("[UPARROW] Up five blocks")
+        Console.WriteLine("[LEFTARROW] Left five blocks")
+        Console.WriteLine("[DOWNARROW] Down five blocks")
+        Console.WriteLine("[RIGHTARROW] Right five blocks")
+        Console.WriteLine("[ENTER] Select lot" & vbCrLf)
+        Console.WriteLine("Construction:")
+        Console.WriteLine("[B] Enter building submenu (after selecting a lot)")
+        Console.WriteLine("[1-9] Choose building category")
+        Console.WriteLine("[C] Cancel construction, return to navigation" & vbCrLf)
+        Console.WriteLine("Demolition:")
+        Console.WriteLine("[D] Demolish building (after selecting a lot)" & vbCrLf)
+        Console.WriteLine("Time:")
+        Console.WriteLine("[N] Finish week in manual mode")
+        Console.WriteLine("[SPACE] Toggle between auto and manual week mode" & vbCrLf)
+        Console.WriteLine("Managing the government:")
+        Console.WriteLine("[G] Enter the government menu")
+        Console.WriteLine("[C] Cancel")
+        Console.WriteLine("[1] Treasury department")
+        Console.WriteLine("[2] Executive cabinet")
+        Console.WriteLine("[3] The legislature" & vbCrLf)
+        Console.WriteLine("Department of the Treasury:")
+        Console.WriteLine("[1] Adjust tax rates")
+        Console.WriteLine("[2] View balance sheet")
+        Console.WriteLine("Executive Cabinet: ")
+        Console.WriteLine("[1] Sign executive action")
+        Console.WriteLine("[C] Cancel")
+        Console.WriteLine("The Legislature:")
+        Console.WriteLine("[1] Dissolve parliament and trigger a General Election")
+        Console.WriteLine("[2] Propose a bill for Parliament to vote on")
+        Console.WriteLine("[C] Cancel")
+        Console.WriteLine("")
         Dim input As ConsoleKeyInfo = Console.ReadKey(True)
         If input.Key = ConsoleKey.Escape Then
             If isStart = True Then
@@ -135,7 +184,7 @@ Module Module1
         Console.ReadLine()
         StartMenu()
     End Sub
-    Sub CreateNewGame(IsStart, ByRef Game, ByRef Map)
+    Sub CreateNewGame(IsStart, ByRef Game, ByRef Map, Optional GameSettings = Nothing)
         Dim newGame As Game = New Game()
         newGame.NewGame(IsStart, Game, Map)
     End Sub
