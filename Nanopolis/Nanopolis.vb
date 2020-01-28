@@ -12,7 +12,7 @@ Module Module1
         Dim map As Map = New Map()
         StartMenu()
     End Sub
-    Sub StartMenu(Optional GameSettings = Nothing)
+    Sub StartMenu(Optional ByRef GameSettings = Nothing)
         Console.Clear()
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black

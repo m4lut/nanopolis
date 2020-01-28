@@ -1477,7 +1477,7 @@ Public Class Map
         Console.TreatControlCAsInput = True
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
-        Console.WriteLine("Navigate[WASD/Arrow Keys] | Select[ENTER] | Finish Week[N] | Main Menu[ESC]")
+        Console.WriteLine("[WASD/Arrow Keys] Navigate | [RETURN] Select | [N] Finish week | [G] Manage government | [ESC] Main menu")
         Console.ResetColor()
         Dim lot As Lot = New Lot()
         Dim Selected As Boolean = False
@@ -1515,6 +1515,8 @@ Public Class Map
                 Game.FinishWeek(Game)
             ElseIf Key1 = ConsoleKey.Escape Then
                 MainMenu(Game, Game.GameMap)
+            ElseIf Key1 = ConsoleKey.G Then
+                Game.CityGovernment.ShowGovernmentMenu(Game)
             End If
         End While
         Console.BackgroundColor = ConsoleColor.Gray
@@ -1540,6 +1542,7 @@ Public Class Government
     Public ExecutivePower As Integer
     Public HasParliament As Boolean
     Public ApprovalRate As Integer
+    Public LegislativeControl As Integer
     Public SalesTaxRate As Integer
     Public LowerIncomeTax As Integer
     Public MiddleIncomeTax As Integer
@@ -1570,8 +1573,35 @@ Public Class Government
     Sub RemoveParliament()
         HasParliament = False
     End Sub
-    Public Sub ShowPolicyMenu()
+    Public Sub ShowGovernmentMenu(ByRef Game)
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.WriteLine("--THE GOVERNMENT--" & vbCrLf)
+        Console.ResetColor()
+        Console.WriteLine(" [1] The Treasury | [2] Your Cabinet | [3] The Legislature | [C] Return to navigation")
+        Dim key1 As ConsoleKey = Console.ReadKey(True).Key
+        Select Case key1
+            Case ConsoleKey.D1
+                Game.CityGovernment.ShowPolicyMenu(True)
+            Case ConsoleKey.D2
+                Game.CityGovernment.ShowPolicyMenu(False)
+            Case ConsoleKey.D3
 
+        End Select
+    End Sub
+    Sub ShowLegislatureMenu(ByRef Game)
+        Console.WriteLine("  --THE LEGISLATURE--")
+    End Sub
+    Sub ShowTreasuryMenu(ByRef Game)
+        Console.ReadLine()
+    End Sub
+    Sub ShowPolicyMenu(IsExecutive As Boolean, ByRef Game As Game)
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.WriteLine("  Change government policy:")
+        Console.WriteLine("  Executive power: " & Game.CityGovernment.ExecutivePower)
+        Console.WriteLine("  Legislative control: " & Game.CityGovernment.LegislativeControl)
+        Console.ResetColor()
     End Sub
     Sub ShowPolicyAlert()
 
