@@ -13,6 +13,7 @@ Module Module1
         StartMenu()
     End Sub
     Sub StartMenu(Optional GameSettings = Nothing)
+        Console.Clear()
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
         Console.WriteLine("---MAIN MENU---" & vbCrLf)
@@ -21,7 +22,7 @@ Module Module1
         Console.WriteLine("[1] New game")
         Console.WriteLine("[2] Load a previously saved game (Not yet implemented!)")
         Console.WriteLine("[3] Start a tutorial game (Not yet implemented!)")
-        Console.WriteLine("[4] View key bindings (Not yet implemented!)")
+        Console.WriteLine("[4] View key bindings")
         Console.WriteLine("[5] Graphics options")
         Console.WriteLine("[6] Quit to desktop")
         Dim MenuCode As ConsoleKeyInfo = Console.ReadKey(False)
@@ -109,45 +110,45 @@ Module Module1
         Console.Clear()
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
-        Console.WriteLine("--KEY BINDINGS--")
+        Console.WriteLine("--KEY BINDINGS--" & vbCrLf)
         Console.ResetColor()
-        Console.WriteLine("Press [ESC] to return" & vbCrLf)
         Console.WriteLine("Navigation:")
-        Console.WriteLine("[W] Up one block")
-        Console.WriteLine("[A] Left one block")
-        Console.WriteLine("[S] Down one block")
-        Console.WriteLine("[D] Right one block")
-        Console.WriteLine("[UPARROW] Up five blocks")
-        Console.WriteLine("[LEFTARROW] Left five blocks")
-        Console.WriteLine("[DOWNARROW] Down five blocks")
-        Console.WriteLine("[RIGHTARROW] Right five blocks")
-        Console.WriteLine("[ENTER] Select lot" & vbCrLf)
+        Console.WriteLine(" [W] Up one block")
+        Console.WriteLine(" [A] Left one block")
+        Console.WriteLine(" [S] Down one block")
+        Console.WriteLine(" [D] Right one block")
+        Console.WriteLine(" [UPARROW] Up five blocks")
+        Console.WriteLine(" [LEFTARROW] Left five blocks")
+        Console.WriteLine(" [DOWNARROW] Down five blocks")
+        Console.WriteLine(" [RIGHTARROW] Right five blocks")
+        Console.WriteLine(" [ENTER] Select lot" & vbCrLf)
         Console.WriteLine("Construction:")
-        Console.WriteLine("[B] Enter building submenu (after selecting a lot)")
-        Console.WriteLine("[1-9] Choose building category")
-        Console.WriteLine("[C] Cancel construction, return to navigation" & vbCrLf)
+        Console.WriteLine(" [B] Enter building submenu (after selecting a lot)")
+        Console.WriteLine(" [1-9] Choose building category")
+        Console.WriteLine(" [C] Cancel construction, return to navigation" & vbCrLf)
         Console.WriteLine("Demolition:")
-        Console.WriteLine("[D] Demolish building (after selecting a lot)" & vbCrLf)
+        Console.WriteLine(" [D] Demolish building (after selecting a lot)" & vbCrLf)
         Console.WriteLine("Time:")
-        Console.WriteLine("[N] Finish week in manual mode")
-        Console.WriteLine("[SPACE] Toggle between auto and manual week mode" & vbCrLf)
+        Console.WriteLine(" [N] Finish week in manual mode")
+        Console.WriteLine(" [SPACE] Toggle between auto and manual week mode" & vbCrLf)
         Console.WriteLine("Managing the government:")
-        Console.WriteLine("[G] Enter the government menu")
-        Console.WriteLine("[C] Cancel")
-        Console.WriteLine("[1] Treasury department")
-        Console.WriteLine("[2] Executive cabinet")
-        Console.WriteLine("[3] The legislature" & vbCrLf)
-        Console.WriteLine("Department of the Treasury:")
-        Console.WriteLine("[1] Adjust tax rates")
-        Console.WriteLine("[2] View balance sheet")
-        Console.WriteLine("Executive Cabinet: ")
-        Console.WriteLine("[1] Sign executive action")
-        Console.WriteLine("[C] Cancel")
-        Console.WriteLine("The Legislature:")
-        Console.WriteLine("[1] Dissolve parliament and trigger a General Election")
-        Console.WriteLine("[2] Propose a bill for Parliament to vote on")
-        Console.WriteLine("[C] Cancel")
+        Console.WriteLine(" [G] Enter the government menu")
+        Console.WriteLine(" [C] Cancel")
+        Console.WriteLine(" [1] Treasury department")
+        Console.WriteLine(" [2] Executive cabinet")
+        Console.WriteLine(" [3] The legislature" & vbCrLf)
+        Console.WriteLine(" Department of the Treasury:")
+        Console.WriteLine("  [1] Adjust tax rates")
+        Console.WriteLine("  [2] View balance sheet" & vbCrLf)
+        Console.WriteLine(" Executive Cabinet: ")
+        Console.WriteLine("  [1] Sign executive action")
+        Console.WriteLine("  [C] Cancel" & vbCrLf)
+        Console.WriteLine(" The Legislature:")
+        Console.WriteLine("  [1] Dissolve parliament and trigger a General Election")
+        Console.WriteLine("  [2] Propose a bill for Parliament to vote on")
+        Console.WriteLine("  [C] Cancel")
         Console.WriteLine("")
+        Console.WriteLine("Press [ESC] to return")
         Dim input As ConsoleKeyInfo = Console.ReadKey(True)
         If input.Key = ConsoleKey.Escape Then
             If isStart = True Then
@@ -159,15 +160,15 @@ Module Module1
     End Sub
     Sub LoadGame(game, map, isStart)
         Console.Clear()
-        Dim PathName As String
+        Dim PathName As String = Nothing
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
-        Console.Write("Input file name, or type [C] and [RETURN] to return to main menu:")
+        Console.Write("Input file name, or leave empty to return to the main menu:")
         Console.ResetColor()
         Try
             PathName = Console.ReadLine()
             'insert some JSON serealization here
-            If PathName = "C" Then
+            If PathName = Nothing Then
                 If isStart = True Then
                     StartMenu()
                 Else
@@ -209,6 +210,8 @@ Module Module1
             FileWriter.WriteLine(map.GridCodes.ToString)
             FileWriter.Close()
         Catch ex As Exception
+            MainMenu(game, map)
+        Finally
             MainMenu(game, map)
         End Try
         Console.Clear()
