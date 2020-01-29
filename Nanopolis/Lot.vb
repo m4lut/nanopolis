@@ -41,10 +41,10 @@
     Public Overridable Sub AbandonBuilding(ByRef Game, Pos, ByRef Map)
         Me.Demolish(Pos, Game)
     End Sub
-    Function RoadConnectionCheck(Position, ByRef Game)
+    Function RoadConnectionCheck(Pos, ByRef Game)
         For j As Integer = -1 To 1
             For i As Integer = -1 To 1
-                If Game.LotObjectMatrix(Position.y, Position.x).LotIs("Nanopolis.SmallRoad",,,) Or Game.LotObjectMatrix(Position.y, Position.x).LotIs("Nanopolis.LargeRoad",,,) Then
+                If Game.LotObjectMatrix(Pos.y, Pos.x).GetType.ToString = "Nanopolis.SmallRoad" Or Game.LotObjectMatrix(Pos.y, Pos.x).GetType.ToString = "Nanopolis.LargeRoad" Then
                     Return True
                 ElseIf i = 0 And j = 0 Then
                     Continue For
@@ -467,9 +467,11 @@ Public Class ResidentialLot
 End Class
 Public Class SmallResidential
     Inherits ResidentialLot
+    Protected MaxNoOfDwellers As Integer = 25
 End Class
 Public Class LargeResidential
     Inherits ResidentialLot
+    Protected MaxNoOfDwellers As Integer = 100
 End Class
 Public Class CommercialLot
     Inherits Lot

@@ -41,15 +41,28 @@ Public Structure Texture
     End Property
 End Structure
 Public Class Game
+    Const StartingPopulation As Integer = 10
+    Public GameSettings As GameSettings
+    Private DefaultSettings As GameSettings
     Public TotalPowerOutput As Integer
     Public TotalPowerDemand As Integer
     Public GameMap As Map
     Public CityGovernment As Government
-    Public LotObjectMatrix(24, 32) As Lot
+    Public LotObjectMatrix(24, GameSettings.MapWidth - 1) As Lot
     Public Shared TypeDict As Dictionary(Of String, String)
     Public HasWorkBuildings As Boolean = False
     Public HasShoppingPlace As Boolean = False
-    Public Sub NewGame(IsStart, CurrentGame, Map)
+    Protected Sub IntroduceStartingPopulation(ByRef Game)
+        Dim pos As Position
+        For pos.y = 0 To 24
+            For pos.x = 0 To (Game.GameSettings.MapWidth - 1)
+                If Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.SmallResidential" Or Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.LargeResidential" Then
+                    Game.LotObjectMatrix(pos.y, pos.x).DwellerAmount += StartingPopulation
+                End If
+            Next
+        Next
+    End Sub
+    Public Sub NewGame(IsStart As Boolean, CurrentGame As Game, Map As Map, Optional GameSettings As GameSettings = Nothing)
         Console.WriteLine("Are you sure? No [ESC] | Yes [ENTER]")
         Dim Input As ConsoleKeyInfo = Console.ReadKey(True)
         If Input.Key = ConsoleKey.Enter Then
@@ -1582,17 +1595,30 @@ Public Class Government
         Dim key1 As ConsoleKey = Console.ReadKey(True).Key
         Select Case key1
             Case ConsoleKey.D1
-                Game.CityGovernment.ShowPolicyMenu(True)
+                Game.CityGovernment.ShowPolicyMenu(True, Game)
             Case ConsoleKey.D2
-                Game.CityGovernment.ShowPolicyMenu(False)
+                Game.CityGovernment.ShowPolicyMenu(False, Game)
             Case ConsoleKey.D3
-
+                Game.CityGovernment.ShowLegislatureMenu(Game)
         End Select
     End Sub
     Sub ShowLegislatureMenu(ByRef Game)
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
         Console.WriteLine("  --THE LEGISLATURE--")
+        Console.ResetColor()
+        Console.WriteLine("[1] Propose a bill for the legislature to vote on | [2] Dissolve parliament and trigger a General Election | [C] Return to gov't menu")
+        Dim key As ConsoleKey = Console.ReadKey(True).Key
+        If key = ConsoleKey.D1 Then
+            Game.CityGovernment.ShowPolicyMenu(False, Game)
+        End If
     End Sub
     Sub ShowTreasuryMenu(ByRef Game)
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.WriteLine("  --THE TREASURY--")
+        Console.ResetColor()
+        Console.WriteLine("  [1] Adjust tax rates | [2] Adjust interest rate | [3] Issue bonds | [4] View balance sheet | [C] Return to gov't menu")
         Console.ReadLine()
     End Sub
     Sub ShowPolicyMenu(IsExecutive As Boolean, ByRef Game As Game)
@@ -1600,10 +1626,10 @@ Public Class Government
         Console.ForegroundColor = ConsoleColor.Black
         Console.WriteLine("  Change government policy:")
         Console.WriteLine("  Executive power: " & Game.CityGovernment.ExecutivePower)
-        Console.WriteLine("  Legislative control: " & Game.CityGovernment.LegislativeControl)
+        Console.WriteLine("  Legislative control:" & Game.CityGovernment.LegislativeControl)
         Console.ResetColor()
     End Sub
-    Sub ShowPolicyAlert()
+    Sub ShowGovtAlert()
 
     End Sub
 End Class

@@ -1,7 +1,7 @@
 ﻿Imports System.IO
 Imports Newtonsoft.Json
 Public Structure GameSettings
-    Public Resolution As String
+    Public MapWidth As Integer
     Public TextureFile As String
     Public IsTutorialGame As Boolean
 End Structure
@@ -24,8 +24,8 @@ Module Module1
         Console.WriteLine("[3] Start a tutorial game (Not yet implemented!)")
         Console.WriteLine("[4] View key bindings")
         Console.WriteLine("[5] Graphics options")
-        Console.WriteLine("[6] Quit to desktop")
-        Dim MenuCode As ConsoleKeyInfo = Console.ReadKey(False)
+        Console.WriteLine("[ESC] Quit to desktop")
+        Dim MenuCode As ConsoleKeyInfo = Console.ReadKey(True)
         If MenuCode.Key = ConsoleKey.D1 Then
             CreateNewGame(True, Nothing, Nothing, GameSettings)
         ElseIf MenuCode.Key = ConsoleKey.D2 Then
@@ -36,7 +36,7 @@ Module Module1
             KeyBindMenu(Nothing, True, Nothing)
         ElseIf MenuCode.Key = ConsoleKey.D5 Then
             GraphicsMenu(Nothing, True, Nothing)
-        ElseIf MenuCode.Key = ConsoleKey.D6 Then
+        ElseIf MenuCode.Key = ConsoleKey.Escape Then
             Stop
         Else
             StartMenu()
@@ -50,13 +50,13 @@ Module Module1
         Console.ResetColor()
         Console.WriteLine("Please enter one of the following keys:")
         Console.WriteLine("[1] New game (WARNING: Save your game before starting a new game!)")
-        Console.WriteLine("[2] Load a previously saved game")
-        Console.WriteLine("[3] Start a tutorial game")
+        Console.WriteLine("[2] Load a previously saved game (not yet implemented)")
+        Console.WriteLine("[3] Start a tutorial game (not yet implemented!)")
         Console.WriteLine("[4] View key bindings")
         Console.WriteLine("[5] Graphics options")
         Console.WriteLine("[6] Quit to desktop")
         Console.WriteLine("[ESC] Return to game")
-        Dim MenuCode As ConsoleKeyInfo = Console.ReadKey(False)
+        Dim MenuCode As ConsoleKeyInfo = Console.ReadKey(True)
         If MenuCode.Key = ConsoleKey.D1 Then
             CreateNewGame(False, game, map)
         ElseIf MenuCode.Key = ConsoleKey.D2 Then
@@ -139,7 +139,9 @@ Module Module1
         Console.WriteLine(" [3] The legislature" & vbCrLf)
         Console.WriteLine(" Department of the Treasury:")
         Console.WriteLine("  [1] Adjust tax rates")
-        Console.WriteLine("  [2] View balance sheet" & vbCrLf)
+        Console.WriteLine("  [2] Adjust interest rate")
+        Console.WriteLine("  [3] Issue bonds")
+        Console.WriteLine("  [4] View balance sheet" & vbCrLf)
         Console.WriteLine(" Executive Cabinet: ")
         Console.WriteLine("  [1] Sign executive action")
         Console.WriteLine("  [C] Cancel" & vbCrLf)
