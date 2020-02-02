@@ -41,14 +41,14 @@ Public Structure Texture
     End Property
 End Structure
 Public Class Game
-    Const StartingPopulation As Integer = 10
     Public GameSettings As GameSettings
-    Private DefaultSettings As GameSettings
+    Const StartingPopulation As Integer = 10
+    Public Shared DefaultSettings As GameSettings
     Public TotalPowerOutput As Integer
     Public TotalPowerDemand As Integer
     Public GameMap As Map
     Public CityGovernment As Government
-    Public LotObjectMatrix(24, GameSettings.MapWidth - 1) As Lot
+    Public LotObjectMatrix(24, 32) As Lot
     Public Shared TypeDict As Dictionary(Of String, String)
     Public HasWorkBuildings As Boolean = False
     Public HasShoppingPlace As Boolean = False
@@ -62,15 +62,14 @@ Public Class Game
             Next
         Next
     End Sub
-    Public Sub NewGame(IsStart As Boolean, CurrentGame As Game, Map As Map, Optional GameSettings As GameSettings = Nothing)
+    Public Sub NewGame(IsStart As Boolean, CurrentGame As Game, Map As Map, GameSettings As GameSettings, Game As Game)
         Console.WriteLine("Are you sure? No [ESC] | Yes [ENTER]")
         Dim Input As ConsoleKeyInfo = Console.ReadKey(True)
         If Input.Key = ConsoleKey.Enter Then
-            Dim game As Game = New Game()
-            game.NewMap(game, IsStart)
+            Game.NewMap(Game, IsStart)
         Else
             If IsStart = True Then
-                StartMenu()
+                StartMenu(GameSettings)
             Else
                 MainMenu(CurrentGame, Map)
             End If
@@ -170,7 +169,7 @@ Public Class Game
                         Game.LotObjectMatrix(pos.y, pos.x).GenerateWorkOrShoppingPlace(True, Game.LotObjectMatrix, pos)
                     End If
                 End If
-                Game.LotObjectMatrix(pos.y, pos.x).CrimeRate = Game.LotObjectMatrix(pos.y, pos.x).CalculateCrimeRate(pos, Game)
+                Game.LotObjectMatrix(pos.y, pos.x).CrimeRate = Game.LotObjectMatrix(pos.y, pos.x).CrimeRate(pos, Game)
             Next
         Next
         pos.y = 12
@@ -221,14 +220,13 @@ Public Class Game
         Dim coalStationTexture As Texture
         Dim largeRoadUpDownLeftTexture As Texture
     End Sub
-    Sub NewMap(ByRef Game, IsStart)
+    Sub NewMap(ByRef NewGame, IsStart)
         Randomize()
         Dim pos As Position
         pos.y = 12
         pos.x = 16
-        Dim newGame As Game = New Game()
         Dim map As Map = New Map()
-        newGame.GameMap = map
+        NewGame.GameMap = map
         Dim grassProb As Integer
         Dim waterProb As Integer
         Dim forestProb As Integer
@@ -249,7 +247,7 @@ Public Class Game
                 totalProb += forestProb
             Catch ex As Exception
                 Console.WriteLine(ex.Message)
-                StartMenu()
+                StartMenu(GameSettings)
             End Try
             Console.WriteLine("Generating map...")
             For i As Integer = 0 To 24
@@ -258,44 +256,44 @@ Public Class Game
                     GeneratedTile = GeneratedTile * totalProb
                     If GeneratedTile < waterProb Then
                         Dim water As Water = New Water()
-                        newGame.GameMap.GridCodes(i, j) = 38
-                        newGame.LotObjectMatrix(i, j) = water
+                        NewGame.GameMap.GridCodes(i, j) = 38
+                        NewGame.LotObjectMatrix(i, j) = water
                     ElseIf GeneratedTile > waterProb And GeneratedTile <= (grassProb + waterProb) Then
                         Dim grass As Grass = New Grass()
                         map.GridCodes(i, j) = -1
-                        newGame.LotObjectMatrix(i, j) = grass
+                        NewGame.LotObjectMatrix(i, j) = grass
                     ElseIf GeneratedTile > (grassProb + waterProb) Then
                         Dim forest As Forest = New Forest()
                         map.GridCodes(i, j) = 39
-                        newGame.LotObjectMatrix(i, j) = forest
+                        NewGame.LotObjectMatrix(i, j) = forest
                     End If
-                    newGame.LotObjectMatrix(i, j).LandValue = Game.LotObjectMatrix(i, j).BaseLandValue
+                    NewGame.LotObjectMatrix(i, j).LandValue = NewGame.LotObjectMatrix(i, j).BaseLandValue
                 Next
             Next
             Dim cityGovernment As Government = New Government()
             cityGovernment.EstablishGovernment()
-            newGame.CityGovernment = cityGovernment
-            newGame.GameMap = map
-            newGame.GameMap.PrintMap(pos, newGame)
+            NewGame.CityGovernment = cityGovernment
+            NewGame.GameMap = map
+            NewGame.GameMap.PrintMap(pos, NewGame)
         ElseIf plainMapChoice.Key = ConsoleKey.Y Then
             For i As Integer = 0 To 24
                 For j As Integer = 0 To 32
                     map.GridCodes(i, j) = -1
                     Dim grass As Grass = New Grass()
-                    newGame.LotObjectMatrix(i, j) = grass
+                    NewGame.LotObjectMatrix(i, j) = grass
                 Next
             Next
             Dim cityGovernment As Government = New Government()
             cityGovernment.EstablishGovernment()
-            newGame.CityGovernment = cityGovernment
-            newGame.GameMap.PrintMap(pos, newGame)
+            NewGame.CityGovernment = cityGovernment
+            NewGame.GameMap.PrintMap(pos, NewGame)
         ElseIf plainMapChoice.Key = ConsoleKey.Escape Then
-            StartMenu()
+            StartMenu(GameSettings)
         Else
             If IsStart = False Then
-                newGame.NewGame(False, Game, map)
+                NewGame.NewGame(False, NewGame, map, GameSettings, Nothing)
             Else
-                newGame.NewGame(True, Nothing, Nothing)
+                NewGame.NewGame(True, Nothing, Nothing, GameSettings, Nothing)
             End If
         End If
     End Sub
@@ -1500,32 +1498,32 @@ Public Class Map
             Key1 = Console.ReadKey(True).Key
             If Key1 = ConsoleKey.LeftArrow Then
                 Pos.x -= 5
-                Game.PrintMap(Pos, Game)
+                Game.GameMap.PrintMap(Pos, Game)
             ElseIf Key1 = ConsoleKey.RightArrow Then
                 Pos.x += 5
-                Game.PrintMap(Pos, Game)
+                Game.GameMap.PrintMap(Pos, Game)
             ElseIf Key1 = ConsoleKey.DownArrow Then
                 Pos.y += 5
-                Game.PrintMap(Pos, Game)
+                Game.GameMap.PrintMap(Pos, Game)
             ElseIf Key1 = ConsoleKey.UpArrow Then
                 Pos.y -= 5
-                Game.PrintMap(Pos, Game)
+                Game.GameMap.PrintMap(Pos, Game)
             ElseIf Key1 = ConsoleKey.A Then
                 Pos.x -= 1
-                Game.PrintMap(Pos, Game)
+                Game.GameMap.PrintMap(Pos, Game)
             ElseIf Key1 = ConsoleKey.D Then
                 Pos.x += 1
-                Game.PrintMap(Pos, Game)
+                Game.GameMap.PrintMap(Pos, Game)
             ElseIf Key1 = ConsoleKey.S Then
                 Pos.y += 1
-                Game.PrintMap(Pos, Game)
+                Game.GameMap.PrintMap(Pos, Game)
             ElseIf Key1 = ConsoleKey.W Then
                 Pos.y -= 1
-                Game.PrintMap(Pos, Game)
+                Game.GameMap.PrintMap(Pos, Game)
             ElseIf Key1 = ConsoleKey.Enter Then
                 Selected = True
             ElseIf Key1 = ConsoleKey.N Then
-                Game.FinishWeek(Game)
+                Game.GameMap.FinishWeek(Game)
             ElseIf Key1 = ConsoleKey.Escape Then
                 MainMenu(Game, Game.GameMap)
             ElseIf Key1 = ConsoleKey.G Then

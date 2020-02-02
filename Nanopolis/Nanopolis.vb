@@ -1,18 +1,24 @@
 ﻿Imports System.IO
 Imports Newtonsoft.Json
 Public Structure GameSettings
+    Const DefaultMapWidth = 32
+    Const DefaultTextureFile = "textures.json"
+    Const DefaultIsTutorialGame = False
     Public MapWidth As Integer
     Public TextureFile As String
     Public IsTutorialGame As Boolean
 End Structure
-
 Module Module1
     Sub Main()
         MsgBox("Welcome to Nanopolis!" & vbCrLf & "Developed by Maksim Al-Utaibi" & vbCrLf & "Make sure to maximise the console window when playing.", vbOKOnly)
         Dim map As Map = New Map()
-        StartMenu()
+        Dim gameSettings As GameSettings = New GameSettings()
+        gameSettings.TextureFile = GameSettings.DefaultTextureFile
+        gameSettings.MapWidth = GameSettings.DefaultMapWidth
+        gameSettings.IsTutorialGame = GameSettings.DefaultIsTutorialGame
+        StartMenu(gameSettings)
     End Sub
-    Sub StartMenu(Optional ByRef GameSettings = Nothing)
+    Sub StartMenu(ByRef GameSettings)
         Console.Clear()
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
@@ -29,20 +35,24 @@ Module Module1
         If MenuCode.Key = ConsoleKey.D1 Then
             CreateNewGame(True, Nothing, Nothing, GameSettings)
         ElseIf MenuCode.Key = ConsoleKey.D2 Then
-            LoadGame(Nothing, Nothing, True)
+            LoadGame(Nothing, Nothing, True, GameSettings)
         ElseIf MenuCode.Key = ConsoleKey.D3 Then
-            Tutorial()
+            Tutorial(GameSettings)
         ElseIf MenuCode.Key = ConsoleKey.D4 Then
-            KeyBindMenu(Nothing, True, Nothing)
+            KeyBindMenu(Nothing, True, Nothing, GameSettings)
         ElseIf MenuCode.Key = ConsoleKey.D5 Then
-            GraphicsMenu(Nothing, True, Nothing)
+            GraphicsMenu(Nothing, True, Nothing, GameSettings)
         ElseIf MenuCode.Key = ConsoleKey.Escape Then
             Stop
         Else
-            StartMenu()
+            StartMenu(GameSettings)
         End If
     End Sub
-    Sub MainMenu(game, map)
+    Sub MainMenu(ByRef game, ByRef map)
+        Dim GameSettings As GameSettings
+        GameSettings.IsTutorialGame = game.IsTutorialGame
+        GameSettings.MapWidth = game.MapWidth
+        GameSettings.TextureFile = game.TextureFile
         Console.Clear()
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
@@ -58,15 +68,15 @@ Module Module1
         Console.WriteLine("[ESC] Return to game")
         Dim MenuCode As ConsoleKeyInfo = Console.ReadKey(True)
         If MenuCode.Key = ConsoleKey.D1 Then
-            CreateNewGame(False, game, map)
+            CreateNewGame(False, game, map, GameSettings)
         ElseIf MenuCode.Key = ConsoleKey.D2 Then
-            LoadGame(game, map, False)
+            LoadGame(game, map, False, GameSettings)
         ElseIf MenuCode.Key = ConsoleKey.D3 Then
-            Tutorial()
+            Tutorial(GameSettings)
         ElseIf MenuCode.Key = ConsoleKey.D4 Then
-            KeyBindMenu(map, False, game)
+            KeyBindMenu(map, False, game, GameSettings)
         ElseIf MenuCode.Key = ConsoleKey.D5 Then
-            GraphicsMenu(map, False, game)
+            GraphicsMenu(map, False, game, GameSettings)
         ElseIf MenuCode.Key = ConsoleKey.D6 Then
             Stop
         ElseIf MenuCode.Key = ConsoleKey.Escape Then
@@ -78,7 +88,7 @@ Module Module1
             MainMenu(game, map)
         End If
     End Sub
-    Sub GraphicsMenu(map, isStart, game)
+    Sub GraphicsMenu(ByRef map, isStart, ByRef game, ByRef GameSettings)
         Console.Clear()
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
@@ -90,7 +100,7 @@ Module Module1
         Dim input As ConsoleKeyInfo = Console.ReadKey(True)
         If input.Key = ConsoleKey.Escape Then
             If isStart = True Then
-                StartMenu()
+                StartMenu(game.GameSettings)
             Else
                 MainMenu(game, map)
             End If
@@ -106,7 +116,7 @@ Module Module1
             Dim input2 As ConsoleKeyInfo = Console.ReadKey(True)
         End If
     End Sub
-    Sub KeyBindMenu(map, isStart, game)
+    Sub KeyBindMenu(map, isStart, game, GameSettings)
         Console.Clear()
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
@@ -154,13 +164,13 @@ Module Module1
         Dim input As ConsoleKeyInfo = Console.ReadKey(True)
         If input.Key = ConsoleKey.Escape Then
             If isStart = True Then
-                StartMenu()
+                StartMenu(GameSettings)
             Else
                 MainMenu(map, game)
             End If
         End If
     End Sub
-    Sub LoadGame(game, map, isStart)
+    Sub LoadGame(ByRef game, map, isStart, GameSettings)
         Console.Clear()
         Dim PathName As String = Nothing
         Console.BackgroundColor = ConsoleColor.Gray
@@ -172,7 +182,7 @@ Module Module1
             'insert some JSON serealization here
             If PathName = Nothing Then
                 If isStart = True Then
-                    StartMenu()
+                    StartMenu(GameSettings)
                 Else
                     MainMenu(game, map)
                 End If
@@ -184,19 +194,24 @@ Module Module1
             Console.WriteLine(ex.Message)
             Console.ResetColor()
             If isStart = True Then
-                StartMenu()
+                StartMenu(GameSettings)
             Else
                 MainMenu(game, map)
             End If
         End Try
     End Sub
-    Sub Tutorial()
+    Sub Tutorial(ByRef GameSettings)
         Console.ReadLine()
-        StartMenu()
+        StartMenu(GameSettings)
     End Sub
-    Sub CreateNewGame(IsStart, ByRef Game, ByRef Map, Optional GameSettings = Nothing)
+    Sub CreateNewGame(IsStart, ByRef CurrentGame, ByRef Map, GameSettings)
         Dim newGame As Game = New Game()
-        newGame.NewGame(IsStart, Game, Map)
+        newGame.GameSettings.IsTutorialGame = GameSettings.IsTutorialGame
+        newGame.GameSettings.MapWidth = GameSettings.MapWidth
+        newGame.GameSettings.TextureFile = GameSettings.TextureFile
+        Dim newLotObjectMatrix(24, GameSettings.MapWidth) As Lot
+        newGame.LotObjectMatrix = newLotObjectMatrix
+        newGame.NewGame(IsStart, CurrentGame, Map, GameSettings, newGame)
     End Sub
     Sub SaveGame(game, map)
         Console.WriteLine("Return[ESC]")

@@ -2,33 +2,17 @@
     Public CrimeRate As Integer = 0
     Const PowerDemand As Integer = 50
     Const BaseWeeksUntilAbandoned As Integer = 5
-    Public Const BaseLandValue As Integer = 25
-    Const Width As Integer = 1
-    Const Height As Integer = 1
-    Public Pos As Position
+    Const BaseLandValue As Integer = 25
     Public InternalLandValueModifier As Integer
     Public Shadows ExternalLandValueModifier As Integer = 0
     Public WorkPlace As Position
     Public ShoppingPlace As Position
     Public ConnectedToRoad As Boolean
     Public Abandoned As Boolean
-    Public WeeksUntilAbandoned As Boolean
+    Public WeeksUntilAbandoned As Integer
     Public LandValue As Integer = BaseLandValue
     Public LandValueModifier As Integer
-    Public Function LotIs(Type, Game, Y, X) As Boolean
-        Type = Type.ToString
-        Console.WriteLine(Game.LotObjectMatrix(Y, X).GetType.ToString)
-        Console.WriteLine(Game.TypeDict(Type).ToString)
-        Console.ReadLine()
-        If Game.LotObjectMatrix(Y, X).GetType.ToString = Game.TypeDict(Type).ToString Then
-            Console.WriteLine(Game.LotObjectMatrix(Y, X).GetType.ToString)
-            Console.ReadLine()
-            Return True
-        Else
-            Return False
-        End If
-    End Function
-    Public Sub SetAbandonedWeeks(ByRef Game, Pos, ByRef Map)
+    Private Sub SetAbandonedWeeks(ByRef Game, Pos, ByRef Map)
         If (BaseLandValue - InternalLandValueModifier) >= 0 Then
             WeeksUntilAbandoned = BaseWeeksUntilAbandoned
         Else
@@ -38,7 +22,7 @@
             AbandonBuilding(Game, Pos, Map)
         End If
     End Sub
-    Public Overridable Sub AbandonBuilding(ByRef Game, Pos, ByRef Map)
+    Sub AbandonBuilding(ByRef Game, Pos, ByRef Map)
         Me.Demolish(Pos, Game)
     End Sub
     Function RoadConnectionCheck(Pos, ByRef Game)
@@ -53,7 +37,6 @@
         Next
         Return False
     End Function
-
     Public Sub Build(ByRef Pos, ByRef Game)
         Randomize()
         Dim ShopType As Integer = Math.Round((Rnd()) + 3)
@@ -72,16 +55,12 @@
                 If input.Key = ConsoleKey.D1 Then
                     Game.GameMap.GridCodes(Pos.y, Pos.x) = 0
                     Dim construction As Construction = New Construction()
-                    construction.Pos.y = Pos.y
-                    construction.Pos.x = Pos.x
                     construction.NextTurnLot = "Nanopolis.SmallResidential"
                     Game.LotObjectMatrix(Pos.y, Pos.x) = construction
                     Game.CityGovernment.Spend(15)
                 ElseIf input.Key = ConsoleKey.D2 Then
                     Game.GameMap.GridCodes(Pos.y, Pos.x) = 0
                     Dim construction As Construction = New Construction()
-                    construction.Pos.y = Pos.y
-                    construction.Pos.x = Pos.x
                     construction.NextTurnLot = "Nanopolis.LargeResidential"
                     Game.LotObjectMatrix(Pos.y, Pos.x) = construction
                     If Game.HasWorkBuildings Then
@@ -101,8 +80,6 @@
                 If input.Key = ConsoleKey.D1 Then
                     Game.GameMap.GridCodes(Pos.y, Pos.x) = ShopType
                     Dim construction As Construction = New Construction()
-                    construction.Pos.y = Pos.y
-                    construction.Pos.x = Pos.x
                     construction.NextTurnLot = "Nanopolis.SmallCommercial"
                     Game.LotObjectMatrix(Pos.y, Pos.x) = construction
                     Game.HasWorkBuildings = True
@@ -111,8 +88,6 @@
                 ElseIf input.Key = ConsoleKey.D2 Then
                     Game.GameMap.GridCodes(Pos.y, Pos.x) = 5
                     Dim construction As Construction = New Construction()
-                    construction.Pos.y = Pos.y
-                    construction.Pos.x = Pos.x
                     construction.NextTurnLot = "Nanopolis.LargeCommercial"
                     Game.LotObjectMatrix(Pos.y, Pos.x) = construction
                     Game.HasShoppingPlace = True
@@ -122,8 +97,6 @@
             Case ConsoleKey.D3
                 Game.GameMap.GridCodes(Pos.y, Pos.x) = 32
                 Dim industry As Industry = New Industry()
-                industry.Pos.y = Pos.y
-                industry.Pos.x = Pos.x
                 Game.LotObjectMatrix(Pos.y, Pos.x) = industry
                 Game.HasWorkBuildings = True
                 Game.CityGovernment.Spend(30)
@@ -253,8 +226,8 @@
     Public Function CalculateCrimeRate(Pos, ByRef Game)
         Dim tempCrimeRate As Integer = 0
         Dim crimeRate As Integer = 0
-        For j As Integer = -2 To 2
-            For i As Integer = -2 To 2
+        For j As Integer = -3 To 3
+            For i As Integer = -3 To 3
                 If Game.LotObjectMatrix(Pos.y + j, Pos.x + i).GetType.ToString = "Nanopolis.PoliceStation" Then
                     tempCrimeRate -= 50
                 End If
@@ -263,7 +236,7 @@
         crimeRate += tempCrimeRate
         Return crimeRate
     End Function
-    Public Function CalculateLandValueFromInternal(Pos, ByRef Game)
+    Private Function CalculateLandValueFromInternal(Pos, ByRef Game)
         Dim tempModifier As Integer = 0
         Dim tji As Integer = 0
         If Game.LotObjectMatrix(Pos.y, Pos.x).GetType.ToString = "Nanopolis.SmallRoad" Or Game.LotObjectMatrix(Pos.y, Pos.x).GetType.ToString = "Nanopolis.LargeRoad" Then
