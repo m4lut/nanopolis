@@ -221,11 +221,18 @@ Public Class Game
         Dim largeRoadUpDownLeftTexture As Texture
     End Sub
     Sub NewMap(ByRef NewGame, IsStart)
+        Console.Clear()
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.WriteLine("NEW GAME")
+        Console.ResetColor()
         Randomize()
         Dim pos As Position
         pos.y = 12
         pos.x = 16
         Dim map As Map = New Map()
+        Dim newGridCodes(24, NewGame.GameSettings.MapWidth) As String
+        map.GridCodes = newGridCodes
         NewGame.GameMap = map
         Dim grassProb As Integer
         Dim waterProb As Integer
@@ -251,7 +258,7 @@ Public Class Game
             End Try
             Console.WriteLine("Generating map...")
             For i As Integer = 0 To 24
-                For j As Integer = 0 To 32
+                For j As Integer = 0 To NewGame.GameSettings.MapWidth
                     Dim GeneratedTile As Single = Rnd()
                     GeneratedTile = GeneratedTile * totalProb
                     If GeneratedTile < waterProb Then
@@ -308,7 +315,7 @@ Public Class Map
         Console.Clear()
         For y = 0 To 24
             For CurrentLine As Integer = 0 To 3
-                For x = 0 To 32
+                For x = 0 To Game.GameSettings.MapWidth
                     If CurrentLine = 0 Then
                         Select Case Game.GameMap.GridCodes(y, x)
                             Case -1

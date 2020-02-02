@@ -100,7 +100,7 @@ Module Module1
         Dim input As ConsoleKeyInfo = Console.ReadKey(True)
         If input.Key = ConsoleKey.Escape Then
             If isStart = True Then
-                StartMenu(game.GameSettings)
+                StartMenu(GameSettings)
             Else
                 MainMenu(game, map)
             End If
@@ -108,12 +108,30 @@ Module Module1
             Console.Clear()
             Console.BackgroundColor = ConsoleColor.Gray
             Console.ForegroundColor = ConsoleColor.Black
-            Console.WriteLine("---CHANGE MAP SIZE---")
+            Console.WriteLine("CHANGE MAP SIZE")
             Console.ResetColor()
-            Console.WriteLine("[1] Low resolution / high scaling")
+            Console.WriteLine("[1] Low resolution / High scaling")
             Console.WriteLine("[2] High resolution")
             Console.WriteLine("[ESC] Return")
             Dim input2 As ConsoleKeyInfo = Console.ReadKey(True)
+            If input2.Key = ConsoleKey.D1 Then
+                GameSettings.MapWidth = 32
+                If game <> Nothing Then
+                    game.GameSettings.MapWidth = 32
+                End If
+                GraphicsMenu(map, isStart, game, GameSettings)
+            ElseIf input2.key = ConsoleKey.D2 Then
+                GameSettings.MapWidth = 37
+                If game <> Nothing Then
+                    game.GameSettings.MapWidth = 37
+                End If
+                GraphicsMenu(map, isStart, game, GameSettings)
+            ElseIf input2.Key = ConsoleKey.Escape Then
+                If isStart = True Then
+                    StartMenu(GameSettings)
+                End If
+                GraphicsMenu(map, isStart, game, GameSettings)
+            End If
         End If
     End Sub
     Sub KeyBindMenu(map, isStart, game, GameSettings)
@@ -202,6 +220,7 @@ Module Module1
     End Sub
     Sub Tutorial(ByRef GameSettings)
         Console.ReadLine()
+        GameSettings.IsTutorial = True
         StartMenu(GameSettings)
     End Sub
     Sub CreateNewGame(IsStart, ByRef CurrentGame, ByRef Map, GameSettings)
@@ -211,9 +230,12 @@ Module Module1
         newGame.GameSettings.TextureFile = GameSettings.TextureFile
         Dim newLotObjectMatrix(24, GameSettings.MapWidth) As Lot
         newGame.LotObjectMatrix = newLotObjectMatrix
+        Console.WriteLine(GameSettings.MapWidth)
+        Console.ReadLine()
         newGame.NewGame(IsStart, CurrentGame, Map, GameSettings, newGame)
     End Sub
     Sub SaveGame(game, map)
+        Console.Clear()
         Console.WriteLine("Return[ESC]")
         Dim filename As String
         Console.BackgroundColor = ConsoleColor.Gray
