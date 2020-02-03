@@ -121,9 +121,9 @@ Module Module1
                 End If
                 GraphicsMenu(map, isStart, game, GameSettings)
             ElseIf input2.key = ConsoleKey.D2 Then
-                GameSettings.MapWidth = 37
+                GameSettings.MapWidth = 45
                 If game <> Nothing Then
-                    game.GameSettings.MapWidth = 37
+                    game.GameSettings.MapWidth = 45
                 End If
                 GraphicsMenu(map, isStart, game, GameSettings)
             ElseIf input2.Key = ConsoleKey.Escape Then
@@ -230,8 +230,6 @@ Module Module1
         newGame.GameSettings.TextureFile = GameSettings.TextureFile
         Dim newLotObjectMatrix(24, GameSettings.MapWidth) As Lot
         newGame.LotObjectMatrix = newLotObjectMatrix
-        Console.WriteLine(GameSettings.MapWidth)
-        Console.ReadLine()
         newGame.NewGame(IsStart, CurrentGame, Map, GameSettings, newGame)
     End Sub
     Sub SaveGame(game, map)

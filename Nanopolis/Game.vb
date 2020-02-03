@@ -256,7 +256,6 @@ Public Class Game
                 Console.WriteLine(ex.Message)
                 StartMenu(GameSettings)
             End Try
-            Console.WriteLine("Generating map...")
             For i As Integer = 0 To 24
                 For j As Integer = 0 To NewGame.GameSettings.MapWidth
                     Dim GeneratedTile As Single = Rnd()
@@ -267,11 +266,11 @@ Public Class Game
                         NewGame.LotObjectMatrix(i, j) = water
                     ElseIf GeneratedTile > waterProb And GeneratedTile <= (grassProb + waterProb) Then
                         Dim grass As Grass = New Grass()
-                        map.GridCodes(i, j) = -1
+                        NewGame.GameMap.GridCodes(i, j) = -1
                         NewGame.LotObjectMatrix(i, j) = grass
                     ElseIf GeneratedTile > (grassProb + waterProb) Then
                         Dim forest As Forest = New Forest()
-                        map.GridCodes(i, j) = 39
+                        NewGame.GameMap.GridCodes(i, j) = 39
                         NewGame.LotObjectMatrix(i, j) = forest
                     End If
                     NewGame.LotObjectMatrix(i, j).LandValue = NewGame.LotObjectMatrix(i, j).BaseLandValue
@@ -284,8 +283,8 @@ Public Class Game
             NewGame.GameMap.PrintMap(pos, NewGame)
         ElseIf plainMapChoice.Key = ConsoleKey.Y Then
             For i As Integer = 0 To 24
-                For j As Integer = 0 To 32
-                    map.GridCodes(i, j) = -1
+                For j As Integer = 0 To NewGame.GameSettings.MapWidth
+                    NewGame.GameMap.GridCodes(i, j) = -1
                     Dim grass As Grass = New Grass()
                     NewGame.LotObjectMatrix(i, j) = grass
                 Next
