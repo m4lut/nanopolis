@@ -221,6 +221,7 @@ Public Class Game
         Dim largeRoadUpDownLeftTexture As Texture
     End Sub
     Sub NewMap(ByRef NewGame, IsStart)
+        Const baselandvalue As Integer = 25
         Console.Clear()
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
@@ -241,21 +242,21 @@ Public Class Game
         Console.WriteLine("Create a plain map?[y/n]")
         Dim plainMapChoice As ConsoleKeyInfo = Console.ReadKey(True)
         If plainMapChoice.Key = ConsoleKey.N Then
-            Try
+            Do
                 Console.WriteLine("Set map parameters:")
+                Console.WriteLine("Set the likelihood of water, grass fields out of a 100, then the game will complete the probability of forest")
                 Console.WriteLine("Likelihood of water(0-100): ")
                 waterProb = Console.ReadLine()
                 totalProb += waterProb
-                Console.WriteLine("Likelihood of grass fields(0-100): ")
-                grassProb = Console.ReadLine()
-                totalProb += grassProb
-                Console.WriteLine("Likelihood of forest(0-100): ")
-                forestProb = Console.ReadLine()
-                totalProb += forestProb
-            Catch ex As Exception
-                Console.WriteLine(ex.Message)
-                StartMenu(GameSettings)
-            End Try
+                If waterProb < 100 Then
+                    Console.WriteLine("Likelihood of grass fields(0-" & 100 - waterProb & "): ")
+                    grassProb = Console.ReadLine()
+                    totalProb += grassProb
+                End If
+                Console.WriteLine()
+            Loop While totalProb > 100
+            forestProb = 100 - totalProb
+            totalProb += forestProb
             For i As Integer = 0 To 24
                 For j As Integer = 0 To NewGame.GameSettings.MapWidth
                     Dim GeneratedTile As Single = Rnd()
@@ -273,7 +274,7 @@ Public Class Game
                         NewGame.GameMap.GridCodes(i, j) = 39
                         NewGame.LotObjectMatrix(i, j) = forest
                     End If
-                    NewGame.LotObjectMatrix(i, j).LandValue = NewGame.LotObjectMatrix(i, j).BaseLandValue
+                    NewGame.LotObjectMatrix(i, j).LandValue = baselandvalue
                 Next
             Next
             Dim cityGovernment As Government = New Government()

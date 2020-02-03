@@ -2,7 +2,7 @@
     Public CrimeRate As Integer = 0
     Const PowerDemand As Integer = 50
     Const BaseWeeksUntilAbandoned As Integer = 5
-    Const BaseLandValue As Integer = 25
+    Public Const BaseLandValue As Integer = 25
     Public InternalLandValueModifier As Integer
     Public Shadows ExternalLandValueModifier As Integer = 0
     Public WorkPlace As Position
