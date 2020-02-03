@@ -8,6 +8,13 @@ Public Structure GameSettings
     Public TextureFile As String
     Public IsTutorialGame As Boolean
 End Structure
+Public Class JSON_Result
+    Public GameSettings As GameSettings
+    Public TotalPowerSupply As Integer
+    Public TotalPowerDemand As Integer
+    Public GameMap As Map
+    Public GridCodes(24, 45) As Integer
+End Class
 Module Module1
     Sub Main()
         MsgBox("Welcome to Nanopolis!" & vbCrLf & "Developed by Maksim Al-Utaibi" & vbCrLf & "Make sure to maximise the console window when playing.", vbOKOnly)
