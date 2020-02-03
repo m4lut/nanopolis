@@ -43,7 +43,6 @@ End Structure
 Public Class Game
     Public GameSettings As GameSettings
     Const StartingPopulation As Integer = 10
-    Public Shared DefaultSettings As GameSettings
     Public TotalPowerOutput As Integer
     Public TotalPowerDemand As Integer
     Public GameMap As Map
@@ -169,7 +168,7 @@ Public Class Game
                         Game.LotObjectMatrix(pos.y, pos.x).GenerateWorkOrShoppingPlace(True, Game.LotObjectMatrix, pos)
                     End If
                 End If
-                Game.LotObjectMatrix(pos.y, pos.x).CrimeRate = Game.LotObjectMatrix(pos.y, pos.x).CrimeRate(pos, Game)
+                Game.LotObjectMatrix(pos.y, pos.x).CrimeRate = Game.LotObjectMatrix(pos.y, pos.x).CalculateCrimeRate(pos, Game)
             Next
         Next
         pos.y = 12
@@ -232,7 +231,7 @@ Public Class Game
         pos.y = 12
         pos.x = 16
         Dim map As Map = New Map()
-        Dim newGridCodes(24, NewGame.GameSettings.MapWidth) As String
+        Dim newGridCodes(24, NewGame.GameSettings.MapWidth) As Integer
         map.GridCodes = newGridCodes
         NewGame.GameMap = map
         Dim grassProb As Integer
@@ -243,13 +242,12 @@ Public Class Game
         Dim plainMapChoice As ConsoleKeyInfo = Console.ReadKey(True)
         If plainMapChoice.Key = ConsoleKey.N Then
             Do
-                Console.WriteLine("Set map parameters:")
-                Console.WriteLine("Set the likelihood of water, grass fields out of a 100, then the game will complete the probability of forest")
-                Console.WriteLine("Likelihood of water(0-100): ")
+                Console.WriteLine(" Set the likelihood of water, grass fields out of a 100, then the game will complete the probability of forest:")
+                Console.WriteLine(" Likelihood of water(0-100): ")
                 waterProb = Console.ReadLine()
                 totalProb += waterProb
                 If waterProb < 100 Then
-                    Console.WriteLine("Likelihood of grass fields(0-" & 100 - waterProb & "): ")
+                    Console.WriteLine(" Likelihood of grass fields(0-" & 100 - waterProb & "): ")
                     grassProb = Console.ReadLine()
                     totalProb += grassProb
                 End If
@@ -309,8 +307,8 @@ Public Class Game
     End Sub
 End Class
 Public Class Map
-    Protected Textures(42) As Texture
-    Public GridCodes(24, 32) As String
+    Public Textures(42) As Texture
+    Public GridCodes(24, 32) As Integer
     Public Sub PrintMap(ByRef Pos, ByRef Game)
         Console.Clear()
         For y = 0 To 24
@@ -1485,10 +1483,10 @@ Public Class Map
         Console.Write("Y" & Int(Pos.y))
         Console.WriteLine(", X" & Int(Pos.x))
         Console.WriteLine("Land Value: " & Game.LotObjectMatrix(Pos.y, Pos.x).LandValue)
-        Console.WriteLine(Game.cityGovernment.GetTreasury)
+        Console.WriteLine("Government Budget: " & Game.cityGovernment.GetTreasury)
         Dim buildingType As Type = Game.LotObjectMatrix(Pos.y, Pos.x).GetType
         Console.WriteLine(buildingType)
-        Console.WriteLine("Crime rate: " & Game.LotObjectMatrix(Pos.y, Pos.x).CrimeRate & "/1000")
+        Console.WriteLine("Crime Rate: " & Game.LotObjectMatrix(Pos.y, Pos.x).CrimeRate & "/1000")
         Game.GameMap.MapSelection(Pos, Game)
     End Sub
     Public Sub MapSelection(ByRef Pos, ByRef Game)
@@ -1530,7 +1528,7 @@ Public Class Map
             ElseIf Key1 = ConsoleKey.Enter Then
                 Selected = True
             ElseIf Key1 = ConsoleKey.N Then
-                Game.GameMap.FinishWeek(Game)
+                Game.FinishWeek(Game)
             ElseIf Key1 = ConsoleKey.Escape Then
                 MainMenu(Game, Game.GameMap)
             ElseIf Key1 = ConsoleKey.G Then

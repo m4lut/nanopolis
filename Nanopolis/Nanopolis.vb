@@ -48,11 +48,11 @@ Module Module1
             StartMenu(GameSettings)
         End If
     End Sub
-    Sub MainMenu(ByRef game, ByRef map)
+    Sub MainMenu(ByRef Game, ByRef map)
         Dim GameSettings As GameSettings
-        GameSettings.IsTutorialGame = game.IsTutorialGame
-        GameSettings.MapWidth = game.MapWidth
-        GameSettings.TextureFile = game.TextureFile
+        GameSettings.IsTutorialGame = Game.GameSettings.IsTutorialGame
+        GameSettings.MapWidth = Game.MapWidth
+        GameSettings.TextureFile = Game.TextureFile
         Console.Clear()
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
@@ -68,24 +68,24 @@ Module Module1
         Console.WriteLine("[ESC] Return to game")
         Dim MenuCode As ConsoleKeyInfo = Console.ReadKey(True)
         If MenuCode.Key = ConsoleKey.D1 Then
-            CreateNewGame(False, game, map, GameSettings)
+            CreateNewGame(False, Game, map, GameSettings)
         ElseIf MenuCode.Key = ConsoleKey.D2 Then
-            LoadGame(game, map, False, GameSettings)
+            LoadGame(Game, map, False, GameSettings)
         ElseIf MenuCode.Key = ConsoleKey.D3 Then
             Tutorial(GameSettings)
         ElseIf MenuCode.Key = ConsoleKey.D4 Then
-            KeyBindMenu(map, False, game, GameSettings)
+            KeyBindMenu(map, False, Game, GameSettings)
         ElseIf MenuCode.Key = ConsoleKey.D5 Then
-            GraphicsMenu(map, False, game, GameSettings)
+            GraphicsMenu(map, False, Game, GameSettings)
         ElseIf MenuCode.Key = ConsoleKey.D6 Then
             Stop
         ElseIf MenuCode.Key = ConsoleKey.Escape Then
             Dim pos As Position
             pos.y = 13
             pos.x = 16
-            game.PrintMap(pos, map, game)
+            Game.PrintMap(pos, map, Game)
         Else
-            MainMenu(game, map)
+            MainMenu(Game, map)
         End If
     End Sub
     Sub GraphicsMenu(ByRef map, isStart, ByRef game, ByRef GameSettings)
@@ -108,11 +108,11 @@ Module Module1
             Console.Clear()
             Console.BackgroundColor = ConsoleColor.Gray
             Console.ForegroundColor = ConsoleColor.Black
-            Console.WriteLine("CHANGE MAP SIZE")
+            Console.WriteLine(" CHANGE MAP SIZE")
             Console.ResetColor()
-            Console.WriteLine("[1] Low resolution / High scaling")
-            Console.WriteLine("[2] High resolution")
-            Console.WriteLine("[ESC] Return")
+            Console.WriteLine(" [1] Low resolution / High scaling")
+            Console.WriteLine(" [2] High resolution")
+            Console.WriteLine(" [ESC] Return")
             Dim input2 As ConsoleKeyInfo = Console.ReadKey(True)
             If input2.Key = ConsoleKey.D1 Then
                 GameSettings.MapWidth = 32
