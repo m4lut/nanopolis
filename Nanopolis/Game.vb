@@ -1602,14 +1602,20 @@ Public Class Government
                 Game.CityGovernment.ShowPolicyMenu(False, Game)
             Case ConsoleKey.D3
                 Game.CityGovernment.ShowLegislatureMenu(Game)
+            Case ConsoleKey.C
+                Dim Pos As Position
+                Pos.y = 16
+                Pos.x = Game.GameSettings.MapWidth / 2
+                Game.GameMap.MapSelection(Pos, Game)
         End Select
     End Sub
     Sub ShowLegislatureMenu(ByRef Game)
+        Console.WriteLine(" ")
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
-        Console.WriteLine("  --THE LEGISLATURE--")
+        Console.WriteLine("--THE LEGISLATURE--")
         Console.ResetColor()
-        Console.WriteLine("[1] Propose a bill for the legislature to vote on | [2] Dissolve parliament and trigger a General Election | [C] Return to gov't menu")
+        Console.WriteLine(" [1] Propose a bill for the legislature to vote on | [2] Dissolve parliament and trigger a General Election | [C] Return to gov't menu")
         Dim key As ConsoleKey = Console.ReadKey(True).Key
         If key = ConsoleKey.D1 Then
             Game.CityGovernment.ShowPolicyMenu(False, Game)

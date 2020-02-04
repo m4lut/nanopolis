@@ -1,8 +1,4 @@
-﻿Module Module1
-
-    Sub Main()
-
-        'code -1
+﻿        'code -1
         Console.WriteLine(“Grass”)
         Console.WriteLine(“. . .”)
         Console.WriteLine(“ . . ”)

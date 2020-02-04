@@ -231,6 +231,18 @@
                 If Game.LotObjectMatrix(Pos.y + j, Pos.x + i).GetType.ToString = "Nanopolis.PoliceStation" Then
                     tempCrimeRate -= 50
                 End If
+                If (Pos.x + i) < 0 Then
+                    Continue For
+                End If
+                If (Pos.x + i) > (Game.GameSettings.MapWidth + 1) Then
+                    Continue For
+                End If
+                If (Pos.y + j) < 0 Then
+                    Continue For
+                End If
+                If (Pos.y + j) > 32 Then
+                    Continue For
+                End If
             Next
         Next
         crimeRate += tempCrimeRate
@@ -427,11 +439,11 @@ Public Class ResidentialLot
                     ShoppingPlace.y = pos.y + offset.y
                     ShoppingPlace.x = pos.x + offset.x
                 End If
-                If LotObjectMatrix(WorkPlace.y, WorkPlace.x).LotIs("Nanopolis.CommercialLot",,,) And FindingWork Then
+                If LotObjectMatrix(WorkPlace.y, WorkPlace.x).GetType.ToString = "Nanopolis.CommercialLot" And FindingWork Then
                     Found = True
-                ElseIf LotObjectMatrix(ShoppingPlace.y, ShoppingPlace.x).LotIs("Nanopolis.CommercialLot",,,) And FindingWork = False Then
+                ElseIf LotObjectMatrix(ShoppingPlace.y, ShoppingPlace.x).GetType.ToString = "Nanopolis.CommercialLot" And FindingWork = False Then
                     Found = True
-                ElseIf LotObjectMatrix(ShoppingPlace.y, ShoppingPlace.x).LotIs("Nanopolis.Industry",,,) And FindingWork = False Then
+                ElseIf LotObjectMatrix(ShoppingPlace.y, ShoppingPlace.x).GetType.ToString = "Nanopolis.Industry" And FindingWork = False Then
                     Found = True
                 End If
             End If

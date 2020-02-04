@@ -1,11 +1,10 @@
 {
-  "GameSettings": [
+  "GameSettings": 
     {
       "MapWidth": 33,
       "IsTutorial": false,
       "TextureFile": "textures.json"
-    }
-  ],
+    },
   "TotalPowerSupply": 0,
   "TotalPowerDemand": 0,
   "GridCodes": [

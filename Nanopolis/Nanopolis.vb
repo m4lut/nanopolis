@@ -8,13 +8,6 @@ Public Structure GameSettings
     Public TextureFile As String
     Public IsTutorialGame As Boolean
 End Structure
-Public Class JSON_Result
-    Public GameSettings As GameSettings
-    Public TotalPowerSupply As Integer
-    Public TotalPowerDemand As Integer
-    Public GameMap As Map
-    Public GridCodes(24, 45) As Integer
-End Class
 Module Module1
     Sub Main()
         MsgBox("Welcome to Nanopolis!" & vbCrLf & "Developed by Maksim Al-Utaibi" & vbCrLf & "Make sure to maximise the console window when playing.", vbOKOnly)
@@ -58,7 +51,7 @@ Module Module1
     Sub MainMenu(ByRef Game, ByRef map)
         Dim GameSettings As GameSettings
         GameSettings.IsTutorialGame = Game.GameSettings.IsTutorialGame
-        GameSettings.MapWidth = Game.MapWidth
+        GameSettings.MapWidth = Game.GameSettings.MapWidth
         GameSettings.TextureFile = Game.TextureFile
         Console.Clear()
         Console.BackgroundColor = ConsoleColor.Gray
@@ -197,14 +190,20 @@ Module Module1
     End Sub
     Sub LoadGame(ByRef game, map, isStart, GameSettings)
         Console.Clear()
-        Dim PathName As String = Nothing
+        Dim PathName As String
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
-        Console.Write("Input file name, or leave empty to return to the main menu:")
+        Console.WriteLine("LOAD GAME")
+        Console.WriteLine("Input file name, or leave empty to return to the main menu:")
         Console.ResetColor()
+        Console.Write(" ")
         Try
             PathName = Console.ReadLine()
-            'insert some JSON serealization here
+            Dim json As String = "{""GameSettings"":{""MapWidth"":""32"",""IsTutorial"":""false"",""TextureFile"":""textures.json""}""}"
+            Dim read = Linq.JObject.Parse(json)
+            Console.WriteLine(read.Item("GameSettings")("MapWidth").ToString)
+            Console.ReadLine()
+            'insert some JSON parsing here
             If PathName = Nothing Then
                 If isStart = True Then
                     StartMenu(GameSettings)
@@ -215,9 +214,10 @@ Module Module1
         Catch ex As Exception
             Console.BackgroundColor = ConsoleColor.Red
             Console.ForegroundColor = ConsoleColor.Black
-            Console.WriteLine("Error")
+            Console.WriteLine("Error, press any key to continue...")
             Console.WriteLine(ex.Message)
             Console.ResetColor()
+            Console.ReadLine()
             If isStart = True Then
                 StartMenu(GameSettings)
             Else
