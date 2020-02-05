@@ -156,7 +156,7 @@ Public Class Game
     Sub FinishWeek(ByRef Game)
         Dim pos As Position
         For pos.y = 0 To 24
-            For pos.x = 0 To 32
+            For pos.x = 0 To (Game.GameSettings.MapWidth - 1)
                 Game.LotObjectMatrix(pos.y, pos.x).LandValue = Game.LotObjectMatrix(pos.y, pos.x).CalculateLandValue(pos, Game)
                 If Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.Construction" Then
                     Console.WriteLine("NextTurnLot = " & Game.LotObjectMatrix(pos.y, pos.x).NextTurnLot)
@@ -168,6 +168,7 @@ Public Class Game
                     End If
                 End If
                 Game.LotObjectMatrix(pos.y, pos.x).CrimeRate = Game.LotObjectMatrix(pos.y, pos.x).CalculateCrimeRate(pos, Game)
+                Game.LotObjectMatrix(pos.y, pos.x).SetAbandonedWeeks(Game, pos)
             Next
         Next
         pos.y = 12
@@ -938,6 +939,7 @@ Public Class Map
                                 Console.ResetColor()
                             Case 6
                                 Console.BackgroundColor = ConsoleColor.Green
+                                Console.ForegroundColor = ConsoleColor.DarkGreen
                                 Console.Write("|h| |")
                                 Console.ResetColor()
                             Case 7

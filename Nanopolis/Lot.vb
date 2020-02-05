@@ -9,20 +9,20 @@
     Public ShoppingPlace As Position
     Public ConnectedToRoad As Boolean
     Public Abandoned As Boolean
-    Public WeeksUntilAbandoned As Integer
+    Public WeeksUntilAbandoned As Integer = BaseWeeksUntilAbandoned
     Public LandValue As Integer = BaseLandValue
     Public LandValueModifier As Integer
-    Private Sub SetAbandonedWeeks(ByRef Game, Pos, ByRef Map)
+    Sub SetAbandonedWeeks(ByRef Game, Pos)
         If (BaseLandValue - InternalLandValueModifier) >= 0 Then
             WeeksUntilAbandoned = BaseWeeksUntilAbandoned
         Else
             WeeksUntilAbandoned -= 1
         End If
         If WeeksUntilAbandoned <= 0 Then
-            AbandonBuilding(Game, Pos, Map)
+            AbandonBuilding(Game, Pos)
         End If
     End Sub
-    Sub AbandonBuilding(ByRef Game, Pos, ByRef Map)
+    Sub AbandonBuilding(ByRef Game, Pos)
         Me.Demolish(Pos, Game)
     End Sub
     Function RoadConnectionCheck(Pos, ByRef Game)
@@ -228,27 +228,27 @@
         Dim crimeRate As Integer = 0
         For j As Integer = -3 To 3
             For i As Integer = -3 To 3
-                If Game.LotObjectMatrix(Pos.y + j, Pos.x + i).GetType.ToString = "Nanopolis.PoliceStation" Then
-                    tempCrimeRate -= 50
-                End If
                 If (Pos.x + i) < 0 Then
                     Continue For
                 End If
-                If (Pos.x + i) > (Game.GameSettings.MapWidth + 1) Then
+                If (Pos.x + i) > (Game.GameSettings.MapWidth - 1) Then
                     Continue For
                 End If
                 If (Pos.y + j) < 0 Then
                     Continue For
                 End If
-                If (Pos.y + j) > 32 Then
+                If (Pos.y + j) > 24 Then
                     Continue For
+                End If
+                If Game.LotObjectMatrix(Pos.y + j, Pos.x + i).GetType.ToString = "Nanopolis.PoliceStation" Then
+                    tempCrimeRate -= 50
                 End If
             Next
         Next
         crimeRate += tempCrimeRate
         Return crimeRate
     End Function
-    Private Function CalculateLandValueFromInternal(Pos, ByRef Game)
+    Protected Function CalculateLandValueFromInternal(Pos, ByRef Game)
         Dim tempModifier As Integer = 0
         Dim tji As Integer = 0
         If Game.LotObjectMatrix(Pos.y, Pos.x).GetType.ToString = "Nanopolis.SmallRoad" Or Game.LotObjectMatrix(Pos.y, Pos.x).GetType.ToString = "Nanopolis.LargeRoad" Then
