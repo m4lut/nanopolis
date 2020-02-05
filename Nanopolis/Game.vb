@@ -626,13 +626,13 @@ Public Class Map
                                 Console.ResetColor()
                             Case 6
                                 Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.Gray
+                                Console.ForegroundColor = ConsoleColor.DarkYellow
                                 Console.Write("|")
                                 Console.BackgroundColor = ConsoleColor.Green
                                 Console.ForegroundColor = ConsoleColor.DarkGreen
                                 Console.Write(":::")
                                 Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.White
+                                Console.ForegroundColor = ConsoleColor.DarkYellow
                                 Console.Write("|")
                                 Console.ResetColor()
                             Case 7
@@ -939,7 +939,7 @@ Public Class Map
                                 Console.ResetColor()
                             Case 6
                                 Console.BackgroundColor = ConsoleColor.Green
-                                Console.ForegroundColor = ConsoleColor.DarkGreen
+                                Console.ForegroundColor = ConsoleColor.DarkYellow
                                 Console.Write("|h| |")
                                 Console.ResetColor()
                             Case 7
@@ -1232,6 +1232,7 @@ Public Class Map
                                 Console.Write("[][]|")
                                 Console.ResetColor()
                             Case 6
+                                Console.ForegroundColor = ConsoleColor.DarkYellow
                                 Console.BackgroundColor = ConsoleColor.DarkGray
                                 Console.Write("|")
                                 Console.BackgroundColor = ConsoleColor.Green

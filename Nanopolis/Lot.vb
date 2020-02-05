@@ -42,7 +42,7 @@
         Dim ShopType As Integer = Math.Round((Rnd()) + 3)
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
-        Console.WriteLine("Residential[1] | Commercial[2] | Industrial[3]($30) | Road[4] | Power[5] | Park[6] | Police[7]($75) | Parliament[8]($20000) | Nature[9]")
+        Console.WriteLine("[1]Residential | [2]Commercial | [3]Industrial($30) | [4]Road | [5]Power | [6]Park | [7]Police($175) | [8]Parliament($20000) | [9]Nature")
         Console.ResetColor()
         Dim input As ConsoleKeyInfo = Console.ReadKey(True)
         Select Case input.Key
@@ -178,7 +178,7 @@
                 Game.GameMap.GridCodes(Pos.y, Pos.x) = 37
                 Dim policeStation As PoliceStation = New PoliceStation()
                 Game.LotObjectMatrix(Pos.y, Pos.x) = policeStation
-                Game.CityGovernment.Spend(75)
+                Game.CityGovernment.Spend(175)
                 Game.HasWorkBuildings = True
             Case ConsoleKey.D8
                 Game.GameMap.GridCodes(Pos.y, Pos.x) = 33
@@ -221,7 +221,7 @@
         Game.GameMap.GridCodes(Pos.y, Pos.x) = -1
         Dim grass As Grass = New Grass()
         Game.LotObjectMatrix(Pos.y, Pos.x) = grass
-        Game.GameMap.PrintMap(Pos, Game.GameMap)
+        Game.GameMap.PrintMap(Pos, Game)
     End Sub
     Public Function CalculateCrimeRate(Pos, ByRef Game)
         Dim tempCrimeRate As Integer = 0
