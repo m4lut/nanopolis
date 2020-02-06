@@ -252,7 +252,7 @@
         Dim tempModifier As Integer = 0
         Dim tji As Integer = 0
         If Game.LotObjectMatrix(Pos.y, Pos.x).GetType.ToString = "Nanopolis.SmallRoad" Or Game.LotObjectMatrix(Pos.y, Pos.x).GetType.ToString = "Nanopolis.LargeRoad" Then
-            Game.LotObjectMatrix(Pos.y, Pos.x).CalculateTJI
+            Game.LotObjectMatrix(Pos.y, Pos.x).CalculateTJI()
             tempModifier += tji
             Return tempModifier
         Else
@@ -271,7 +271,13 @@ Public Class Roads
     Inherits Lot
     Public TrafficJamIndex As Integer
     Public TimesReferenced As Integer = 0
-    Public Function CalculateTJI(ByRef Game, RoadGraph)
+    Public Function CalculateTJI(ByRef Game)
+        Dim tempTJI As Integer = 0
+        For i As Integer = 0 To Game.GameSettings.MapWidth
+            For j As Integer = 0 To 25
+                tempTJI += Game.LotObjectMatrix(j, i).TimesReferenced
+            Next
+        Next
         Return TrafficJamIndex
     End Function
 End Class
@@ -305,6 +311,18 @@ Public Class ResidentialLot
     Public MiddleClassProportion As Integer
     Public UpperClassProportion As Integer
     Public UnemployedProportion As Integer
+    Sub FindPath(ByRef Game, WhereFromY, WhereFromX, WhereToY, WhereToX)
+        For i As Integer = -1 To 1
+            For j As Integer = -1 To 1
+                If j = 0 And i = 0 Then
+                    Continue For
+                End If
+                If Game.LotObjectMatrix(i, j).GetType.ToString = "Nanopolis.SmallRoad" Or Game.LotObjectMatrix(i, j).GetType.ToString = "Nanopolis.LargeRoad" Then
+                    FindPath(Game, WhereFromY + i, WhereFromX + j, WhereToY + i, WhereToX = j)
+                End If
+            Next
+        Next
+    End Sub
     Sub GenerateWorkOrShoppingPlace(FindingWork, ByRef LotObjectMatrix, pos)
         Randomize()
         Dim offset As Position
