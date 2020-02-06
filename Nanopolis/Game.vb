@@ -50,6 +50,63 @@ Public Class Game
     Public LotObjectMatrix(24, 32) As Lot
     Public HasWorkBuildings As Boolean = False
     Public HasShoppingPlace As Boolean = False
+    Public TestMap As Map
+    Public NoOfWeeksPlayed As Integer
+    Sub ShowTestMap(Game)
+        Dim testMap As Map = New Map()
+        For i As Integer = 0 To 32
+            For j As Integer = 0 To 24
+                testMap.GridCodes(24, 32) = -1
+            Next
+        Next
+        testMap.GridCodes(0, 0) = -1
+        testMap.GridCodes(0, 1) = 0
+        testMap.GridCodes(0, 2) = 1
+        testMap.GridCodes(0, 3) = 2
+        testMap.GridCodes(0, 4) = 3
+        testMap.GridCodes(0, 5) = 4
+        testMap.GridCodes(0, 6) = 5
+        testMap.GridCodes(0, 7) = 6
+        testMap.GridCodes(0, 8) = 7
+        testMap.GridCodes(0, 9) = 8
+        testMap.GridCodes(0, 10) = 9
+        testMap.GridCodes(0, 11) = 10
+        testMap.GridCodes(0, 12) = 11
+        testMap.GridCodes(0, 13) = 12
+        testMap.GridCodes(0, 14) = 13
+        testMap.GridCodes(0, 15) = 14
+        testMap.GridCodes(0, 16) = 15
+        testMap.GridCodes(0, 17) = 16
+        testMap.GridCodes(0, 18) = 17
+        testMap.GridCodes(0, 19) = 18
+        testMap.GridCodes(0, 20) = 19
+        testMap.GridCodes(0, 21) = 20
+        testMap.GridCodes(0, 22) = 21
+        testMap.GridCodes(0, 23) = 22
+        testMap.GridCodes(0, 24) = 23
+        testMap.GridCodes(0, 25) = 24
+        testMap.GridCodes(0, 26) = 25
+        testMap.GridCodes(0, 27) = 26
+        testMap.GridCodes(0, 28) = 27
+        testMap.GridCodes(0, 29) = 28
+        testMap.GridCodes(0, 30) = 29
+        testMap.GridCodes(0, 31) = 30
+        testMap.GridCodes(0, 32) = 31
+        testMap.GridCodes(1, 0) = 32
+        testMap.GridCodes(1, 1) = 33
+        testMap.GridCodes(1, 2) = 34
+        testMap.GridCodes(2, 1) = 35
+        testMap.GridCodes(2, 2) = 36
+        testMap.GridCodes(1, 5) = 37
+        testMap.GridCodes(1, 6) = 38
+        testMap.GridCodes(1, 7) = 39
+        testMap.GridCodes(1, 8) = 40
+        testMap.GridCodes(1, 9) = 41
+        testMap.GridCodes(1, 10) = 42
+        Game.TestMap = testMap
+        Dim pos As Position
+        Game.TestMap.PrintMap(pos, Game, True)
+    End Sub
     Protected Sub IntroduceStartingPopulation(ByRef Game)
         Dim pos As Position
         For pos.y = 0 To 24
@@ -173,6 +230,7 @@ Public Class Game
         Next
         pos.y = 12
         pos.x = 16
+        Game.NoOfWeeksPlayed += 1
         Game.GameMap.PrintMap(pos, Game)
     End Sub
     Sub NewMap(ByRef NewGame, IsStart)
@@ -309,1179 +367,2366 @@ Public Class Map
         Dim coalStationTexture As Texture
         Dim largeRoadUpDownLeftTexture As Texture
     End Sub
-    Public Sub PrintMap(ByRef Pos, ByRef Game)
+    Public Sub PrintMap(ByRef Pos, ByRef Game, Optional IsTestMap = False)
         Console.Clear()
-        For y = 0 To 24
-            For CurrentLine As Integer = 0 To 3
-                For x = 0 To Game.GameSettings.MapWidth
-                    If CurrentLine = 0 Then
-                        Select Case Game.GameMap.GridCodes(y, x)
-                            Case -1
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.ForegroundColor = ConsoleColor.DarkGreen
-                                Console.Write(". . .")
-                                Console.ResetColor()
-                            Case 0
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("___|")
-                                Console.ForegroundColor = ConsoleColor.Gray
-                                Console.Write("\")
-                                Console.ResetColor()
-                            Case 1
-                                Console.BackgroundColor = ConsoleColor.Red
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.Write("/\")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.ForegroundColor = ConsoleColor.DarkGreen
-                                Console.Write(". .")
-                                Console.ResetColor()
-                            Case 2
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.ForegroundColor = ConsoleColor.DarkRed
-                                Console.Write("_____")
-                                Console.ResetColor()
-                            Case 3
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.ForegroundColor = ConsoleColor.DarkGreen
-                                Console.Write(". . .")
-                                Console.ResetColor()
-                            Case 4
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("     ")
-                                Console.ResetColor()
-                            Case 5
-                                Console.Write("|MA|")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("_")
-                                Console.ResetColor()
-                            Case 6
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.DarkYellow
-                                Console.Write("_____")
-                                Console.ResetColor()
-                            Case 7
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.DarkYellow
-                                Console.Write(" ____")
-                                Console.ResetColor()
-                            Case 8
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.DarkYellow
-                                Console.Write("____ ")
-                                Console.ResetColor()
-                            Case 9
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.DarkYellow
-                                Console.Write(" ___ ")
-                                Console.ResetColor()
-                            Case 10
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.DarkYellow
-                                Console.Write(" ___ ")
-                                Console.ResetColor()
-                            Case 11
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.ForegroundColor = ConsoleColor.DarkYellow
-                                Console.Write("_____")
-                                Console.ResetColor()
-                            Case 12
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.ForegroundColor = ConsoleColor.DarkGreen
-                                Console.Write(".")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.Write("||")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.ForegroundColor = ConsoleColor.DarkGreen
-                                Console.Write(" .")
-                                Console.ResetColor()
-                            Case 13
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.Write("_")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("/ \")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("_")
-                                Console.ResetColor()
-                            Case 14
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.Write("_")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("/\")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("__")
-                                Console.ResetColor()
-                            Case 15
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.Write("_____")
-                                Console.ResetColor()
-                            Case 16
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("_")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("/|")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("  ")
-                                Console.ResetColor()
-                            Case 17
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("|\")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("__")
-                                Console.ResetColor()
-                            Case 18
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("_")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("/|")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("  ")
-                                Console.ResetColor()
-                            Case 19
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("|\")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("__")
-                                Console.ResetColor()
-                            Case 20
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("__   ")
-                                Console.ResetColor()
-                            Case 21
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("  ___")
-                                Console.ResetColor()
-                            Case 22
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("_____")
-                                Console.ResetColor()
-                            Case 23
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.Write("|:|")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.ResetColor()
-                            Case 24
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("/ : \")
-                                Console.ResetColor()
-                            Case 25
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("/ : \")
-                                Console.ResetColor()
-                            Case 26
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("/ :|")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                            Case 27
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("|: \")
-                                Console.ResetColor()
-                            Case 28
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("/ :|")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.ResetColor()
-                            Case 29
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("|: \")
-                                Console.ResetColor()
-                            Case 30
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("___  ")
-                                Console.ResetColor()
-                            Case 31
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("  ___")
-                                Console.ResetColor()
-                            Case 32
-                                Console.BackgroundColor = ConsoleColor.Gray
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.Write("oOO  ")
-                                Console.ResetColor()
-                            Case 33
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("    _")
-                                Console.ResetColor()
-                            Case 34
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("_    ")
-                                Console.ResetColor()
-                            Case 35
-                                Console.BackgroundColor = ConsoleColor.White
-                                Console.Write("|")
-                                Console.BackgroundColor = ConsoleColor.DarkCyan
-                                Console.Write("[][")
-                                Console.BackgroundColor = ConsoleColor.White
-                                Console.Write(" ")
-                                Console.ResetColor()
-                            Case 36
-                                Console.BackgroundColor = ConsoleColor.White
-                                Console.Write(" ")
-                                Console.BackgroundColor = ConsoleColor.DarkCyan
-                                Console.Write("][]")
-                                Console.BackgroundColor = ConsoleColor.White
-                                Console.Write("|")
-                                Console.ResetColor()
-                            Case 37
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("_____")
-                                Console.ResetColor()
-                            Case 38
-                                Console.BackgroundColor = ConsoleColor.Blue
-                                Console.Write("~~~~~")
-                                Console.BackgroundColor = ConsoleColor.Black
-                            Case 39
-                                Console.ForegroundColor = ConsoleColor.Green
-                                Console.BackgroundColor = ConsoleColor.DarkGreen
-                                Console.Write(":::::")
-                                Console.ResetColor()
-                            Case 40
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.Write("x   x")
-                                Console.ResetColor()
-                            Case 41
-                                Console.BackgroundColor = ConsoleColor.Gray
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.Write("OOo  ")
-                                Console.ResetColor()
-                            Case 42
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.Write("/ :|")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.ResetColor()
-                        End Select
-                    ElseIf CurrentLine = 1 Then
-                        Select Case Game.GameMap.GridCodes(y, x)
-                            Case -1
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.ForegroundColor = ConsoleColor.DarkGreen
-                                Console.Write(" . . ")
-                                Console.ResetColor()
-                            Case 0
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("I")
-                                Console.ForegroundColor = ConsoleColor.Yellow
-                                Console.Write("  N ")
-                                Console.ResetColor()
-                            Case 1
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.BackgroundColor = ConsoleColor.DarkYellow
-                                Console.Write("[]")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("   ")
-                                Console.ResetColor()
-                            Case 2
-                                Console.BackgroundColor = ConsoleColor.DarkRed
-                                Console.Write("| ")
-                                Console.BackgroundColor = ConsoleColor.DarkCyan
-                                Console.Write("[]")
-                                Console.BackgroundColor = ConsoleColor.DarkRed
-                                Console.Write("|")
-                                Console.ResetColor()
-                            Case 3
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("_____")
-                                Console.ResetColor()
-                            Case 4
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("____ ")
-                                Console.ResetColor()
-                            Case 5
-                                Console.Write("|LL|")
-                                Console.BackgroundColor = ConsoleColor.DarkCyan
-                                Console.Write("|")
-                                Console.ResetColor()
-                            Case 6
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.DarkYellow
-                                Console.Write("|")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.ForegroundColor = ConsoleColor.DarkGreen
-                                Console.Write(":::")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.DarkYellow
-                                Console.Write("|")
-                                Console.ResetColor()
-                            Case 7
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("|")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.ForegroundColor = ConsoleColor.DarkRed
-                                Console.Write("h  ")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.Write("|")
-                                Console.ResetColor()
-                            Case 8
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.DarkGreen
-                                Console.Write(".")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(":::")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.Gray
-                                Console.Write("|")
-                                Console.ResetColor()
-                            Case 9
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("|")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.ForegroundColor = ConsoleColor.DarkGreen
-                                Console.Write(":::")
-                                Console.ForegroundColor = ConsoleColor.Gray
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("|")
-                                Console.ResetColor()
-                            Case 10
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("|")
-                                Console.BackgroundColor = ConsoleColor.Yellow
-                                Console.ForegroundColor = ConsoleColor.Red
-                                Console.Write(" _ ")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.Gray
-                                Console.Write("|")
-                                Console.ResetColor()
-                            Case 11
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("_____")
-                                Console.ResetColor()
-                            Case 12
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.Write(" ")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("||")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("  ")
-                                Console.ResetColor()
-                            Case 13
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.Write("_   _")
-                                Console.ResetColor()
-                            Case 14
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.Write("_____")
-                                Console.ResetColor()
-                            Case 15
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.Write("_   _")
-                                Console.ResetColor()
-                            Case 16
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.Write("_ |")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("  ")
-                                Console.ResetColor()
-                            Case 17
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("| __")
-                                Console.ResetColor()
-                            Case 18
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.Write("__/")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("  ")
-                                Console.ResetColor()
-                            Case 19
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.Write("\___")
-                                Console.ResetColor()
-                            Case 20
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.Write("_ \")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("  ")
-                                Console.ResetColor()
-                            Case 21
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.BackgroundColor = ConsoleColor.Black
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("/  _")
-                                Console.ResetColor()
-                            Case 22
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("-----")
-                                Console.ResetColor()
-                            Case 23
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.Write("|:|")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.ResetColor()
-                            Case 24
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.Write("-   -")
-                                Console.ResetColor()
-                            Case 25
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.Write("-   -")
-                                Console.ResetColor()
-                            Case 26
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.Write("-   -")
-                                Console.ResetColor()
-                            Case 27
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.Write("-   -")
-                                Console.ResetColor()
-                            Case 28
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.Write("-- |")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.ResetColor()
-                            Case 29
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.Write("| --")
-                                Console.ResetColor()
-                            Case 30
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.Write("-- \")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.ResetColor()
-                            Case 31
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.Write("/  -")
-                                Console.ResetColor()
-                            Case 32
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.Write("__")
-                                Console.BackgroundColor = ConsoleColor.DarkRed
-                                Console.Write("||")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("_")
-                                Console.ResetColor()
-                            Case 33
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.Write("___")
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.BackgroundColor = ConsoleColor.White
-                                Console.Write("/ ")
-                                Console.ResetColor()
-                            Case 34
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.BackgroundColor = ConsoleColor.White
-                                Console.Write(" \")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.Write("___")
-                                Console.ResetColor()
-                            Case 35
-                                Console.BackgroundColor = ConsoleColor.White
-                                Console.Write("|")
-                                Console.BackgroundColor = ConsoleColor.DarkCyan
-                                Console.Write("[][")
-                                Console.BackgroundColor = ConsoleColor.White
-                                Console.Write(" ")
-                                Console.ResetColor()
-                            Case 36
-                                Console.BackgroundColor = ConsoleColor.White
-                                Console.Write(" ")
-                                Console.BackgroundColor = ConsoleColor.DarkCyan
-                                Console.Write("][]")
-                                Console.BackgroundColor = ConsoleColor.White
-                                Console.Write("|")
-                                Console.ResetColor()
-                            Case 37
-                                Console.BackgroundColor = ConsoleColor.Gray
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.Write("|")
-                                Console.BackgroundColor = ConsoleColor.White
-                                Console.Write("POL")
-                                Console.BackgroundColor = ConsoleColor.Gray
-                                Console.Write("|")
-                                Console.ResetColor()
-                            Case 38
-                                Console.BackgroundColor = ConsoleColor.Blue
-                                Console.Write("~~~~~")
-                                Console.ResetColor()
-                            Case 39
-                                Console.ForegroundColor = ConsoleColor.DarkRed
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("| | |")
-                                Console.ResetColor()
-                            Case 40
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.Write("| x |")
-                                Console.ResetColor()
-                            Case 41
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.BackgroundColor = ConsoleColor.Gray
-                                Console.Write("||")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("  ")
-                                Console.ResetColor()
-                            Case 42
-                                Console.ForegroundColor = ConsoleColor.DarkGray
-                                Console.BackgroundColor = ConsoleColor.White
-                                Console.Write("-  |")
-                                Console.ForegroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.ResetColor()
-                        End Select
-                    ElseIf CurrentLine = 2 Then
-                        Select Case Game.GameMap.GridCodes(y, x)
-                            Case -1
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.ForegroundColor = ConsoleColor.DarkGreen
-                                Console.Write(". . .")
-                                Console.ResetColor()
-                            Case 0
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.Yellow
-                                Console.Write("   N ")
-                                Console.ResetColor()
-                            Case 1
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("  ")
-                                Console.BackgroundColor = ConsoleColor.Red
-                                Console.Write("/\")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.ResetColor()
-                            Case 2
-                                Console.BackgroundColor = ConsoleColor.DarkRed
-                                Console.Write("| ")
-                                Console.BackgroundColor = ConsoleColor.DarkCyan
-                                Console.Write("[]")
-                                Console.BackgroundColor = ConsoleColor.DarkRed
-                                Console.Write("|")
-                                Console.ResetColor()
-                            Case 3
-                                Console.BackgroundColor = ConsoleColor.Gray
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.Write("[GAS]")
-                                Console.ResetColor()
-                            Case 4
-                                Console.BackgroundColor = ConsoleColor.Red
-                                Console.Write("M")
-                                Console.BackgroundColor = ConsoleColor.DarkRed
-                                Console.Write("A")
-                                Console.BackgroundColor = ConsoleColor.Red
-                                Console.Write("R")
-                                Console.BackgroundColor = ConsoleColor.DarkRed
-                                Console.Write("T")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.ResetColor()
-                            Case 5
-                                Console.BackgroundColor = ConsoleColor.DarkCyan
-                                Console.Write("[][]|")
-                                Console.ResetColor()
-                            Case 6
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.ForegroundColor = ConsoleColor.DarkYellow
-                                Console.Write("|h| |")
-                                Console.ResetColor()
-                            Case 7
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.ForegroundColor = ConsoleColor.DarkRed
-                                Console.Write("|hTT")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.Gray
-                                Console.Write("|")
-                                Console.ResetColor()
-                            Case 8
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("|")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.ForegroundColor = ConsoleColor.DarkRed
-                                Console.Write("|h|")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.Write("|")
-                                Console.ResetColor()
-                            Case 9
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("|")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.ForegroundColor = ConsoleColor.DarkRed
-                                Console.Write("|||")
-                                Console.ForegroundColor = ConsoleColor.Gray
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("|")
-                                Console.ResetColor()
-                            Case 10
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("|")
-                                Console.BackgroundColor = ConsoleColor.Yellow
-                                Console.ForegroundColor = ConsoleColor.Red
-                                Console.Write("/U\")
-                                Console.ForegroundColor = ConsoleColor.Gray
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("|")
-                                Console.ResetColor()
-                            Case 11
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("     ")
-                                Console.ResetColor()
-                            Case 12
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.Write("||")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("  ")
-                                Console.ResetColor()
-                            Case 13
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("\ /")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.ResetColor()
-                            Case 14
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("     ")
-                                Console.ResetColor()
-                            Case 15
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.Write("\ /")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.ResetColor()
-                            Case 16
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.Write("\|")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("  ")
-                                Console.ResetColor()
-                            Case 17
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("|/")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("  ")
-                                Console.ResetColor()
-                            Case 18
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("     ")
-                                Console.ResetColor()
-                            Case 19
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("     ")
-                                Console.ResetColor()
-                            Case 20
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("\|")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("  ")
-                                Console.ResetColor()
-                            Case 21
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.Write("| /")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.ResetColor()
-                            Case 22
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("_____")
-                                Console.ResetColor()
-                            Case 23
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("|:|")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.ResetColor()
-                            Case 24
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("     ")
-                                Console.ResetColor()
-                            Case 25
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("     ")
-                                Console.ResetColor()
-                            Case 26
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("_____")
-                                Console.ResetColor()
-                            Case 27
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("     ")
-                                Console.ResetColor()
-                            Case 28
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.Write("___/")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.ResetColor()
-                            Case 29
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.Write("\___")
-                                Console.ResetColor()
-                            Case 30
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.Write("  :|")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.ResetColor()
-                            Case 31
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.Write("|:  ")
-                                Console.ResetColor()
-                            Case 32
-                                Console.BackgroundColor = ConsoleColor.DarkRed
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.Write("|   |")
-                                Console.ResetColor()
-                            Case 33
-                                Console.BackgroundColor = ConsoleColor.White
-                                Console.Write("|")
-                                Console.BackgroundColor = ConsoleColor.DarkCyan
-                                Console.Write("[][")
-                                Console.BackgroundColor = ConsoleColor.White
-                                Console.Write(" ")
-                                Console.ResetColor()
-                            Case 34
-                                Console.BackgroundColor = ConsoleColor.White
-                                Console.Write(" ")
-                                Console.BackgroundColor = ConsoleColor.DarkCyan
-                                Console.Write("][]")
-                                Console.BackgroundColor = ConsoleColor.White
-                                Console.Write("|")
-                                Console.ResetColor()
-                            Case 35
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("    ")
-                                Console.BackgroundColor = ConsoleColor.Yellow
-                                Console.Write("|")
-                                Console.ResetColor()
-                            Case 36
-                                Console.BackgroundColor = ConsoleColor.Yellow
-                                Console.Write("|")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("    ")
-                                Console.ResetColor()
-                            Case 37
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.BackgroundColor = ConsoleColor.Gray
-                                Console.Write("|")
-                                Console.BackgroundColor = ConsoleColor.White
-                                Console.Write("ICE")
-                                Console.BackgroundColor = ConsoleColor.Gray
-                                Console.Write("|")
-                                Console.ResetColor()
-                            Case 38
-                                Console.BackgroundColor = ConsoleColor.Blue
-                                Console.Write("~~~~~")
-                                Console.ResetColor()
-                            Case 39
-                                Console.BackgroundColor = ConsoleColor.DarkGreen
-                                Console.ForegroundColor = ConsoleColor.Green
-                                Console.Write(":::::")
-                                Console.ResetColor()
-                            Case 40
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("X | X")
-                                Console.ResetColor()
-                            Case 41
-                                Console.BackgroundColor = ConsoleColor.Gray
-                                Console.Write("_||__")
-                                Console.ResetColor()
-                            Case 42
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.Write("   |")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.ResetColor()
-                        End Select
-                    ElseIf CurrentLine = 3 Then
-                        Select Case Game.GameMap.GridCodes(y, x)
-                            Case -1
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.ForegroundColor = ConsoleColor.DarkGreen
-                                Console.Write(" . . ")
-                                Console.ResetColor()
-                            Case 0
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.Yellow
-                                Console.Write("  [N]")
-                                Console.ResetColor()
-                            Case 1
-                                Console.ForegroundColor = ConsoleColor.DarkYellow
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("  ")
-                                Console.BackgroundColor = ConsoleColor.DarkYellow
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.Write("[]")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.ResetColor()
-                            Case 2
-                                Console.BackgroundColor = ConsoleColor.DarkCyan
-                                Console.Write("[]")
-                                Console.BackgroundColor = ConsoleColor.DarkRed
-                                Console.Write("_[|")
-                                Console.ResetColor()
-                            Case 3
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("|")
-                                Console.Write("  ")
-                                Console.BackgroundColor = ConsoleColor.DarkCyan
-                                Console.Write("[]")
-                                Console.ResetColor()
-                            Case 4
-                                Console.BackgroundColor = ConsoleColor.DarkCyan
-                                Console.Write("[]")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("_|")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.ResetColor()
-                            Case 5
-                                Console.BackgroundColor = ConsoleColor.DarkCyan
-                                Console.Write("[][]|")
-                                Console.ResetColor()
-                            Case 6
-                                Console.ForegroundColor = ConsoleColor.DarkYellow
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("|")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("___")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("|")
-                                Console.ResetColor()
-                            Case 7
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("|")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("_")
-                                Console.ForegroundColor = ConsoleColor.DarkRed
-                                Console.Write("h")
-                                Console.ForegroundColor = ConsoleColor.DarkGray
-                                Console.Write("_")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("|")
-                                Console.ResetColor()
-                            Case 8
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("|")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("___")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("|")
-                                Console.ResetColor()
-                            Case 9
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("|")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("___")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("|")
-                                Console.ResetColor()
-                            Case 10
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("|")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("___")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.Write("|")
-                                Console.ResetColor()
-                            Case 11
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("     ")
-                                Console.ResetColor()
-                            Case 12
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.Write("||")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("  ")
-                                Console.ResetColor()
-                            Case 13
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.Write("||")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("  ")
-                                Console.ResetColor()
-                            Case 14
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("     ")
-                                Console.ResetColor()
-                            Case 15
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.Write("||")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("  ")
-                                Console.ResetColor()
-                            Case 16
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.Write("||")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("  ")
-                                Console.ResetColor()
-                            Case 17
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.Write("||")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("  ")
-                                Console.ResetColor()
-                            Case 18
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("     ")
-                                Console.ResetColor()
-                            Case 19
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("     ")
-                                Console.ResetColor()
-                            Case 20
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.Write("||")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("  ")
-                                Console.ResetColor()
-                            Case 21
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.Write("||")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("  ")
-                                Console.ResetColor()
-                            Case 22
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("     ")
-                                Console.ResetColor()
-                            Case 23
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.Write("|:|")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.ResetColor()
-                            Case 24
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.Write("\ : /")
-                                Console.ResetColor()
-                            Case 25
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.Write("\ : /")
-                                Console.ResetColor()
-                            Case 26
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("     ")
-                                Console.ResetColor()
-                            Case 27
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.Write("\ : /")
-                                Console.ResetColor()
-                            Case 28
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("     ")
-                                Console.ResetColor()
-                            Case 29
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("     ")
-                                Console.ResetColor()
-                            Case 30
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.Write("\ :|")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.ResetColor()
-                            Case 31
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.Write("|: /")
-                                Console.ResetColor()
-                            Case 32
-                                Console.BackgroundColor = ConsoleColor.DarkRed
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.Write("|___|")
-                                Console.ResetColor()
-                            Case 33
-                                Console.BackgroundColor = ConsoleColor.White
-                                Console.Write("|")
-                                Console.BackgroundColor = ConsoleColor.DarkCyan
-                                Console.Write("[][")
-                                Console.BackgroundColor = ConsoleColor.White
-                                Console.Write(" ")
-                                Console.ResetColor()
-                            Case 34
-                                Console.BackgroundColor = ConsoleColor.White
-                                Console.Write(" ")
-                                Console.BackgroundColor = ConsoleColor.DarkCyan
-                                Console.Write("][]")
-                                Console.BackgroundColor = ConsoleColor.White
-                                Console.Write("|")
-                                Console.ResetColor()
-                            Case 35
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("   ")
-                                Console.BackgroundColor = ConsoleColor.Yellow
-                                Console.Write("/ ")
-                                Console.ResetColor()
-                            Case 36
-                                Console.BackgroundColor = ConsoleColor.Yellow
-                                Console.Write(" \")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write("   ")
-                                Console.ResetColor()
-                            Case 37
-                                Console.BackgroundColor = ConsoleColor.Gray
-                                Console.ForegroundColor = ConsoleColor.Black
-                                Console.Write("|_")
-                                Console.BackgroundColor = ConsoleColor.DarkCyan
-                                Console.Write("[]")
-                                Console.BackgroundColor = ConsoleColor.Gray
-                                Console.Write("|")
-                                Console.ResetColor()
-                            Case 38
-                                Console.BackgroundColor = ConsoleColor.Blue
-                                Console.Write("~~~~~")
-                                Console.ResetColor()
-                            Case 39
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.ForegroundColor = ConsoleColor.DarkRed
-                                Console.Write("| | |")
-                                Console.ResetColor()
-                            Case 40
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.Write("|   |")
-                                Console.ResetColor()
-                            Case 41
-                                Console.BackgroundColor = ConsoleColor.Gray
-                                Console.Write("|___|")
-                                Console.ResetColor()
-                            Case 42
-                                Console.BackgroundColor = ConsoleColor.DarkGray
-                                Console.ForegroundColor = ConsoleColor.White
-                                Console.Write("\ :|")
-                                Console.BackgroundColor = ConsoleColor.Green
-                                Console.Write(" ")
-                                Console.ResetColor()
-                        End Select
-                    End If
+
+        If IsTestMap = False Then
+            For y = 0 To 24
+                For CurrentLine As Integer = 0 To 3
+                    For x = 0 To Game.GameSettings.MapWidth
+                        If Pos.y = y And Pos.x = x Then
+                            If CurrentLine = 0 Then
+                                Console.Write("\   /")
+                            ElseIf CurrentLine = 1 Then
+                                Console.Write(" \ / ")
+                            ElseIf CurrentLine = 2 Then
+                                Console.Write(" / \ ")
+                            Else
+                                Console.Write("/   \")
+                            End If
+                        Else
+                            If CurrentLine = 0 Then
+                                Select Case Game.GameMap.GridCodes(y, x)
+                                    Case -1
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.ForegroundColor = ConsoleColor.DarkGreen
+                                        Console.Write(". . .")
+                                        Console.ResetColor()
+                                    Case 0
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("___|")
+                                        Console.ForegroundColor = ConsoleColor.Gray
+                                        Console.Write("\")
+                                        Console.ResetColor()
+                                    Case 1
+                                        Console.BackgroundColor = ConsoleColor.Red
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.Write("/\")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.ForegroundColor = ConsoleColor.DarkGreen
+                                        Console.Write(". .")
+                                        Console.ResetColor()
+                                    Case 2
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.ForegroundColor = ConsoleColor.DarkRed
+                                        Console.Write("_____")
+                                        Console.ResetColor()
+                                    Case 3
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.ForegroundColor = ConsoleColor.DarkGreen
+                                        Console.Write(". . .")
+                                        Console.ResetColor()
+                                    Case 4
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("     ")
+                                        Console.ResetColor()
+                                    Case 5
+                                        Console.Write("|MA|")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("_")
+                                        Console.ResetColor()
+                                    Case 6
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.DarkYellow
+                                        Console.Write("_____")
+                                        Console.ResetColor()
+                                    Case 7
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.DarkYellow
+                                        Console.Write(" ____")
+                                        Console.ResetColor()
+                                    Case 8
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.DarkYellow
+                                        Console.Write("____ ")
+                                        Console.ResetColor()
+                                    Case 9
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.DarkYellow
+                                        Console.Write(" ___ ")
+                                        Console.ResetColor()
+                                    Case 10
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.DarkYellow
+                                        Console.Write(" ___ ")
+                                        Console.ResetColor()
+                                    Case 11
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.ForegroundColor = ConsoleColor.DarkYellow
+                                        Console.Write("_____")
+                                        Console.ResetColor()
+                                    Case 12
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.ForegroundColor = ConsoleColor.DarkGreen
+                                        Console.Write(".")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.Write("||")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.ForegroundColor = ConsoleColor.DarkGreen
+                                        Console.Write(" .")
+                                        Console.ResetColor()
+                                    Case 13
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.Write("_")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("/ \")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("_")
+                                        Console.ResetColor()
+                                    Case 14
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.Write("_")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("/\")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("__")
+                                        Console.ResetColor()
+                                    Case 15
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.Write("_____")
+                                        Console.ResetColor()
+                                    Case 16
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("_")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("/|")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("  ")
+                                        Console.ResetColor()
+                                    Case 17
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("|\")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("__")
+                                        Console.ResetColor()
+                                    Case 18
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("_")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("/|")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("  ")
+                                        Console.ResetColor()
+                                    Case 19
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("|\")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("__")
+                                        Console.ResetColor()
+                                    Case 20
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("__   ")
+                                        Console.ResetColor()
+                                    Case 21
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("  ___")
+                                        Console.ResetColor()
+                                    Case 22
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("_____")
+                                        Console.ResetColor()
+                                    Case 23
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.Write("|:|")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.ResetColor()
+                                    Case 24
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("/ : \")
+                                        Console.ResetColor()
+                                    Case 25
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("/ : \")
+                                        Console.ResetColor()
+                                    Case 26
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("/ :|")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                    Case 27
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("|: \")
+                                        Console.ResetColor()
+                                    Case 28
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("/ :|")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.ResetColor()
+                                    Case 29
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("|: \")
+                                        Console.ResetColor()
+                                    Case 30
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("___  ")
+                                        Console.ResetColor()
+                                    Case 31
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("  ___")
+                                        Console.ResetColor()
+                                    Case 32
+                                        Console.BackgroundColor = ConsoleColor.Gray
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.Write("oOO  ")
+                                        Console.ResetColor()
+                                    Case 33
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("    _")
+                                        Console.ResetColor()
+                                    Case 34
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("_    ")
+                                        Console.ResetColor()
+                                    Case 35
+                                        Console.BackgroundColor = ConsoleColor.White
+                                        Console.Write("|")
+                                        Console.BackgroundColor = ConsoleColor.DarkCyan
+                                        Console.Write("[][")
+                                        Console.BackgroundColor = ConsoleColor.White
+                                        Console.Write(" ")
+                                        Console.ResetColor()
+                                    Case 36
+                                        Console.BackgroundColor = ConsoleColor.White
+                                        Console.Write(" ")
+                                        Console.BackgroundColor = ConsoleColor.DarkCyan
+                                        Console.Write("][]")
+                                        Console.BackgroundColor = ConsoleColor.White
+                                        Console.Write("|")
+                                        Console.ResetColor()
+                                    Case 37
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("_____")
+                                        Console.ResetColor()
+                                    Case 38
+                                        Console.BackgroundColor = ConsoleColor.Blue
+                                        Console.Write("~~~~~")
+                                        Console.BackgroundColor = ConsoleColor.Black
+                                    Case 39
+                                        Console.ForegroundColor = ConsoleColor.Green
+                                        Console.BackgroundColor = ConsoleColor.DarkGreen
+                                        Console.Write(":::::")
+                                        Console.ResetColor()
+                                    Case 40
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.Write("x   x")
+                                        Console.ResetColor()
+                                    Case 41
+                                        Console.BackgroundColor = ConsoleColor.Gray
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.Write("OOo  ")
+                                        Console.ResetColor()
+                                    Case 42
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.Write("/ :|")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.ResetColor()
+                                End Select
+                            ElseIf CurrentLine = 1 Then
+                                Select Case Game.GameMap.GridCodes(y, x)
+                                    Case -1
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.ForegroundColor = ConsoleColor.DarkGreen
+                                        Console.Write(" . . ")
+                                        Console.ResetColor()
+                                    Case 0
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("I")
+                                        Console.ForegroundColor = ConsoleColor.Yellow
+                                        Console.Write("  N ")
+                                        Console.ResetColor()
+                                    Case 1
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.BackgroundColor = ConsoleColor.DarkYellow
+                                        Console.Write("[]")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("   ")
+                                        Console.ResetColor()
+                                    Case 2
+                                        Console.BackgroundColor = ConsoleColor.DarkRed
+                                        Console.Write("| ")
+                                        Console.BackgroundColor = ConsoleColor.DarkCyan
+                                        Console.Write("[]")
+                                        Console.BackgroundColor = ConsoleColor.DarkRed
+                                        Console.Write("|")
+                                        Console.ResetColor()
+                                    Case 3
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("_____")
+                                        Console.ResetColor()
+                                    Case 4
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("____ ")
+                                        Console.ResetColor()
+                                    Case 5
+                                        Console.Write("|LL|")
+                                        Console.BackgroundColor = ConsoleColor.DarkCyan
+                                        Console.Write("|")
+                                        Console.ResetColor()
+                                    Case 6
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.DarkYellow
+                                        Console.Write("|")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.ForegroundColor = ConsoleColor.DarkGreen
+                                        Console.Write(":::")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.DarkYellow
+                                        Console.Write("|")
+                                        Console.ResetColor()
+                                    Case 7
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("|")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.ForegroundColor = ConsoleColor.DarkRed
+                                        Console.Write("h  ")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.Write("|")
+                                        Console.ResetColor()
+                                    Case 8
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.DarkGreen
+                                        Console.Write(".")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(":::")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.Gray
+                                        Console.Write("|")
+                                        Console.ResetColor()
+                                    Case 9
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("|")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.ForegroundColor = ConsoleColor.DarkGreen
+                                        Console.Write(":::")
+                                        Console.ForegroundColor = ConsoleColor.Gray
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("|")
+                                        Console.ResetColor()
+                                    Case 10
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("|")
+                                        Console.BackgroundColor = ConsoleColor.Yellow
+                                        Console.ForegroundColor = ConsoleColor.Red
+                                        Console.Write(" _ ")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.Gray
+                                        Console.Write("|")
+                                        Console.ResetColor()
+                                    Case 11
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("_____")
+                                        Console.ResetColor()
+                                    Case 12
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.Write(" ")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("||")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("  ")
+                                        Console.ResetColor()
+                                    Case 13
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.Write("_   _")
+                                        Console.ResetColor()
+                                    Case 14
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.Write("_____")
+                                        Console.ResetColor()
+                                    Case 15
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.Write("_   _")
+                                        Console.ResetColor()
+                                    Case 16
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.Write("_ |")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("  ")
+                                        Console.ResetColor()
+                                    Case 17
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("| __")
+                                        Console.ResetColor()
+                                    Case 18
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.Write("__/")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("  ")
+                                        Console.ResetColor()
+                                    Case 19
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.Write("\___")
+                                        Console.ResetColor()
+                                    Case 20
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.Write("_ \")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("  ")
+                                        Console.ResetColor()
+                                    Case 21
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.BackgroundColor = ConsoleColor.Black
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("/  _")
+                                        Console.ResetColor()
+                                    Case 22
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("-----")
+                                        Console.ResetColor()
+                                    Case 23
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.Write("|:|")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.ResetColor()
+                                    Case 24
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.Write("-   -")
+                                        Console.ResetColor()
+                                    Case 25
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.Write("-   -")
+                                        Console.ResetColor()
+                                    Case 26
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.Write("-   -")
+                                        Console.ResetColor()
+                                    Case 27
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.Write("-   -")
+                                        Console.ResetColor()
+                                    Case 28
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.Write("-- |")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.ResetColor()
+                                    Case 29
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.Write("| --")
+                                        Console.ResetColor()
+                                    Case 30
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.Write("-- \")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.ResetColor()
+                                    Case 31
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.Write("/  -")
+                                        Console.ResetColor()
+                                    Case 32
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.Write("__")
+                                        Console.BackgroundColor = ConsoleColor.DarkRed
+                                        Console.Write("||")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("_")
+                                        Console.ResetColor()
+                                    Case 33
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.Write("___")
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.BackgroundColor = ConsoleColor.White
+                                        Console.Write("/ ")
+                                        Console.ResetColor()
+                                    Case 34
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.BackgroundColor = ConsoleColor.White
+                                        Console.Write(" \")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.Write("___")
+                                        Console.ResetColor()
+                                    Case 35
+                                        Console.BackgroundColor = ConsoleColor.White
+                                        Console.Write("|")
+                                        Console.BackgroundColor = ConsoleColor.DarkCyan
+                                        Console.Write("[][")
+                                        Console.BackgroundColor = ConsoleColor.White
+                                        Console.Write(" ")
+                                        Console.ResetColor()
+                                    Case 36
+                                        Console.BackgroundColor = ConsoleColor.White
+                                        Console.Write(" ")
+                                        Console.BackgroundColor = ConsoleColor.DarkCyan
+                                        Console.Write("][]")
+                                        Console.BackgroundColor = ConsoleColor.White
+                                        Console.Write("|")
+                                        Console.ResetColor()
+                                    Case 37
+                                        Console.BackgroundColor = ConsoleColor.Gray
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.Write("|")
+                                        Console.BackgroundColor = ConsoleColor.White
+                                        Console.Write("POL")
+                                        Console.BackgroundColor = ConsoleColor.Gray
+                                        Console.Write("|")
+                                        Console.ResetColor()
+                                    Case 38
+                                        Console.BackgroundColor = ConsoleColor.Blue
+                                        Console.Write("~~~~~")
+                                        Console.ResetColor()
+                                    Case 39
+                                        Console.ForegroundColor = ConsoleColor.DarkRed
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("| | |")
+                                        Console.ResetColor()
+                                    Case 40
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.Write("| x |")
+                                        Console.ResetColor()
+                                    Case 41
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.BackgroundColor = ConsoleColor.Gray
+                                        Console.Write("||")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("  ")
+                                        Console.ResetColor()
+                                    Case 42
+                                        Console.ForegroundColor = ConsoleColor.DarkGray
+                                        Console.BackgroundColor = ConsoleColor.White
+                                        Console.Write("-  |")
+                                        Console.ForegroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.ResetColor()
+                                End Select
+                            ElseIf CurrentLine = 2 Then
+                                Select Case Game.GameMap.GridCodes(y, x)
+                                    Case -1
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.ForegroundColor = ConsoleColor.DarkGreen
+                                        Console.Write(". . .")
+                                        Console.ResetColor()
+                                    Case 0
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.Yellow
+                                        Console.Write("   N ")
+                                        Console.ResetColor()
+                                    Case 1
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("  ")
+                                        Console.BackgroundColor = ConsoleColor.Red
+                                        Console.Write("/\")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.ResetColor()
+                                    Case 2
+                                        Console.BackgroundColor = ConsoleColor.DarkRed
+                                        Console.Write("| ")
+                                        Console.BackgroundColor = ConsoleColor.DarkCyan
+                                        Console.Write("[]")
+                                        Console.BackgroundColor = ConsoleColor.DarkRed
+                                        Console.Write("|")
+                                        Console.ResetColor()
+                                    Case 3
+                                        Console.BackgroundColor = ConsoleColor.Gray
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.Write("[GAS]")
+                                        Console.ResetColor()
+                                    Case 4
+                                        Console.BackgroundColor = ConsoleColor.Red
+                                        Console.Write("M")
+                                        Console.BackgroundColor = ConsoleColor.DarkRed
+                                        Console.Write("A")
+                                        Console.BackgroundColor = ConsoleColor.Red
+                                        Console.Write("R")
+                                        Console.BackgroundColor = ConsoleColor.DarkRed
+                                        Console.Write("T")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.ResetColor()
+                                    Case 5
+                                        Console.BackgroundColor = ConsoleColor.DarkCyan
+                                        Console.Write("[][]|")
+                                        Console.ResetColor()
+                                    Case 6
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.ForegroundColor = ConsoleColor.DarkYellow
+                                        Console.Write("|h| |")
+                                        Console.ResetColor()
+                                    Case 7
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.ForegroundColor = ConsoleColor.DarkRed
+                                        Console.Write("|hTT")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.Gray
+                                        Console.Write("|")
+                                        Console.ResetColor()
+                                    Case 8
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("|")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.ForegroundColor = ConsoleColor.DarkRed
+                                        Console.Write("|h|")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.Write("|")
+                                        Console.ResetColor()
+                                    Case 9
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("|")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.ForegroundColor = ConsoleColor.DarkRed
+                                        Console.Write("|||")
+                                        Console.ForegroundColor = ConsoleColor.Gray
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("|")
+                                        Console.ResetColor()
+                                    Case 10
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("|")
+                                        Console.BackgroundColor = ConsoleColor.Yellow
+                                        Console.ForegroundColor = ConsoleColor.Red
+                                        Console.Write("/U\")
+                                        Console.ForegroundColor = ConsoleColor.Gray
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("|")
+                                        Console.ResetColor()
+                                    Case 11
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("     ")
+                                        Console.ResetColor()
+                                    Case 12
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.Write("||")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("  ")
+                                        Console.ResetColor()
+                                    Case 13
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("\ /")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.ResetColor()
+                                    Case 14
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("     ")
+                                        Console.ResetColor()
+                                    Case 15
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.Write("\ /")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.ResetColor()
+                                    Case 16
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.Write("\|")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("  ")
+                                        Console.ResetColor()
+                                    Case 17
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("|/")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("  ")
+                                        Console.ResetColor()
+                                    Case 18
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("     ")
+                                        Console.ResetColor()
+                                    Case 19
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("     ")
+                                        Console.ResetColor()
+                                    Case 20
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("\|")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("  ")
+                                        Console.ResetColor()
+                                    Case 21
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.Write("| /")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.ResetColor()
+                                    Case 22
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("_____")
+                                        Console.ResetColor()
+                                    Case 23
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("|:|")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.ResetColor()
+                                    Case 24
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("     ")
+                                        Console.ResetColor()
+                                    Case 25
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("     ")
+                                        Console.ResetColor()
+                                    Case 26
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("_____")
+                                        Console.ResetColor()
+                                    Case 27
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("     ")
+                                        Console.ResetColor()
+                                    Case 28
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.Write("___/")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.ResetColor()
+                                    Case 29
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.Write("\___")
+                                        Console.ResetColor()
+                                    Case 30
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.Write("  :|")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.ResetColor()
+                                    Case 31
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.Write("|:  ")
+                                        Console.ResetColor()
+                                    Case 32
+                                        Console.BackgroundColor = ConsoleColor.DarkRed
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.Write("|   |")
+                                        Console.ResetColor()
+                                    Case 33
+                                        Console.BackgroundColor = ConsoleColor.White
+                                        Console.Write("|")
+                                        Console.BackgroundColor = ConsoleColor.DarkCyan
+                                        Console.Write("[][")
+                                        Console.BackgroundColor = ConsoleColor.White
+                                        Console.Write(" ")
+                                        Console.ResetColor()
+                                    Case 34
+                                        Console.BackgroundColor = ConsoleColor.White
+                                        Console.Write(" ")
+                                        Console.BackgroundColor = ConsoleColor.DarkCyan
+                                        Console.Write("][]")
+                                        Console.BackgroundColor = ConsoleColor.White
+                                        Console.Write("|")
+                                        Console.ResetColor()
+                                    Case 35
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("    ")
+                                        Console.BackgroundColor = ConsoleColor.Yellow
+                                        Console.Write("|")
+                                        Console.ResetColor()
+                                    Case 36
+                                        Console.BackgroundColor = ConsoleColor.Yellow
+                                        Console.Write("|")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("    ")
+                                        Console.ResetColor()
+                                    Case 37
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.BackgroundColor = ConsoleColor.Gray
+                                        Console.Write("|")
+                                        Console.BackgroundColor = ConsoleColor.White
+                                        Console.Write("ICE")
+                                        Console.BackgroundColor = ConsoleColor.Gray
+                                        Console.Write("|")
+                                        Console.ResetColor()
+                                    Case 38
+                                        Console.BackgroundColor = ConsoleColor.Blue
+                                        Console.Write("~~~~~")
+                                        Console.ResetColor()
+                                    Case 39
+                                        Console.BackgroundColor = ConsoleColor.DarkGreen
+                                        Console.ForegroundColor = ConsoleColor.Green
+                                        Console.Write(":::::")
+                                        Console.ResetColor()
+                                    Case 40
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("X | X")
+                                        Console.ResetColor()
+                                    Case 41
+                                        Console.BackgroundColor = ConsoleColor.Gray
+                                        Console.Write("_||__")
+                                        Console.ResetColor()
+                                    Case 42
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.Write("   |")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.ResetColor()
+                                End Select
+                            ElseIf CurrentLine = 3 Then
+                                Select Case Game.GameMap.GridCodes(y, x)
+                                    Case -1
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.ForegroundColor = ConsoleColor.DarkGreen
+                                        Console.Write(" . . ")
+                                        Console.ResetColor()
+                                    Case 0
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.Yellow
+                                        Console.Write("  [N]")
+                                        Console.ResetColor()
+                                    Case 1
+                                        Console.ForegroundColor = ConsoleColor.DarkYellow
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("  ")
+                                        Console.BackgroundColor = ConsoleColor.DarkYellow
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.Write("[]")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.ResetColor()
+                                    Case 2
+                                        Console.BackgroundColor = ConsoleColor.DarkCyan
+                                        Console.Write("[]")
+                                        Console.BackgroundColor = ConsoleColor.DarkRed
+                                        Console.Write("_[|")
+                                        Console.ResetColor()
+                                    Case 3
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("|")
+                                        Console.Write("  ")
+                                        Console.BackgroundColor = ConsoleColor.DarkCyan
+                                        Console.Write("[]")
+                                        Console.ResetColor()
+                                    Case 4
+                                        Console.BackgroundColor = ConsoleColor.DarkCyan
+                                        Console.Write("[]")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("_|")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.ResetColor()
+                                    Case 5
+                                        Console.BackgroundColor = ConsoleColor.DarkCyan
+                                        Console.Write("[][]|")
+                                        Console.ResetColor()
+                                    Case 6
+                                        Console.ForegroundColor = ConsoleColor.DarkYellow
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("|")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("___")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("|")
+                                        Console.ResetColor()
+                                    Case 7
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("|")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("_")
+                                        Console.ForegroundColor = ConsoleColor.DarkRed
+                                        Console.Write("h")
+                                        Console.ForegroundColor = ConsoleColor.DarkGray
+                                        Console.Write("_")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("|")
+                                        Console.ResetColor()
+                                    Case 8
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("|")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("___")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("|")
+                                        Console.ResetColor()
+                                    Case 9
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("|")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("___")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("|")
+                                        Console.ResetColor()
+                                    Case 10
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("|")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("___")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.Write("|")
+                                        Console.ResetColor()
+                                    Case 11
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("     ")
+                                        Console.ResetColor()
+                                    Case 12
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.Write("||")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("  ")
+                                        Console.ResetColor()
+                                    Case 13
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.Write("|| ")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.ResetColor()
+                                    Case 14
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("     ")
+                                        Console.ResetColor()
+                                    Case 15
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.Write("||")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("  ")
+                                        Console.ResetColor()
+                                    Case 16
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.Write("||")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("  ")
+                                        Console.ResetColor()
+                                    Case 17
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.Write("|| ")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.ResetColor()
+                                    Case 18
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("     ")
+                                        Console.ResetColor()
+                                    Case 19
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("     ")
+                                        Console.ResetColor()
+                                    Case 20
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.Write("|| ")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.ResetColor()
+                                    Case 21
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.Write("||")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("  ")
+                                        Console.ResetColor()
+                                    Case 22
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("     ")
+                                        Console.ResetColor()
+                                    Case 23
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.Write("|:|")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.ResetColor()
+                                    Case 24
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.Write("\ : /")
+                                        Console.ResetColor()
+                                    Case 25
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.Write("\ : /")
+                                        Console.ResetColor()
+                                    Case 26
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("     ")
+                                        Console.ResetColor()
+                                    Case 27
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.Write("\ : /")
+                                        Console.ResetColor()
+                                    Case 28
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("     ")
+                                        Console.ResetColor()
+                                    Case 29
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("     ")
+                                        Console.ResetColor()
+                                    Case 30
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.Write("\ :|")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.ResetColor()
+                                    Case 31
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.Write("|: /")
+                                        Console.ResetColor()
+                                    Case 32
+                                        Console.BackgroundColor = ConsoleColor.DarkRed
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.Write("|___|")
+                                        Console.ResetColor()
+                                    Case 33
+                                        Console.BackgroundColor = ConsoleColor.White
+                                        Console.Write("|")
+                                        Console.BackgroundColor = ConsoleColor.DarkCyan
+                                        Console.Write("[][")
+                                        Console.BackgroundColor = ConsoleColor.White
+                                        Console.Write(" ")
+                                        Console.ResetColor()
+                                    Case 34
+                                        Console.BackgroundColor = ConsoleColor.White
+                                        Console.Write(" ")
+                                        Console.BackgroundColor = ConsoleColor.DarkCyan
+                                        Console.Write("][]")
+                                        Console.BackgroundColor = ConsoleColor.White
+                                        Console.Write("|")
+                                        Console.ResetColor()
+                                    Case 35
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("   ")
+                                        Console.BackgroundColor = ConsoleColor.Yellow
+                                        Console.Write("/ ")
+                                        Console.ResetColor()
+                                    Case 36
+                                        Console.BackgroundColor = ConsoleColor.Yellow
+                                        Console.Write(" \")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("   ")
+                                        Console.ResetColor()
+                                    Case 37
+                                        Console.BackgroundColor = ConsoleColor.Gray
+                                        Console.ForegroundColor = ConsoleColor.Black
+                                        Console.Write("|_")
+                                        Console.BackgroundColor = ConsoleColor.DarkCyan
+                                        Console.Write("[]")
+                                        Console.BackgroundColor = ConsoleColor.Gray
+                                        Console.Write("|")
+                                        Console.ResetColor()
+                                    Case 38
+                                        Console.BackgroundColor = ConsoleColor.Blue
+                                        Console.Write("~~~~~")
+                                        Console.ResetColor()
+                                    Case 39
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.ForegroundColor = ConsoleColor.DarkRed
+                                        Console.Write("| | |")
+                                        Console.ResetColor()
+                                    Case 40
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.Write("|   |")
+                                        Console.ResetColor()
+                                    Case 41
+                                        Console.BackgroundColor = ConsoleColor.Gray
+                                        Console.Write("|___|")
+                                        Console.ResetColor()
+                                    Case 42
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.Write("\ :|")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
+                                        Console.ResetColor()
+                                End Select
+                            End If
+                        End If
+                    Next
+                    Console.WriteLine()
                 Next
-                Console.WriteLine()
             Next
-        Next
+        Else
+            For y = 0 To 24
+                For CurrentLine As Integer = 0 To 3
+                    For x = 0 To 32
+                        If CurrentLine = 0 Then
+                            Select Case Game.TestMap.GridCodes(y, x)
+                                Case -1
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.ForegroundColor = ConsoleColor.DarkGreen
+                                    Console.Write(". . .")
+                                    Console.ResetColor()
+                                Case 0
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("___|")
+                                    Console.ForegroundColor = ConsoleColor.Gray
+                                    Console.Write("\")
+                                    Console.ResetColor()
+                                Case 1
+                                    Console.BackgroundColor = ConsoleColor.Red
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.Write("/\")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.ForegroundColor = ConsoleColor.DarkGreen
+                                    Console.Write(". .")
+                                    Console.ResetColor()
+                                Case 2
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.ForegroundColor = ConsoleColor.DarkRed
+                                    Console.Write("_____")
+                                    Console.ResetColor()
+                                Case 3
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.ForegroundColor = ConsoleColor.DarkGreen
+                                    Console.Write(". . .")
+                                    Console.ResetColor()
+                                Case 4
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("     ")
+                                    Console.ResetColor()
+                                Case 5
+                                    Console.Write("|MA|")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("_")
+                                    Console.ResetColor()
+                                Case 6
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.DarkYellow
+                                    Console.Write("_____")
+                                    Console.ResetColor()
+                                Case 7
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.DarkYellow
+                                    Console.Write(" ____")
+                                    Console.ResetColor()
+                                Case 8
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.DarkYellow
+                                    Console.Write("____ ")
+                                    Console.ResetColor()
+                                Case 9
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.DarkYellow
+                                    Console.Write(" ___ ")
+                                    Console.ResetColor()
+                                Case 10
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.DarkYellow
+                                    Console.Write(" ___ ")
+                                    Console.ResetColor()
+                                Case 11
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.ForegroundColor = ConsoleColor.DarkYellow
+                                    Console.Write("_____")
+                                    Console.ResetColor()
+                                Case 12
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.ForegroundColor = ConsoleColor.DarkGreen
+                                    Console.Write(".")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.Write("||")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.ForegroundColor = ConsoleColor.DarkGreen
+                                    Console.Write(" .")
+                                    Console.ResetColor()
+                                Case 13
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.Write("_")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("/ \")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("_")
+                                    Console.ResetColor()
+                                Case 14
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.Write("_")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("/\")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("__")
+                                    Console.ResetColor()
+                                Case 15
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.Write("_____")
+                                    Console.ResetColor()
+                                Case 16
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("_")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("/|")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("  ")
+                                    Console.ResetColor()
+                                Case 17
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("|\")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("__")
+                                    Console.ResetColor()
+                                Case 18
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("_")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("/|")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("  ")
+                                    Console.ResetColor()
+                                Case 19
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("|\")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("__")
+                                    Console.ResetColor()
+                                Case 20
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("__   ")
+                                    Console.ResetColor()
+                                Case 21
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("  ___")
+                                    Console.ResetColor()
+                                Case 22
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("_____")
+                                    Console.ResetColor()
+                                Case 23
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.Write("|:|")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.ResetColor()
+                                Case 24
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("/ : \")
+                                    Console.ResetColor()
+                                Case 25
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("/ : \")
+                                    Console.ResetColor()
+                                Case 26
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("/ :|")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                Case 27
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("|: \")
+                                    Console.ResetColor()
+                                Case 28
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("/ :|")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.ResetColor()
+                                Case 29
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("|: \")
+                                    Console.ResetColor()
+                                Case 30
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("___  ")
+                                    Console.ResetColor()
+                                Case 31
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("  ___")
+                                    Console.ResetColor()
+                                Case 32
+                                    Console.BackgroundColor = ConsoleColor.Gray
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.Write("oOO  ")
+                                    Console.ResetColor()
+                                Case 33
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("    _")
+                                    Console.ResetColor()
+                                Case 34
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("_    ")
+                                    Console.ResetColor()
+                                Case 35
+                                    Console.BackgroundColor = ConsoleColor.White
+                                    Console.Write("|")
+                                    Console.BackgroundColor = ConsoleColor.DarkCyan
+                                    Console.Write("[][")
+                                    Console.BackgroundColor = ConsoleColor.White
+                                    Console.Write(" ")
+                                    Console.ResetColor()
+                                Case 36
+                                    Console.BackgroundColor = ConsoleColor.White
+                                    Console.Write(" ")
+                                    Console.BackgroundColor = ConsoleColor.DarkCyan
+                                    Console.Write("][]")
+                                    Console.BackgroundColor = ConsoleColor.White
+                                    Console.Write("|")
+                                    Console.ResetColor()
+                                Case 37
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("_____")
+                                    Console.ResetColor()
+                                Case 38
+                                    Console.BackgroundColor = ConsoleColor.Blue
+                                    Console.Write("~~~~~")
+                                    Console.BackgroundColor = ConsoleColor.Black
+                                Case 39
+                                    Console.ForegroundColor = ConsoleColor.Green
+                                    Console.BackgroundColor = ConsoleColor.DarkGreen
+                                    Console.Write(":::::")
+                                    Console.ResetColor()
+                                Case 40
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.Write("x   x")
+                                    Console.ResetColor()
+                                Case 41
+                                    Console.BackgroundColor = ConsoleColor.Gray
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.Write("OOo  ")
+                                    Console.ResetColor()
+                                Case 42
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.Write("/ :|")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.ResetColor()
+                            End Select
+                        ElseIf CurrentLine = 1 Then
+                            Select Case Game.TestMap.GridCodes(y, x)
+                                Case -1
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.ForegroundColor = ConsoleColor.DarkGreen
+                                    Console.Write(" . . ")
+                                    Console.ResetColor()
+                                Case 0
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("I")
+                                    Console.ForegroundColor = ConsoleColor.Yellow
+                                    Console.Write("  N ")
+                                    Console.ResetColor()
+                                Case 1
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.BackgroundColor = ConsoleColor.DarkYellow
+                                    Console.Write("[]")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("   ")
+                                    Console.ResetColor()
+                                Case 2
+                                    Console.BackgroundColor = ConsoleColor.DarkRed
+                                    Console.Write("| ")
+                                    Console.BackgroundColor = ConsoleColor.DarkCyan
+                                    Console.Write("[]")
+                                    Console.BackgroundColor = ConsoleColor.DarkRed
+                                    Console.Write("|")
+                                    Console.ResetColor()
+                                Case 3
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("_____")
+                                    Console.ResetColor()
+                                Case 4
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("____ ")
+                                    Console.ResetColor()
+                                Case 5
+                                    Console.Write("|LL|")
+                                    Console.BackgroundColor = ConsoleColor.DarkCyan
+                                    Console.Write("|")
+                                    Console.ResetColor()
+                                Case 6
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.DarkYellow
+                                    Console.Write("|")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.ForegroundColor = ConsoleColor.DarkGreen
+                                    Console.Write(":::")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.DarkYellow
+                                    Console.Write("|")
+                                    Console.ResetColor()
+                                Case 7
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("|")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.ForegroundColor = ConsoleColor.DarkRed
+                                    Console.Write("h  ")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.Write("|")
+                                    Console.ResetColor()
+                                Case 8
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.DarkGreen
+                                    Console.Write(".")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(":::")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.Gray
+                                    Console.Write("|")
+                                    Console.ResetColor()
+                                Case 9
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("|")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.ForegroundColor = ConsoleColor.DarkGreen
+                                    Console.Write(":::")
+                                    Console.ForegroundColor = ConsoleColor.Gray
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("|")
+                                    Console.ResetColor()
+                                Case 10
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("|")
+                                    Console.BackgroundColor = ConsoleColor.Yellow
+                                    Console.ForegroundColor = ConsoleColor.Red
+                                    Console.Write(" _ ")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.Gray
+                                    Console.Write("|")
+                                    Console.ResetColor()
+                                Case 11
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("_____")
+                                    Console.ResetColor()
+                                Case 12
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.Write(" ")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("||")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("  ")
+                                    Console.ResetColor()
+                                Case 13
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.Write("_   _")
+                                    Console.ResetColor()
+                                Case 14
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.Write("_____")
+                                    Console.ResetColor()
+                                Case 15
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.Write("_   _")
+                                    Console.ResetColor()
+                                Case 16
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.Write("_ |")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("  ")
+                                    Console.ResetColor()
+                                Case 17
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("| __")
+                                    Console.ResetColor()
+                                Case 18
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.Write("__/")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("  ")
+                                    Console.ResetColor()
+                                Case 19
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.Write("\___")
+                                    Console.ResetColor()
+                                Case 20
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.Write("_ \")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("  ")
+                                    Console.ResetColor()
+                                Case 21
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.BackgroundColor = ConsoleColor.Black
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("/  _")
+                                    Console.ResetColor()
+                                Case 22
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("-----")
+                                    Console.ResetColor()
+                                Case 23
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.Write("|:|")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.ResetColor()
+                                Case 24
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.Write("-   -")
+                                    Console.ResetColor()
+                                Case 25
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.Write("-   -")
+                                    Console.ResetColor()
+                                Case 26
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.Write("-   -")
+                                    Console.ResetColor()
+                                Case 27
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.Write("-   -")
+                                    Console.ResetColor()
+                                Case 28
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.Write("-- |")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.ResetColor()
+                                Case 29
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.Write("| --")
+                                    Console.ResetColor()
+                                Case 30
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.Write("-- \")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.ResetColor()
+                                Case 31
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.Write("/  -")
+                                    Console.ResetColor()
+                                Case 32
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.Write("__")
+                                    Console.BackgroundColor = ConsoleColor.DarkRed
+                                    Console.Write("||")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("_")
+                                    Console.ResetColor()
+                                Case 33
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.Write("___")
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.BackgroundColor = ConsoleColor.White
+                                    Console.Write("/ ")
+                                    Console.ResetColor()
+                                Case 34
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.BackgroundColor = ConsoleColor.White
+                                    Console.Write(" \")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.Write("___")
+                                    Console.ResetColor()
+                                Case 35
+                                    Console.BackgroundColor = ConsoleColor.White
+                                    Console.Write("|")
+                                    Console.BackgroundColor = ConsoleColor.DarkCyan
+                                    Console.Write("[][")
+                                    Console.BackgroundColor = ConsoleColor.White
+                                    Console.Write(" ")
+                                    Console.ResetColor()
+                                Case 36
+                                    Console.BackgroundColor = ConsoleColor.White
+                                    Console.Write(" ")
+                                    Console.BackgroundColor = ConsoleColor.DarkCyan
+                                    Console.Write("][]")
+                                    Console.BackgroundColor = ConsoleColor.White
+                                    Console.Write("|")
+                                    Console.ResetColor()
+                                Case 37
+                                    Console.BackgroundColor = ConsoleColor.Gray
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.Write("|")
+                                    Console.BackgroundColor = ConsoleColor.White
+                                    Console.Write("POL")
+                                    Console.BackgroundColor = ConsoleColor.Gray
+                                    Console.Write("|")
+                                    Console.ResetColor()
+                                Case 38
+                                    Console.BackgroundColor = ConsoleColor.Blue
+                                    Console.Write("~~~~~")
+                                    Console.ResetColor()
+                                Case 39
+                                    Console.ForegroundColor = ConsoleColor.DarkRed
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("| | |")
+                                    Console.ResetColor()
+                                Case 40
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.Write("| x |")
+                                    Console.ResetColor()
+                                Case 41
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.BackgroundColor = ConsoleColor.Gray
+                                    Console.Write("||")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("  ")
+                                    Console.ResetColor()
+                                Case 42
+                                    Console.ForegroundColor = ConsoleColor.DarkGray
+                                    Console.BackgroundColor = ConsoleColor.White
+                                    Console.Write("-  |")
+                                    Console.ForegroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.ResetColor()
+                            End Select
+                        ElseIf CurrentLine = 2 Then
+                            Select Case Game.TestMap.GridCodes(y, x)
+                                Case -1
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.ForegroundColor = ConsoleColor.DarkGreen
+                                    Console.Write(". . .")
+                                    Console.ResetColor()
+                                Case 0
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.Yellow
+                                    Console.Write("   N ")
+                                    Console.ResetColor()
+                                Case 1
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("  ")
+                                    Console.BackgroundColor = ConsoleColor.Red
+                                    Console.Write("/\")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.ResetColor()
+                                Case 2
+                                    Console.BackgroundColor = ConsoleColor.DarkRed
+                                    Console.Write("| ")
+                                    Console.BackgroundColor = ConsoleColor.DarkCyan
+                                    Console.Write("[]")
+                                    Console.BackgroundColor = ConsoleColor.DarkRed
+                                    Console.Write("|")
+                                    Console.ResetColor()
+                                Case 3
+                                    Console.BackgroundColor = ConsoleColor.Gray
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.Write("[GAS]")
+                                    Console.ResetColor()
+                                Case 4
+                                    Console.BackgroundColor = ConsoleColor.Red
+                                    Console.Write("M")
+                                    Console.BackgroundColor = ConsoleColor.DarkRed
+                                    Console.Write("A")
+                                    Console.BackgroundColor = ConsoleColor.Red
+                                    Console.Write("R")
+                                    Console.BackgroundColor = ConsoleColor.DarkRed
+                                    Console.Write("T")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.ResetColor()
+                                Case 5
+                                    Console.BackgroundColor = ConsoleColor.DarkCyan
+                                    Console.Write("[][]|")
+                                    Console.ResetColor()
+                                Case 6
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.ForegroundColor = ConsoleColor.DarkYellow
+                                    Console.Write("|h| |")
+                                    Console.ResetColor()
+                                Case 7
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.ForegroundColor = ConsoleColor.DarkRed
+                                    Console.Write("|hTT")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.Gray
+                                    Console.Write("|")
+                                    Console.ResetColor()
+                                Case 8
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("|")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.ForegroundColor = ConsoleColor.DarkRed
+                                    Console.Write("|h|")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.Write("|")
+                                    Console.ResetColor()
+                                Case 9
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("|")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.ForegroundColor = ConsoleColor.DarkRed
+                                    Console.Write("|||")
+                                    Console.ForegroundColor = ConsoleColor.Gray
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("|")
+                                    Console.ResetColor()
+                                Case 10
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("|")
+                                    Console.BackgroundColor = ConsoleColor.Yellow
+                                    Console.ForegroundColor = ConsoleColor.Red
+                                    Console.Write("/U\")
+                                    Console.ForegroundColor = ConsoleColor.Gray
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("|")
+                                    Console.ResetColor()
+                                Case 11
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("     ")
+                                    Console.ResetColor()
+                                Case 12
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.Write("||")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("  ")
+                                    Console.ResetColor()
+                                Case 13
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("\ /")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.ResetColor()
+                                Case 14
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("     ")
+                                    Console.ResetColor()
+                                Case 15
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.Write("\ /")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.ResetColor()
+                                Case 16
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.Write("\|")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("  ")
+                                    Console.ResetColor()
+                                Case 17
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("|/")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("  ")
+                                    Console.ResetColor()
+                                Case 18
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("     ")
+                                    Console.ResetColor()
+                                Case 19
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("     ")
+                                    Console.ResetColor()
+                                Case 20
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("\|")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("  ")
+                                    Console.ResetColor()
+                                Case 21
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.Write("| /")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.ResetColor()
+                                Case 22
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("_____")
+                                    Console.ResetColor()
+                                Case 23
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("|:|")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.ResetColor()
+                                Case 24
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("     ")
+                                    Console.ResetColor()
+                                Case 25
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("     ")
+                                    Console.ResetColor()
+                                Case 26
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("_____")
+                                    Console.ResetColor()
+                                Case 27
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("     ")
+                                    Console.ResetColor()
+                                Case 28
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.Write("___/")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.ResetColor()
+                                Case 29
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.Write("\___")
+                                    Console.ResetColor()
+                                Case 30
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.Write("  :|")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.ResetColor()
+                                Case 31
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.Write("|:  ")
+                                    Console.ResetColor()
+                                Case 32
+                                    Console.BackgroundColor = ConsoleColor.DarkRed
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.Write("|   |")
+                                    Console.ResetColor()
+                                Case 33
+                                    Console.BackgroundColor = ConsoleColor.White
+                                    Console.Write("|")
+                                    Console.BackgroundColor = ConsoleColor.DarkCyan
+                                    Console.Write("[][")
+                                    Console.BackgroundColor = ConsoleColor.White
+                                    Console.Write(" ")
+                                    Console.ResetColor()
+                                Case 34
+                                    Console.BackgroundColor = ConsoleColor.White
+                                    Console.Write(" ")
+                                    Console.BackgroundColor = ConsoleColor.DarkCyan
+                                    Console.Write("][]")
+                                    Console.BackgroundColor = ConsoleColor.White
+                                    Console.Write("|")
+                                    Console.ResetColor()
+                                Case 35
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("    ")
+                                    Console.BackgroundColor = ConsoleColor.Yellow
+                                    Console.Write("|")
+                                    Console.ResetColor()
+                                Case 36
+                                    Console.BackgroundColor = ConsoleColor.Yellow
+                                    Console.Write("|")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("    ")
+                                    Console.ResetColor()
+                                Case 37
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.BackgroundColor = ConsoleColor.Gray
+                                    Console.Write("|")
+                                    Console.BackgroundColor = ConsoleColor.White
+                                    Console.Write("ICE")
+                                    Console.BackgroundColor = ConsoleColor.Gray
+                                    Console.Write("|")
+                                    Console.ResetColor()
+                                Case 38
+                                    Console.BackgroundColor = ConsoleColor.Blue
+                                    Console.Write("~~~~~")
+                                    Console.ResetColor()
+                                Case 39
+                                    Console.BackgroundColor = ConsoleColor.DarkGreen
+                                    Console.ForegroundColor = ConsoleColor.Green
+                                    Console.Write(":::::")
+                                    Console.ResetColor()
+                                Case 40
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("X | X")
+                                    Console.ResetColor()
+                                Case 41
+                                    Console.BackgroundColor = ConsoleColor.Gray
+                                    Console.Write("_||__")
+                                    Console.ResetColor()
+                                Case 42
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.Write("   |")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.ResetColor()
+                            End Select
+                        ElseIf CurrentLine = 3 Then
+                            Select Case Game.TestMap.GridCodes(y, x)
+                                Case -1
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.ForegroundColor = ConsoleColor.DarkGreen
+                                    Console.Write(" . . ")
+                                    Console.ResetColor()
+                                Case 0
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.Yellow
+                                    Console.Write("  [N]")
+                                    Console.ResetColor()
+                                Case 1
+                                    Console.ForegroundColor = ConsoleColor.DarkYellow
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("  ")
+                                    Console.BackgroundColor = ConsoleColor.DarkYellow
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.Write("[]")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.ResetColor()
+                                Case 2
+                                    Console.BackgroundColor = ConsoleColor.DarkCyan
+                                    Console.Write("[]")
+                                    Console.BackgroundColor = ConsoleColor.DarkRed
+                                    Console.Write("_[|")
+                                    Console.ResetColor()
+                                Case 3
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("|")
+                                    Console.Write("  ")
+                                    Console.BackgroundColor = ConsoleColor.DarkCyan
+                                    Console.Write("[]")
+                                    Console.ResetColor()
+                                Case 4
+                                    Console.BackgroundColor = ConsoleColor.DarkCyan
+                                    Console.Write("[]")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("_|")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.ResetColor()
+                                Case 5
+                                    Console.BackgroundColor = ConsoleColor.DarkCyan
+                                    Console.Write("[][]|")
+                                    Console.ResetColor()
+                                Case 6
+                                    Console.ForegroundColor = ConsoleColor.DarkYellow
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("|")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("___")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("|")
+                                    Console.ResetColor()
+                                Case 7
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("|")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("_")
+                                    Console.ForegroundColor = ConsoleColor.DarkRed
+                                    Console.Write("h")
+                                    Console.ForegroundColor = ConsoleColor.DarkGray
+                                    Console.Write("_")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("|")
+                                    Console.ResetColor()
+                                Case 8
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("|")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("___")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("|")
+                                    Console.ResetColor()
+                                Case 9
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("|")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("___")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("|")
+                                    Console.ResetColor()
+                                Case 10
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("|")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("___")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.Write("|")
+                                    Console.ResetColor()
+                                Case 11
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("     ")
+                                    Console.ResetColor()
+                                Case 12
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.Write("||")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("  ")
+                                    Console.ResetColor()
+                                Case 13
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.Write("|| ")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.ResetColor()
+                                Case 14
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("     ")
+                                    Console.ResetColor()
+                                Case 15
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.Write("||")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("  ")
+                                    Console.ResetColor()
+                                Case 16
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.Write("||")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("  ")
+                                    Console.ResetColor()
+                                Case 17
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.Write("|| ")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.ResetColor()
+                                Case 18
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("     ")
+                                    Console.ResetColor()
+                                Case 19
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("     ")
+                                    Console.ResetColor()
+                                Case 20
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.Write("|| ")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.ResetColor()
+                                Case 21
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.Write("||")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("  ")
+                                    Console.ResetColor()
+                                Case 22
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("     ")
+                                    Console.ResetColor()
+                                Case 23
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.Write("|:|")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.ResetColor()
+                                Case 24
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.Write("\ : /")
+                                    Console.ResetColor()
+                                Case 25
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.Write("\ : /")
+                                    Console.ResetColor()
+                                Case 26
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("     ")
+                                    Console.ResetColor()
+                                Case 27
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.Write("\ : /")
+                                    Console.ResetColor()
+                                Case 28
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("     ")
+                                    Console.ResetColor()
+                                Case 29
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("     ")
+                                    Console.ResetColor()
+                                Case 30
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.Write("\ :|")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.ResetColor()
+                                Case 31
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.Write("|: /")
+                                    Console.ResetColor()
+                                Case 32
+                                    Console.BackgroundColor = ConsoleColor.DarkRed
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.Write("|___|")
+                                    Console.ResetColor()
+                                Case 33
+                                    Console.BackgroundColor = ConsoleColor.White
+                                    Console.Write("|")
+                                    Console.BackgroundColor = ConsoleColor.DarkCyan
+                                    Console.Write("[][")
+                                    Console.BackgroundColor = ConsoleColor.White
+                                    Console.Write(" ")
+                                    Console.ResetColor()
+                                Case 34
+                                    Console.BackgroundColor = ConsoleColor.White
+                                    Console.Write(" ")
+                                    Console.BackgroundColor = ConsoleColor.DarkCyan
+                                    Console.Write("][]")
+                                    Console.BackgroundColor = ConsoleColor.White
+                                    Console.Write("|")
+                                    Console.ResetColor()
+                                Case 35
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("   ")
+                                    Console.BackgroundColor = ConsoleColor.Yellow
+                                    Console.Write("/ ")
+                                    Console.ResetColor()
+                                Case 36
+                                    Console.BackgroundColor = ConsoleColor.Yellow
+                                    Console.Write(" \")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("   ")
+                                    Console.ResetColor()
+                                Case 37
+                                    Console.BackgroundColor = ConsoleColor.Gray
+                                    Console.ForegroundColor = ConsoleColor.Black
+                                    Console.Write("|_")
+                                    Console.BackgroundColor = ConsoleColor.DarkCyan
+                                    Console.Write("[]")
+                                    Console.BackgroundColor = ConsoleColor.Gray
+                                    Console.Write("|")
+                                    Console.ResetColor()
+                                Case 38
+                                    Console.BackgroundColor = ConsoleColor.Blue
+                                    Console.Write("~~~~~")
+                                    Console.ResetColor()
+                                Case 39
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.ForegroundColor = ConsoleColor.DarkRed
+                                    Console.Write("| | |")
+                                    Console.ResetColor()
+                                Case 40
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.Write("|   |")
+                                    Console.ResetColor()
+                                Case 41
+                                    Console.BackgroundColor = ConsoleColor.Gray
+                                    Console.Write("|___|")
+                                    Console.ResetColor()
+                                Case 42
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.Write("\ :|")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
+                                    Console.ResetColor()
+                            End Select
+                        End If
+                    Next
+                    Console.WriteLine()
+                Next
+            Next
+        End If
         Console.Write("Y" & Int(Pos.y))
         Console.WriteLine(", X" & Int(Pos.x))
         Console.WriteLine("Land Value: " & Game.LotObjectMatrix(Pos.y, Pos.x).LandValue)
@@ -1492,6 +2737,7 @@ Public Class Map
         Game.GameMap.MapSelection(Pos, Game)
     End Sub
     Public Sub MapSelection(ByRef Pos, ByRef Game)
+        Console.WriteLine("Week " & Game.NoOfWeeksPlayed)
         Console.TreatControlCAsInput = True
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black

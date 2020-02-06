@@ -52,7 +52,7 @@ Module Module1
         Dim GameSettings As GameSettings
         GameSettings.IsTutorialGame = Game.GameSettings.IsTutorialGame
         GameSettings.MapWidth = Game.GameSettings.MapWidth
-        GameSettings.TextureFile = Game.TextureFile
+        GameSettings.TextureFile = Game.GameSettings.TextureFile
         Console.Clear()
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
@@ -83,7 +83,9 @@ Module Module1
             Dim pos As Position
             pos.y = 13
             pos.x = 16
-            Game.PrintMap(pos, map, Game)
+            Game.GameMap.PrintMap(pos, Game)
+        ElseIf MenuCode.Key = ConsoleKey.f1 Then
+            Game.ShowTestMap(Game)
         Else
             MainMenu(Game, map)
         End If
