@@ -63,7 +63,7 @@ Module Module1
         Console.WriteLine("[2] Load a previously saved game (not yet implemented)")
         Console.WriteLine("[3] Start a tutorial game (not yet implemented!)")
         Console.WriteLine("[4] View key bindings")
-        Console.WriteLine("[5] Graphics options")
+        Console.WriteLine("[5] Quit to start menu")
         Console.WriteLine("[6] Quit to desktop")
         Console.WriteLine("[ESC] Return to game")
         Dim MenuCode As ConsoleKeyInfo = Console.ReadKey(True)
@@ -76,7 +76,7 @@ Module Module1
         ElseIf MenuCode.Key = ConsoleKey.D4 Then
             KeyBindMenu(map, False, Game, GameSettings)
         ElseIf MenuCode.Key = ConsoleKey.D5 Then
-            GraphicsMenu(map, False, Game, GameSettings)
+            StartMenu(Nothing)
         ElseIf MenuCode.Key = ConsoleKey.D6 Then
             Stop
         ElseIf MenuCode.Key = ConsoleKey.Escape Then

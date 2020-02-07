@@ -41,7 +41,7 @@ Public Structure Texture
     End Property
 End Structure
 Public Class Game
-    Public GameSettings As GameSettings
+    Public Shared GameSettings As GameSettings
     Const StartingPopulation As Integer = 10
     Public TotalPowerSupply As Integer
     Public TotalPowerDemand As Integer
@@ -51,7 +51,7 @@ Public Class Game
     Public HasWorkBuildings As Boolean = False
     Public HasShoppingPlace As Boolean = False
     Public TestMap As Map
-    Public NoOfWeeksPlayed As Integer
+    Public NoOfWeeksPlayed As Integer = 1
     Sub ShowTestMap(Game)
         Dim testMap As Map = New Map()
         For i As Integer = 0 To 32
@@ -59,28 +59,28 @@ Public Class Game
                 testMap.GridCodes(24, 32) = -1
             Next
         Next
-        testMap.GridCodes(0, 0) = -1
-        testMap.GridCodes(0, 1) = 0
-        testMap.GridCodes(0, 2) = 1
-        testMap.GridCodes(0, 3) = 2
-        testMap.GridCodes(0, 4) = 3
-        testMap.GridCodes(0, 5) = 4
-        testMap.GridCodes(0, 6) = 5
-        testMap.GridCodes(0, 7) = 6
-        testMap.GridCodes(0, 8) = 7
-        testMap.GridCodes(0, 9) = 8
-        testMap.GridCodes(0, 10) = 9
-        testMap.GridCodes(0, 11) = 10
-        testMap.GridCodes(0, 12) = 11
-        testMap.GridCodes(0, 13) = 12
-        testMap.GridCodes(0, 14) = 13
-        testMap.GridCodes(0, 15) = 14
-        testMap.GridCodes(0, 16) = 15
-        testMap.GridCodes(0, 17) = 16
-        testMap.GridCodes(0, 18) = 17
-        testMap.GridCodes(0, 19) = 18
-        testMap.GridCodes(0, 20) = 19
-        testMap.GridCodes(0, 21) = 20
+        testMap.GridCodes(0, 0) = 11
+        testMap.GridCodes(0, 1) = 12
+        testMap.GridCodes(0, 2) = 13
+        testMap.GridCodes(0, 3) = 14
+        testMap.GridCodes(0, 4) = 15
+        testMap.GridCodes(0, 5) = 16
+        testMap.GridCodes(0, 6) = 17
+        testMap.GridCodes(0, 7) = 18
+        testMap.GridCodes(0, 8) = 19
+        testMap.GridCodes(0, 9) = 20
+        testMap.GridCodes(0, 10) = 21
+        testMap.GridCodes(0, 11) = 22
+        testMap.GridCodes(0, 12) = 23
+        testMap.GridCodes(0, 13) = 24
+        testMap.GridCodes(0, 14) = 25
+        testMap.GridCodes(0, 15) = 26
+        testMap.GridCodes(0, 16) = 27
+        testMap.GridCodes(0, 17) = 28
+        testMap.GridCodes(0, 18) = 29
+        testMap.GridCodes(0, 19) = 30
+        testMap.GridCodes(0, 20) = 31
+        testMap.GridCodes(0, 21) = 42
         testMap.GridCodes(0, 22) = 21
         testMap.GridCodes(0, 23) = 22
         testMap.GridCodes(0, 24) = 23
@@ -369,7 +369,6 @@ Public Class Map
     End Sub
     Public Sub PrintMap(ByRef Pos, ByRef Game, Optional IsTestMap = False)
         Console.Clear()
-
         If IsTestMap = False Then
             For y = 0 To 24
                 For CurrentLine As Integer = 0 To 3
@@ -951,8 +950,9 @@ Public Class Map
                                         Console.Write("  ")
                                         Console.ResetColor()
                                     Case 42
-                                        Console.ForegroundColor = ConsoleColor.DarkGray
-                                        Console.BackgroundColor = ConsoleColor.White
+                                        Console.ResetColor()
+                                        Console.ForegroundColor = ConsoleColor.White
+                                        Console.BackgroundColor = ConsoleColor.DarkGray
                                         Console.Write("-  |")
                                         Console.ForegroundColor = ConsoleColor.Green
                                         Console.Write(" ")
@@ -1396,9 +1396,9 @@ Public Class Map
                                         Console.Write(" ")
                                         Console.BackgroundColor = ConsoleColor.DarkGray
                                         Console.ForegroundColor = ConsoleColor.Black
-                                        Console.Write("|| ")
+                                        Console.Write("||")
                                         Console.BackgroundColor = ConsoleColor.Green
-                                        Console.Write(" ")
+                                        Console.Write("  ")
                                         Console.ResetColor()
                                     Case 18
                                         Console.BackgroundColor = ConsoleColor.Green

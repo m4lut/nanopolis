@@ -12,6 +12,17 @@
     Public WeeksUntilAbandoned As Integer = BaseWeeksUntilAbandoned
     Public LandValue As Integer = BaseLandValue
     Public LandValueModifier As Integer
+    Sub FindPath(ByRef Game, WhereFrom, WhereTo, ByRef Path)
+        Dim Queue As New List(Of Position)
+        Dim Discovered As New List(Of Position)
+        Dim Parent As New List(Of Position)
+        Dim V As Position
+        Dim temp As Integer = 0
+        Dim tempPos As Position
+        Queue.Add(WhereFrom)
+        Discovered.Add(WhereFrom)
+        Dim Found As Boolean = False
+    End Sub
     Sub SetAbandonedWeeks(ByRef Game, Pos)
         If (BaseLandValue - InternalLandValueModifier) >= 0 Then
             WeeksUntilAbandoned = BaseWeeksUntilAbandoned
@@ -267,11 +278,13 @@
         Game.LotObjectMatrix(Pos.y, Pos.x).LandValue = BaseLandValue + Game.LotObjectMatrix(Pos.y, Pos.x).ExternalLandValueModifier
     End Sub
 End Class
-Public Class Roads
+Public Class Road
     Inherits Lot
+    Public IsJunction As Boolean
     Public TrafficJamIndex As Integer
     Public TimesReferenced As Integer = 0
-    Public Function CalculateTJI(ByRef Game)
+    Public Shared RoadGraph(Game.GameSettings.MapWidth, 24) As Integer
+    Function CalculateTJI(ByRef Game)
         Dim tempTJI As Integer = 0
         For i As Integer = 0 To Game.GameSettings.MapWidth
             For j As Integer = 0 To 25
@@ -280,13 +293,47 @@ Public Class Roads
         Next
         Return TrafficJamIndex
     End Function
+    Function CheckIfJunction(ByRef Game, Pos)
+        For i As Integer = -1 To 1
+            For j As Integer = -1 To 1
+                If i = -1 And j = -1 Then
+                    Continue For
+                End If
+                If i = -1 And j = 1 Then
+                    Continue For
+                End If
+                If i = 1 And j = -1 Then
+                    Continue For
+                End If
+                If i = 1 And j = 1 Then
+                    Continue For
+                End If
+                If i = 0 And j = 0 Then
+                    Continue For
+                End If
+                If Game.LotObjectMatrix(Pos.y + j, Pos.x + i).GetType.ToString = "Nanopolis.SmallRoad" Or Game.LotObjectMatrix(Pos.y, Pos.x).GetType.ToString = "Nanopolis.LargeRoad" Then
+                    Return True
+                Else
+                    Return False
+                End If
+            Next
+        Next
+    End Function
+    Sub CreateRoadGraph(Game)
+        Dim pos As Position
+        For pos.x = 0 To 32
+            For pos.y = 0 To 24
+                Game.LotObjectMatrix(pos.y, pos.x).CheckIfJunction(Game, pos)
+            Next
+        Next
+    End Sub
 End Class
 Public Class SmallRoad
-    Inherits Roads
+    Inherits Road
     Shadows Const Capacity As Integer = 60
 End Class
 Public Class LargeRoad
-    Inherits Roads
+    Inherits Road
     Shadows Const Capacity As Integer = 140
 End Class
 Public Class Nature
@@ -311,18 +358,6 @@ Public Class ResidentialLot
     Public MiddleClassProportion As Integer
     Public UpperClassProportion As Integer
     Public UnemployedProportion As Integer
-    Sub FindPath(ByRef Game, WhereFromY, WhereFromX, WhereToY, WhereToX)
-        For i As Integer = -1 To 1
-            For j As Integer = -1 To 1
-                If j = 0 And i = 0 Then
-                    Continue For
-                End If
-                If Game.LotObjectMatrix(i, j).GetType.ToString = "Nanopolis.SmallRoad" Or Game.LotObjectMatrix(i, j).GetType.ToString = "Nanopolis.LargeRoad" Then
-                    FindPath(Game, WhereFromY + i, WhereFromX + j, WhereToY + i, WhereToX = j)
-                End If
-            Next
-        Next
-    End Sub
     Sub GenerateWorkOrShoppingPlace(FindingWork, ByRef LotObjectMatrix, pos)
         Randomize()
         Dim offset As Position
