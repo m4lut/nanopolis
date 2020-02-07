@@ -263,4 +263,12 @@ Module Module1
         Console.Clear()
         game.PrintMap(0, 16)
     End Sub
+    Sub Play(Game, Pos)
+        Dim input As ConsoleKeyInfo
+        Dim InMenu As Boolean = False
+        While Not InMenu
+            Game.GameMap.PrintMap(Game, Pos)
+            input = Console.ReadKey(True)
+        End While
+    End Sub
 End Module

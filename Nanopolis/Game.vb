@@ -122,6 +122,10 @@ Public Class Game
         Dim Input As ConsoleKeyInfo = Console.ReadKey(True)
         If Input.Key = ConsoleKey.Enter Then
             Game.NewMap(Game, IsStart)
+            Dim pos As Position
+            pos.y = 12
+            pos.x = 16
+            Play(pos, Game)
         Else
             If IsStart = True Then
                 StartMenu(GameSettings)
@@ -305,7 +309,7 @@ Public Class Game
             Dim cityGovernment As Government = New Government()
             cityGovernment.EstablishGovernment()
             NewGame.CityGovernment = cityGovernment
-            NewGame.GameMap.PrintMap(pos, NewGame)
+            Return
         ElseIf plainMapChoice.Key = ConsoleKey.Escape Then
             StartMenu(GameSettings)
         Else
@@ -2124,10 +2128,10 @@ Public Class Map
                                     Console.Write("  ")
                                     Console.ResetColor()
                                 Case 42
-                                    Console.ForegroundColor = ConsoleColor.DarkGray
-                                    Console.BackgroundColor = ConsoleColor.White
+                                    Console.ForegroundColor = ConsoleColor.White
+                                    Console.BackgroundColor = ConsoleColor.DarkGray
                                     Console.Write("-  |")
-                                    Console.ForegroundColor = ConsoleColor.Green
+                                    Console.BackgroundColor = ConsoleColor.Green
                                     Console.Write(" ")
                                     Console.ResetColor()
                             End Select
@@ -2551,9 +2555,9 @@ Public Class Map
                                     Console.Write(" ")
                                     Console.BackgroundColor = ConsoleColor.DarkGray
                                     Console.ForegroundColor = ConsoleColor.Black
-                                    Console.Write("||")
+                                    Console.Write("|| ")
                                     Console.BackgroundColor = ConsoleColor.Green
-                                    Console.Write("  ")
+                                    Console.Write(" ")
                                     Console.ResetColor()
                                 Case 16
                                     Console.BackgroundColor = ConsoleColor.Green
@@ -2569,9 +2573,9 @@ Public Class Map
                                     Console.Write(" ")
                                     Console.BackgroundColor = ConsoleColor.DarkGray
                                     Console.ForegroundColor = ConsoleColor.Black
-                                    Console.Write("|| ")
+                                    Console.Write("||")
                                     Console.BackgroundColor = ConsoleColor.Green
-                                    Console.Write(" ")
+                                    Console.Write("  ")
                                     Console.ResetColor()
                                 Case 18
                                     Console.BackgroundColor = ConsoleColor.Green
@@ -2586,9 +2590,9 @@ Public Class Map
                                     Console.Write(" ")
                                     Console.BackgroundColor = ConsoleColor.DarkGray
                                     Console.ForegroundColor = ConsoleColor.Black
-                                    Console.Write("|| ")
+                                    Console.Write("||")
                                     Console.BackgroundColor = ConsoleColor.Green
-                                    Console.Write(" ")
+                                    Console.Write("  ")
                                     Console.ResetColor()
                                 Case 21
                                     Console.BackgroundColor = ConsoleColor.Green
@@ -2734,7 +2738,7 @@ Public Class Map
         Dim buildingType As Type = Game.LotObjectMatrix(Pos.y, Pos.x).GetType
         Console.WriteLine(buildingType)
         Console.WriteLine("Crime Rate: " & Game.LotObjectMatrix(Pos.y, Pos.x).CrimeRate & "/1000")
-        Game.GameMap.MapSelection(Pos, Game)
+        Return
     End Sub
     Public Sub MapSelection(ByRef Pos, ByRef Game)
         Console.WriteLine("Week " & Game.NoOfWeeksPlayed)
