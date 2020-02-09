@@ -42,8 +42,10 @@ Public Structure Texture
 End Structure
 Public Class Game
     Public Shared GameSettings As GameSettings
+    Public HasResidential As Boolean = False
     Const StartingPopulation As Integer = 10
     Public TotalPowerSupply As Integer
+    Public TotalPopulation As Integer = 0
     Public TotalPowerDemand As Integer
     Public GameMap As Map
     Public CityGovernment As Government
@@ -51,6 +53,8 @@ Public Class Game
     Public HasWorkBuildings As Boolean = False
     Public HasShoppingPlace As Boolean = False
     Public TestMap As Map
+    Public NoOfResidentialLots As Integer = 0
+    Public NoOfCommercialLots As Integer = 0
     Public NoOfWeeksPlayed As Integer = 1
     Sub ShowTestMap(Game)
         Dim testMap As Map = New Map()
@@ -106,16 +110,6 @@ Public Class Game
         Game.TestMap = testMap
         Dim pos As Position
         Game.TestMap.PrintMap(pos, Game, True)
-    End Sub
-    Protected Sub IntroduceStartingPopulation(ByRef Game)
-        Dim pos As Position
-        For pos.y = 0 To 24
-            For pos.x = 0 To (Game.GameSettings.MapWidth - 1)
-                If Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.SmallResidential" Or Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.LargeResidential" Then
-                    Game.LotObjectMatrix(pos.y, pos.x).DwellerAmount += StartingPopulation
-                End If
-            Next
-        Next
     End Sub
     Public Sub NewGame(IsStart As Boolean, CurrentGame As Game, GameSettings As GameSettings, Game As Game)
         Console.Write("Are you sure? ")
@@ -228,11 +222,25 @@ Public Class Game
         Dim pos As Position
         For pos.y = 0 To 24
             For pos.x = 0 To (Game.GameSettings.MapWidth - 1)
-                Game.LotObjectMatrix(pos.y, pos.x).LandValue = Game.LotObjectMatrix(pos.y, pos.x).CalculateLandValue(pos, Game)
                 If Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.Construction" Then
-                    Console.WriteLine("NextTurnLot = " & Game.LotObjectMatrix(pos.y, pos.x).NextTurnLot)
                     Game.LotObjectMatrix(pos.y, pos.x).FinishConstruction(Game, pos)
                 End If
+                If Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.SmallResidential" Or Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.LargeResidential" Then
+                    Game.NoOfResidentialLots += 1
+                    If Game.TotalPopulation < 10 Then
+                        Game.LotObjectMatrix(pos.y, pos.x).DwellerAmount += StartingPopulation
+                    End If
+                    If Game.LotObjectMatrix(pos.y, pos.x).LandValue > 0 Then
+
+                    End If
+                    Game.TotalPopulation += Game.LotObjectMatrix(pos.y, pos.x).DwellerAmount
+                    End If
+                If Game.NoOfResidentialLots <> 0 Then
+                    Game.HasResidential = True
+                Else
+                    Game.HasResidential = False
+                End If
+                Game.LotObjectMatrix(pos.y, pos.x).LandValue = Game.LotObjectMatrix(pos.y, pos.x).CalculateLandValue(pos, Game)
                 If Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.SmallResidential" Or Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.LargeResidential" Then
                     If Game.HasWorkBuildings = True Then
                         Game.LotObjectMatrix(pos.y, pos.x).GenerateWorkOrShoppingPlace(True, Game.LotObjectMatrix, pos)
@@ -2753,6 +2761,7 @@ Public Class Map
         Console.WriteLine(buildingType)
         Console.WriteLine("Crime Rate: " & Game.LotObjectMatrix(Pos.y, Pos.x).CrimeRate & "/1000")
         Console.WriteLine("No. of weeks played: " & Game.NoOfWeeksPLayed)
+        Console.WriteLine("Population: " & Game.TotalPopulation)
         Return
     End Sub
 End Class

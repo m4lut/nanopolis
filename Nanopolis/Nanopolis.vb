@@ -396,7 +396,7 @@ Module Module1
                     input = Console.ReadKey(True)
                     If input.Key = ConsoleKey.B Then
                         Dim lot As Lot = New Lot()
-                        lot.Build(Game, Pos)
+                        lot.Build(Pos, Game)
                     ElseIf input.Key = ConsoleKey.D Then
                         Game.LotObjectMatrix(Pos.y, Pos.x).Demolish(Pos, Game)
                     ElseIf input.Key = ConsoleKey.Escape Then
