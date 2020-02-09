@@ -117,20 +117,30 @@ Public Class Game
             Next
         Next
     End Sub
-    Public Sub NewGame(IsStart As Boolean, CurrentGame As Game, Map As Map, GameSettings As GameSettings, Game As Game)
-        Console.WriteLine("Are you sure? No [ESC] | Yes [ENTER]")
+    Public Sub NewGame(IsStart As Boolean, CurrentGame As Game, GameSettings As GameSettings, Game As Game)
+        Console.Write("Are you sure? ")
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.Write("ESC")
+        Console.ResetColor()
+        Console.Write(" No ")
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.Write("RETURN")
+        Console.ResetColor()
+        Console.WriteLine(" Yes")
         Dim Input As ConsoleKeyInfo = Console.ReadKey(True)
         If Input.Key = ConsoleKey.Enter Then
             Game.NewMap(Game, IsStart)
             Dim pos As Position
             pos.y = 12
             pos.x = 16
-            Play(pos, Game)
+            Play(Game, pos)
         Else
             If IsStart = True Then
                 StartMenu(GameSettings)
             Else
-                MainMenu(CurrentGame, Map)
+                MainMenu(CurrentGame)
             End If
         End If
     End Sub
@@ -235,7 +245,7 @@ Public Class Game
         pos.y = 12
         pos.x = 16
         Game.NoOfWeeksPlayed += 1
-        Game.GameMap.PrintMap(pos, Game)
+        Return
     End Sub
     Sub NewMap(ByRef NewGame, IsStart)
         Const baselandvalue As Integer = 25
@@ -256,7 +266,11 @@ Public Class Game
         Dim waterProb As Integer
         Dim forestProb As Integer
         Dim totalProb As Integer
-        Console.WriteLine("Create a plain map?[y/n]")
+        Console.Write("Create a plain map? ")
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.WriteLine("Y/N")
+        Console.ResetColor()
         Dim plainMapChoice As ConsoleKeyInfo = Console.ReadKey(True)
         If plainMapChoice.Key = ConsoleKey.N Then
             Do
@@ -2738,69 +2752,8 @@ Public Class Map
         Dim buildingType As Type = Game.LotObjectMatrix(Pos.y, Pos.x).GetType
         Console.WriteLine(buildingType)
         Console.WriteLine("Crime Rate: " & Game.LotObjectMatrix(Pos.y, Pos.x).CrimeRate & "/1000")
+        Console.WriteLine("No. of weeks played: " & Game.NoOfWeeksPLayed)
         Return
-    End Sub
-    Public Sub MapSelection(ByRef Pos, ByRef Game)
-        Console.WriteLine("Week " & Game.NoOfWeeksPlayed)
-        Console.TreatControlCAsInput = True
-        Console.BackgroundColor = ConsoleColor.Gray
-        Console.ForegroundColor = ConsoleColor.Black
-        Console.WriteLine("[WASD/Arrow Keys] Navigate | [RETURN] Select | [N] Finish week | [G] Manage government | [ESC] Main menu")
-        Console.ResetColor()
-        Dim lot As Lot = New Lot()
-        Dim Selected As Boolean = False
-        Dim Key1 As ConsoleKey
-        Dim Choice As ConsoleKey
-        While Selected = False
-            Key1 = Console.ReadKey(True).Key
-            If Key1 = ConsoleKey.LeftArrow Then
-                Pos.x -= 5
-                Game.GameMap.PrintMap(Pos, Game)
-            ElseIf Key1 = ConsoleKey.RightArrow Then
-                Pos.x += 5
-                Game.GameMap.PrintMap(Pos, Game)
-            ElseIf Key1 = ConsoleKey.DownArrow Then
-                Pos.y += 5
-                Game.GameMap.PrintMap(Pos, Game)
-            ElseIf Key1 = ConsoleKey.UpArrow Then
-                Pos.y -= 5
-                Game.GameMap.PrintMap(Pos, Game)
-            ElseIf Key1 = ConsoleKey.A Then
-                Pos.x -= 1
-                Game.GameMap.PrintMap(Pos, Game)
-            ElseIf Key1 = ConsoleKey.D Then
-                Pos.x += 1
-                Game.GameMap.PrintMap(Pos, Game)
-            ElseIf Key1 = ConsoleKey.S Then
-                Pos.y += 1
-                Game.GameMap.PrintMap(Pos, Game)
-            ElseIf Key1 = ConsoleKey.W Then
-                Pos.y -= 1
-                Game.GameMap.PrintMap(Pos, Game)
-            ElseIf Key1 = ConsoleKey.Enter Then
-                Selected = True
-            ElseIf Key1 = ConsoleKey.N Then
-                Game.FinishWeek(Game)
-            ElseIf Key1 = ConsoleKey.Escape Then
-                MainMenu(Game, Game.GameMap)
-            ElseIf Key1 = ConsoleKey.G Then
-                Game.CityGovernment.ShowGovernmentMenu(Game)
-            End If
-        End While
-        Console.BackgroundColor = ConsoleColor.Gray
-        Console.ForegroundColor = ConsoleColor.Black
-        Console.WriteLine("Demolish[D] | Build[B] | Cancel[C]")
-        Console.ResetColor()
-        Choice = Console.ReadKey(True).Key
-        If Choice = ConsoleKey.D Then
-            lot.Demolish(Pos, Game)
-        ElseIf Choice = ConsoleKey.B Then
-            lot.Build(Pos, Game)
-        ElseIf Choice = ConsoleKey.C Then
-            Game.GameMap.MapSelection(Pos, Game)
-        ElseIf Choice = ConsoleKey.Escape Then
-            MainMenu(Game, Game.GameMap)
-        End If
     End Sub
 End Class
 Public Class Government
@@ -2846,7 +2799,26 @@ Public Class Government
         Console.ForegroundColor = ConsoleColor.Black
         Console.WriteLine("--THE GOVERNMENT--" & vbCrLf)
         Console.ResetColor()
-        Console.WriteLine(" [1] The Treasury | [2] Your Cabinet | [3] The Legislature | [C] Return to navigation")
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.Write("1")
+        Console.ResetColor()
+        Console.Write(" The Treasury ")
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.Write("2")
+        Console.ResetColor()
+        Console.Write(" Your Cabinet ")
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.Write("3")
+        Console.ResetColor()
+        Console.Write(" The Legislature ")
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.Write("C")
+        Console.ResetColor()
+        Console.WriteLine(" Return to navigation")
         Dim key1 As ConsoleKey = Console.ReadKey(True).Key
         Select Case key1
             Case ConsoleKey.D1
@@ -2859,7 +2831,7 @@ Public Class Government
                 Dim Pos As Position
                 Pos.y = 16
                 Pos.x = Game.GameSettings.MapWidth / 2
-                Game.GameMap.MapSelection(Pos, Game)
+                Return
         End Select
     End Sub
     Sub ShowLegislatureMenu(ByRef Game)

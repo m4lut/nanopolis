@@ -53,7 +53,49 @@
         Dim ShopType As Integer = Math.Round((Rnd()) + 3)
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
-        Console.WriteLine("[1]Residential | [2]Commercial | [3]Industrial($30) | [4]Road | [5]Power | [6]Park | [7]Police($175) | [8]Parliament($20000) | [9]Nature")
+        Console.Write("1")
+        Console.ResetColor()
+        Console.Write(" Residential ")
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.Write("2")
+        Console.ResetColor()
+        Console.Write(" Commercial ")
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.Write("3")
+        Console.ResetColor()
+        Console.Write(" Industrial($30) ")
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.Write("4")
+        Console.ResetColor()
+        Console.Write(" Road ")
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.Write("5")
+        Console.ResetColor()
+        Console.Write(" Power ")
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.Write("6")
+        Console.ResetColor()
+        Console.Write(" Park ")
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.Write("7")
+        Console.ResetColor()
+        Console.Write(" Police($175) ")
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.Write("8")
+        Console.ResetColor()
+        Console.Write(" Parliament($20000) ")
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.Write("9")
+        Console.ResetColor()
+        Console.WriteLine(" Nature ")
         Console.ResetColor()
         Dim input As ConsoleKeyInfo = Console.ReadKey(True)
         Select Case input.Key
@@ -226,13 +268,13 @@
         Dim pointerPos As Position
         pointerPos.y = 12
         pointerPos.x = 16
-        Game.GameMap.PrintMap(pointerPos, Game)
+        Return
     End Sub
     Public Sub Demolish(ByRef Pos, ByRef Game)
         Game.GameMap.GridCodes(Pos.y, Pos.x) = -1
         Dim grass As Grass = New Grass()
         Game.LotObjectMatrix(Pos.y, Pos.x) = grass
-        Game.GameMap.PrintMap(Pos, Game)
+        Return
     End Sub
     Public Function CalculateCrimeRate(Pos, ByRef Game)
         Dim tempCrimeRate As Integer = 0
@@ -330,11 +372,11 @@ Public Class Road
 End Class
 Public Class SmallRoad
     Inherits Road
-    Shadows Const Capacity As Integer = 60
+    Public Shadows Const Capacity As Integer = 60
 End Class
 Public Class LargeRoad
     Inherits Road
-    Shadows Const Capacity As Integer = 140
+    Public Shadows Const Capacity As Integer = 140
 End Class
 Public Class Nature
     Inherits Lot

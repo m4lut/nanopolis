@@ -25,21 +25,45 @@ Module Module1
         Console.WriteLine("---MAIN MENU---" & vbCrLf)
         Console.ResetColor()
         Console.WriteLine("Please enter one of the keys below:")
-        Console.WriteLine("[1] New game")
-        Console.WriteLine("[2] Load a previously saved game (Not yet implemented!)")
-        Console.WriteLine("[3] Start a tutorial game (Not yet implemented!)")
-        Console.WriteLine("[4] View key bindings")
-        Console.WriteLine("[5] Graphics options")
-        Console.WriteLine("[ESC] Quit to desktop")
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.Write("1")
+        Console.ResetColor()
+        Console.WriteLine(" New game")
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.Write("2")
+        Console.ResetColor()
+        Console.WriteLine(" Load a previously saved game (Not yet implemented!)")
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.Write("3")
+        Console.ResetColor()
+        Console.WriteLine(" Start a tutorial game (Not yet implemented!)")
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.Write("4")
+        Console.ResetColor()
+        Console.WriteLine(" View key bindings")
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.Write("5")
+        Console.ResetColor()
+        Console.WriteLine(" Graphics options")
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.Write("ESC")
+        Console.ResetColor()
+        Console.WriteLine(" Quit to desktop")
         Dim MenuCode As ConsoleKeyInfo = Console.ReadKey(True)
         If MenuCode.Key = ConsoleKey.D1 Then
-            CreateNewGame(True, Nothing, Nothing, GameSettings)
+            CreateNewGame(True, Nothing, GameSettings)
         ElseIf MenuCode.Key = ConsoleKey.D2 Then
-            LoadGame(Nothing, Nothing, True, GameSettings)
+            LoadGame(Nothing, True, GameSettings)
         ElseIf MenuCode.Key = ConsoleKey.D3 Then
             Tutorial(GameSettings)
         ElseIf MenuCode.Key = ConsoleKey.D4 Then
-            KeyBindMenu(Nothing, True, Nothing, GameSettings)
+            KeyBindMenu(True, Nothing, GameSettings)
         ElseIf MenuCode.Key = ConsoleKey.D5 Then
             GraphicsMenu(Nothing, True, Nothing, GameSettings)
         ElseIf MenuCode.Key = ConsoleKey.Escape Then
@@ -48,47 +72,79 @@ Module Module1
             StartMenu(GameSettings)
         End If
     End Sub
-    Sub MainMenu(ByRef Game, ByRef map)
+    Sub MainMenu(ByRef Game)
+        Dim inMenu As Boolean = True
         Dim GameSettings As GameSettings
         GameSettings.IsTutorialGame = Game.GameSettings.IsTutorialGame
         GameSettings.MapWidth = Game.GameSettings.MapWidth
         GameSettings.TextureFile = Game.GameSettings.TextureFile
-        Console.Clear()
-        Console.BackgroundColor = ConsoleColor.Gray
-        Console.ForegroundColor = ConsoleColor.Black
-        Console.WriteLine("---MAIN MENU---" & vbCrLf)
-        Console.ResetColor()
-        Console.WriteLine("Please enter one of the following keys:")
-        Console.WriteLine("[1] New game (WARNING: Save your game before starting a new game!)")
-        Console.WriteLine("[2] Load a previously saved game (not yet implemented)")
-        Console.WriteLine("[3] Start a tutorial game (not yet implemented!)")
-        Console.WriteLine("[4] View key bindings")
-        Console.WriteLine("[5] Quit to start menu")
-        Console.WriteLine("[6] Quit to desktop")
-        Console.WriteLine("[ESC] Return to game")
-        Dim MenuCode As ConsoleKeyInfo = Console.ReadKey(True)
-        If MenuCode.Key = ConsoleKey.D1 Then
-            CreateNewGame(False, Game, map, GameSettings)
-        ElseIf MenuCode.Key = ConsoleKey.D2 Then
-            LoadGame(Game, map, False, GameSettings)
-        ElseIf MenuCode.Key = ConsoleKey.D3 Then
-            Tutorial(GameSettings)
-        ElseIf MenuCode.Key = ConsoleKey.D4 Then
-            KeyBindMenu(map, False, Game, GameSettings)
-        ElseIf MenuCode.Key = ConsoleKey.D5 Then
-            StartMenu(Nothing)
-        ElseIf MenuCode.Key = ConsoleKey.D6 Then
-            Stop
-        ElseIf MenuCode.Key = ConsoleKey.Escape Then
-            Dim pos As Position
-            pos.y = 13
-            pos.x = 16
-            Game.GameMap.PrintMap(pos, Game)
-        ElseIf MenuCode.Key = ConsoleKey.f1 Then
-            Game.ShowTestMap(Game)
-        Else
-            MainMenu(Game, map)
-        End If
+        While inMenu
+            Console.Clear()
+            Console.BackgroundColor = ConsoleColor.Gray
+            Console.ForegroundColor = ConsoleColor.Black
+            Console.WriteLine("---MAIN MENU---" & vbCrLf)
+            Console.ResetColor()
+            Console.WriteLine("Please enter one of the following keys:")
+            Console.BackgroundColor = ConsoleColor.Gray
+            Console.ForegroundColor = ConsoleColor.Black
+            Console.Write("1")
+            Console.ResetColor()
+            Console.WriteLine(" New game (WARNING: Save your game before starting a new game!)")
+            Console.BackgroundColor = ConsoleColor.Gray
+            Console.ForegroundColor = ConsoleColor.Black
+            Console.Write("2")
+            Console.ResetColor()
+            Console.WriteLine(" Load a previously saved game (not yet implemented!)")
+            Console.BackgroundColor = ConsoleColor.Gray
+            Console.ForegroundColor = ConsoleColor.Black
+            Console.Write("3")
+            Console.ResetColor()
+            Console.WriteLine(" Start a tutorial game (not yet implemented!)")
+            Console.BackgroundColor = ConsoleColor.Gray
+            Console.ForegroundColor = ConsoleColor.Black
+            Console.Write("4")
+            Console.ResetColor()
+            Console.WriteLine(" View key bindings")
+            Console.BackgroundColor = ConsoleColor.Gray
+            Console.ForegroundColor = ConsoleColor.Black
+            Console.Write("5")
+            Console.ResetColor()
+            Console.WriteLine(" Quit to start menu")
+            Console.BackgroundColor = ConsoleColor.Gray
+            Console.ForegroundColor = ConsoleColor.Black
+            Console.Write("6")
+            Console.ResetColor()
+            Console.WriteLine(" Quit to desktop")
+            Console.BackgroundColor = ConsoleColor.Gray
+            Console.ForegroundColor = ConsoleColor.Black
+            Console.Write("ESC")
+            Console.ResetColor()
+            Console.WriteLine(" Return to game")
+            Dim MenuCode As ConsoleKeyInfo = Console.ReadKey(True)
+            If MenuCode.Key = ConsoleKey.D1 Then
+                CreateNewGame(False, Game, GameSettings)
+            ElseIf MenuCode.Key = ConsoleKey.D2 Then
+                LoadGame(Game, False, GameSettings)
+            ElseIf MenuCode.Key = ConsoleKey.D3 Then
+                Tutorial(GameSettings)
+            ElseIf MenuCode.Key = ConsoleKey.D4 Then
+                KeyBindMenu(False, Game, GameSettings)
+            ElseIf MenuCode.Key = ConsoleKey.D5 Then
+                StartMenu(Nothing)
+            ElseIf MenuCode.Key = ConsoleKey.D6 Then
+                Stop
+            ElseIf MenuCode.Key = ConsoleKey.Escape Then
+                Dim pos As Position
+                pos.y = 13
+                pos.x = 16
+                Return
+            ElseIf MenuCode.Key = ConsoleKey.F1 Then
+                Game.ShowTestMap(Game)
+            Else
+                Continue While
+            End If
+        End While
+        Return
     End Sub
     Sub GraphicsMenu(ByRef map, isStart, ByRef game, ByRef GameSettings)
         Console.Clear()
@@ -104,7 +160,7 @@ Module Module1
             If isStart = True Then
                 StartMenu(GameSettings)
             Else
-                MainMenu(game, map)
+                MainMenu(game)
             End If
         ElseIf input.Key = ConsoleKey.D1 Then
             Console.Clear()
@@ -136,7 +192,7 @@ Module Module1
             End If
         End If
     End Sub
-    Sub KeyBindMenu(map, isStart, game, GameSettings)
+    Sub KeyBindMenu(isStart, game, GameSettings)
         Console.Clear()
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
@@ -186,11 +242,11 @@ Module Module1
             If isStart = True Then
                 StartMenu(GameSettings)
             Else
-                MainMenu(map, game)
+                MainMenu(game)
             End If
         End If
     End Sub
-    Sub LoadGame(ByRef game, map, isStart, GameSettings)
+    Sub LoadGame(ByRef game, isStart, GameSettings)
         Console.Clear()
         Dim PathName As String
         Console.BackgroundColor = ConsoleColor.Gray
@@ -210,7 +266,7 @@ Module Module1
                 If isStart = True Then
                     StartMenu(GameSettings)
                 Else
-                    MainMenu(game, map)
+                    MainMenu(game)
                 End If
             End If
         Catch ex As Exception
@@ -223,7 +279,7 @@ Module Module1
             If isStart = True Then
                 StartMenu(GameSettings)
             Else
-                MainMenu(game, map)
+                MainMenu(game)
             End If
         End Try
     End Sub
@@ -232,14 +288,14 @@ Module Module1
         GameSettings.IsTutorial = True
         StartMenu(GameSettings)
     End Sub
-    Sub CreateNewGame(IsStart, ByRef CurrentGame, ByRef Map, GameSettings)
+    Sub CreateNewGame(IsStart, ByRef CurrentGame, GameSettings)
         Dim newGame As Game = New Game()
         newGame.GameSettings.IsTutorialGame = GameSettings.IsTutorialGame
         newGame.GameSettings.MapWidth = GameSettings.MapWidth
         newGame.GameSettings.TextureFile = GameSettings.TextureFile
         Dim newLotObjectMatrix(24, GameSettings.MapWidth) As Lot
         newGame.LotObjectMatrix = newLotObjectMatrix
-        newGame.NewGame(IsStart, CurrentGame, Map, GameSettings, newGame)
+        newGame.NewGame(IsStart, CurrentGame, GameSettings, newGame)
     End Sub
     Sub SaveGame(game, map)
         Console.Clear()
@@ -252,13 +308,13 @@ Module Module1
         filename = Console.ReadLine()
         filename = filename & ".json"
         Try
-            Dim FileWriter As New System.IO.StreamWriter(filename)
+            Dim FileWriter As New StreamWriter(filename)
             FileWriter.WriteLine(map.GridCodes.ToString)
             FileWriter.Close()
         Catch ex As Exception
-            MainMenu(game, map)
+            MainMenu(game)
         Finally
-            MainMenu(game, map)
+            MainMenu(game)
         End Try
         Console.Clear()
         game.PrintMap(0, 16)
@@ -267,8 +323,93 @@ Module Module1
         Dim input As ConsoleKeyInfo
         Dim InMenu As Boolean = False
         While Not InMenu
-            Game.GameMap.PrintMap(Game, Pos)
+            Game.GameMap.PrintMap(Pos, Game)
+            Console.BackgroundColor = ConsoleColor.Gray
+            Console.ForegroundColor = ConsoleColor.Black
+            Console.Write("WASD/ARROW KEYS")
+            Console.ResetColor()
+            Console.Write(" Navigate ")
+            Console.BackgroundColor = ConsoleColor.Gray
+            Console.ForegroundColor = ConsoleColor.Black
+            Console.Write("RETURN")
+            Console.ResetColor()
+            Console.Write(" Select lot ")
+            Console.BackgroundColor = ConsoleColor.Gray
+            Console.ForegroundColor = ConsoleColor.Black
+            Console.Write("N")
+            Console.ResetColor()
+            Console.Write(" Finish week ")
+            Console.BackgroundColor = ConsoleColor.Gray
+            Console.ForegroundColor = ConsoleColor.Black
+            Console.Write("G")
+            Console.ResetColor()
+            Console.Write(" Manage government ")
+            Console.BackgroundColor = ConsoleColor.Gray
+            Console.ForegroundColor = ConsoleColor.Black
+            Console.Write("ESC")
+            Console.ResetColor()
+            Console.WriteLine(" Main menu")
             input = Console.ReadKey(True)
+            Select Case input.Key
+                Case ConsoleKey.W
+                    Pos.y -= 1
+                    Continue While
+                Case ConsoleKey.A
+                    Pos.x -= 1
+                    Continue While
+                Case ConsoleKey.S
+                    Pos.y += 1
+                    Continue While
+                Case ConsoleKey.D
+                    Pos.x += 1
+                    Continue While
+                Case ConsoleKey.UpArrow
+                    Pos.y -= 5
+                    Continue While
+                Case ConsoleKey.LeftArrow
+                    Pos.x -= 5
+                    Continue While
+                Case ConsoleKey.DownArrow
+                    Pos.y += 5
+                    Continue While
+                Case ConsoleKey.RightArrow
+                    Pos.x += 5
+                    Continue While
+                Case ConsoleKey.Escape
+                    MainMenu(Game)
+                Case ConsoleKey.Enter
+                    Console.BackgroundColor = ConsoleColor.Gray
+                    Console.ForegroundColor = ConsoleColor.Black
+                    Console.Write("B")
+                    Console.ResetColor()
+                    Console.Write(" Build ")
+                    Console.BackgroundColor = ConsoleColor.Gray
+                    Console.ForegroundColor = ConsoleColor.Black
+                    Console.Write("D")
+                    Console.ResetColor()
+                    Console.Write(" Demolish ")
+                    Console.BackgroundColor = ConsoleColor.Gray
+                    Console.ForegroundColor = ConsoleColor.Black
+                    Console.Write("C")
+                    Console.ResetColor()
+                    Console.WriteLine(" Cancel ")
+                    input = Console.ReadKey(True)
+                    If input.Key = ConsoleKey.B Then
+                        Dim lot As Lot = New Lot()
+                        lot.Build(Game, Pos)
+                    ElseIf input.Key = ConsoleKey.D Then
+                        Game.LotObjectMatrix(Pos.y, Pos.x).Demolish(Pos, Game)
+                    ElseIf input.Key = ConsoleKey.Escape Then
+                        MainMenu(Game)
+                    Else
+                        Continue While
+                    End If
+                Case ConsoleKey.N
+                    Game.FinishWeek(Game)
+                Case ConsoleKey.G
+                    Game.CityGovernment.ShowGovernmentMenu(Game)
+            End Select
         End While
+        MainMenu(Game)
     End Sub
 End Module
