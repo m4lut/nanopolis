@@ -299,7 +299,11 @@ Module Module1
     End Sub
     Sub SaveGame(game, map)
         Console.Clear()
-        Console.WriteLine("Return[ESC]")
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.Write("ESC")
+        Console.ResetColor()
+        Console.WriteLine("Return")
         Dim filename As String
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black

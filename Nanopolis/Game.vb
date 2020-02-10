@@ -231,7 +231,7 @@ Public Class Game
                         Game.LotObjectMatrix(pos.y, pos.x).DwellerAmount += StartingPopulation
                     End If
                     If Game.LotObjectMatrix(pos.y, pos.x).LandValue > 0 Then
-
+                        Game.lotobjectmatrix(pos.y, pos.x).DwellerAmount += 5
                     End If
                     Game.TotalPopulation += Game.LotObjectMatrix(pos.y, pos.x).DwellerAmount
                     End If
@@ -2756,7 +2756,12 @@ Public Class Map
         Console.Write("Y" & Int(Pos.y))
         Console.WriteLine(", X" & Int(Pos.x))
         Console.WriteLine("Land Value: " & Game.LotObjectMatrix(Pos.y, Pos.x).LandValue)
-        Console.WriteLine("Government Budget: " & Game.cityGovernment.GetTreasury)
+        Console.WriteLine("Government Budget: $" & Game.cityGovernment.GetTreasury)
+        If Game.citygovernment.gettreasury < 0 Then
+            Console.ForegroundColor = ConsoleColor.Red
+            Console.WriteLine("IN DEBT!")
+            Console.ResetColor()
+        End If
         Dim buildingType As Type = Game.LotObjectMatrix(Pos.y, Pos.x).GetType
         Console.WriteLine(buildingType)
         Console.WriteLine("Crime Rate: " & Game.LotObjectMatrix(Pos.y, Pos.x).CrimeRate & "/1000")

@@ -102,7 +102,14 @@
             Case ConsoleKey.D1
                 Console.BackgroundColor = ConsoleColor.Gray
                 Console.ForegroundColor = ConsoleColor.Black
-                Console.WriteLine("Low density[1]($15) | High density[2]($25)")
+                Console.Write("1")
+                Console.ResetColor()
+                Console.Write("Low density($15)")
+                Console.BackgroundColor = ConsoleColor.Gray
+                Console.ForegroundColor = ConsoleColor.Black
+                Console.Write("2")
+                Console.ResetColor()
+                Console.WriteLine(" High density($25)")
                 Console.ResetColor()
                 input = Console.ReadKey(True)
                 If input.Key = ConsoleKey.D1 Then
@@ -127,7 +134,10 @@
             Case ConsoleKey.D2
                 Console.BackgroundColor = ConsoleColor.Gray
                 Console.ForegroundColor = ConsoleColor.Black
-                Console.WriteLine("Low density[1]($20) | High density[2]($30)")
+                Console.Write("1")
+                Console.Write(" Low density($20) ")
+                Console.Write("2")
+                Console.WriteLine(" High density($30)")
                 Console.ResetColor()
                 input = Console.ReadKey(True)
                 If input.Key = ConsoleKey.D1 Then
@@ -397,11 +407,18 @@ End Class
 Public Class ResidentialLot
     Inherits Lot
     Public DwellerAmount As Integer
-    Public WorkingClassProportion As Integer
+    Public LowerClassCash As Integer = 0
+    Public MiddleClassCash As Integer = 0
+    Public UpperClassCash As Integer = 0
+    Public LowerClassProportion As Integer
     Public MiddleClassProportion As Integer
     Public UpperClassProportion As Integer
     Public UnemployedProportion As Integer
-    Sub GenerateWorkOrShoppingPlace(FindingWork, ByRef LotObjectMatrix, pos)
+    Public LowerMiddleWorkPlace As Position
+    Public MiddleUpperWorkPlace As Position
+    Public LowerMiddleShoppingPlace As Position
+    Public MiddleUpperShoppingPlace As Position
+    Sub GenerateWorkOrShoppingPlace(FindingWork, ByRef LotObjectMatrix, pos, IsUpperOrMiddleClass)
         Randomize()
         Dim offset As Position
         Dim Right As Boolean
@@ -535,7 +552,7 @@ Public Class ResidentialLot
                     ShoppingPlace.y = pos.y + offset.y
                     ShoppingPlace.x = pos.x + offset.x
                 End If
-                If LotObjectMatrix(WorkPlace.y, WorkPlace.x).GetType.ToString = "Nanopolis.CommercialLot" And FindingWork Then
+                If LotObjectMatrix(WorkPlace.y, WorkPlace.x).GetType.ToString = "Nanopolis.SmallCommercial" And FindingWork And Not IsUpperOrMiddleClass Then
                     Found = True
                 ElseIf LotObjectMatrix(ShoppingPlace.y, ShoppingPlace.x).GetType.ToString = "Nanopolis.CommercialLot" And FindingWork = False Then
                     Found = True
@@ -544,6 +561,22 @@ Public Class ResidentialLot
                 End If
             End If
         End While
+    End Sub
+    Sub LowerMiddleBuy(SalesTaxRate, ByRef Game, ShoppingPlace)
+        For i As Integer = 0 To (DwellerAmount * LowerClassProportion)
+            Game.LotObjectMatrix(ShoppingPlace.y, ShoppingPlace.x).GainRevenue(20)
+        Next
+    End Sub
+    Sub MiddleUpperBuy(SalesTaxRate, ByRef Game, ShoppingPlace)
+        For i As Integer = 0 To (DwellerAmount * UpperClassProportion)
+            Game.LotObjectMatrix(ShoppingPlace.y, ShoppingPlace.x).GainRevenue(250)
+            Game.LotObjectMatrix(ShoppingPlace, ShoppingPlace).PaySalesTax(SalesTaxRate)
+        Next
+    End Sub
+    Sub PayIncomeTax(LowerRate, MiddleRate, UpperRate, ByRef Game)
+        For i As Integer = 0 To (DwellerAmount * LowerClassProportion)
+
+        Next
     End Sub
 End Class
 Public Class SmallResidential
@@ -556,21 +589,40 @@ Public Class LargeResidential
 End Class
 Public Class CommercialLot
     Inherits Lot
-    Const BaseRevenue As Integer = 0
-    Public Revenue As Integer
-    Public NumberOfWorkers As Integer
+    Shadows Const BaseCash As Integer = 2000
+    Public Cash As Integer = 0
+    Public NoOfWorkers As Integer = 0
+    Public NoOfBatchesOrdered As Integer = 0
+    Public NoOfBatchesInStock As Integer = 0
+    Public NoOfBatchesSold As Integer = 0
+    Public FactoryPos As Position
     Sub EstablishStore()
-        Revenue = BaseRevenue
+        Cash = BaseCash
     End Sub
-    Sub GainRevenue()
-
+    Sub GainRevenue(Amount)
+        Cash += Amount
     End Sub
-    Sub PaySalesTax()
-
+    Sub PaySalesTax(TaxRate)
+        If Me.GetType.ToString = "Nanopolis.LargeCommercial" Then
+            Cash -= (TaxRate / 2) * NoOfBatchesSold * 250
+        ElseIf Me.GetType.ToString = "Nanopolis.SmallCommercial" Then
+            Cash -= (TaxRate / 2) * NoOfBatchesSold * 20
+        End If
+    End Sub
+    Sub PaySupplier(FactoryPos, OrderAmount, IsLarge, ByRef Game)
+        If Me.GetType.ToString = "Nanopolis.SmallCommercial" Then
+            Game.lotobjectmatrix(FactoryPos.y, FactoryPos.x).Cash += OrderAmount * 15
+        ElseIf Me.GetType.ToString = "Nanopolis.LargeCommercial" Then
+            Game.lotobjectmatrix(FactoryPos.y, FactoryPos.x).Cash += OrderAmount * 200
+        End If
+    End Sub
+    Sub Order(FactoryPos, OrderAmount, ByRef Game)
+        Game.LotObjectMatrix(FactoryPos.y, FactoryPos.x).SendPackages(OrderAmount)
     End Sub
 End Class
 Public Class SmallCommercial
     Inherits CommercialLot
+    Shadows Const BaseCash As Integer = 500
 End Class
 Public Class LargeCommercial
     Inherits CommercialLot
@@ -596,7 +648,22 @@ Public Class LargeParkPointer
 End Class
 Public Class Industry
     Inherits Lot
+    Public NoOfWorkers As Integer = 0
     Public Shadows ExternalLandValueModifier As Integer = -15
+    Public SmallBatchesMade As Integer = 0
+    Public SmallBatchesInStock As Integer = 0
+    Public SmallBatchesOrdered As Integer = 0
+    Public LargeBatchesMade As Integer = 0
+    Public LargeBatchesInStock As Integer = 0
+    Public LargeBatchesOrdered As Integer = 0
+    Sub SendPackages(CommercialPos, ByRef Game, PackageAmount)
+        Game.LotObjectMatrix(CommercialPos.y, CommercialPos.x).NoOfBatchesInStock += PackageAmount
+        If Game.LotObjectMatrix(CommercialPos.y, CommercialPos.x).GetType.ToString = "Nanopolis.SmallCommercial" Then
+            SmallBatchesInStock -= PackageAmount
+        ElseIf Game.LotObjectMatrix(CommercialPos.y, CommercialPos.x).GetType.ToString = "Nanopolis.LargeCommercial" Then
+            LargeBatchesInStock -= PackageAmount
+        End If
+    End Sub
 End Class
 Public Class Parliament
     Inherits Lot
