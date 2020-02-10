@@ -574,9 +574,33 @@ Public Class ResidentialLot
         Next
     End Sub
     Sub PayIncomeTax(LowerRate, MiddleRate, UpperRate, ByRef Game)
+        Dim tax As Integer
         For i As Integer = 0 To (DwellerAmount * LowerClassProportion)
-
+            tax = LowerClassCash * (LowerRate / 100)
+            LowerClassCash -= tax
+            Game.CityGovernment.Treasury += tax
         Next
+        For i As Integer = 0 To (DwellerAmount * MiddleClassProportion)
+            tax = MiddleClassCash * (MiddleRate / 100)
+            MiddleClassCash -= tax
+            Game.CityGovernment.Treasury += tax
+        Next
+        For i As Integer = 0 To (DwellerAmount * UpperClassProportion)
+            tax = UpperClassCash * (UpperRate / 100)
+            UpperClassCash -= tax
+            Game.CityGovernment.Treasury += tax
+        Next
+    End Sub
+    Sub MoveIn(Amount)
+        DwellerAmount += Amount
+        If LandValue > 50 Then
+            MiddleClassProportion += 0.05
+            LowerClassProportion -= 0.05
+        End If
+        If LandValue > 150 Then
+            UpperClassProportion += 0.05
+            MiddleClassProportion -= 0.05
+        End If
     End Sub
 End Class
 Public Class SmallResidential
