@@ -211,8 +211,14 @@ Public Class Game
                     If Game.LotObjectMatrix(pos.y, pos.x).LandValue > 0 Then
                         Game.LotObjectMatrix(pos.y, pos.x).DwellerAmount += 5
                     End If
-                    Game.TotalPopulation += Game.LotObjectMatrix(pos.y, pos.x).DwellerAmount
+                    Game.LotObjectMatrix(pos.y, pos.x).LowerShop(Game.CityGovernment.SalesTaxRate, Game, Game.LotObjectMatrix.LowerMiddleShoppingPlace, pos)
+                    Game.LotObjectMatrix(pos.y, pos.x).MiddleUpperShop(Game.CityGovernment.SalesTaxRate, Game, Game.LotObjectMatrix.MiddleUpperShoppingPlace)
+                    If Game.NoOfWeeksPlayed Mod 4 = 0 Then
+                        Game.LotObjectMatrix(pos.y, pos.x).PayIncomeTax(Game.CityGovernment.LowerRate, Game.CityGovernment.MiddleRate, Game.CityGovernment.UpperRate, Game)
                     End If
+                    Game.LotObjectMatrix(pos.y, pos.x).MoveIn()
+                    Game.TotalPopulation += Game.LotObjectMatrix(pos.y, pos.x).DwellerAmount
+                End If
                 If Game.NoOfResidentialLots <> 0 Then
                     Game.HasResidential = True
                 Else
