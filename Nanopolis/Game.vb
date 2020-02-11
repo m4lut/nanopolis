@@ -195,29 +195,6 @@ Public Class Game
         Next
         Return tempModifier
     End Function
-    Sub InitializeTypeDict(ByRef NewGame)
-        Dim newTypeDict As New Dictionary(Of String, String)
-        newTypeDict.Add("Nanopolis.Grass", "grass")
-        newTypeDict.Add("Nanopolis.Construction", "construction")
-        newTypeDict.Add("Nanopolis.SmallResidential", "smallResidential")
-        newTypeDict.Add("Nanopolis.LargeResidential", "largeResidential")
-        newTypeDict.Add("Nanopolis.SmallCommercial", "smallCommercial")
-        newTypeDict.Add("Nanopolis.LargeCommercial", "largeCommercial")
-        newTypeDict.Add("Nanopolis.SmallPark", "smallPark")
-        newTypeDict.Add("Nanopolis.LargePark", "largePark")
-        newTypeDict.Add("Nanopolis.LargeParkPointer", "largeParkPointer")
-        newTypeDict.Add("Nanopolis.SmallRoad", "smallRoad")
-        newTypeDict.Add("Nanopolis.LargeRoad", "largeRoad")
-        newTypeDict.Add("Nanopolis.Industry", "industry")
-        newTypeDict.Add("Nanopolis.Parliament", "parliament")
-        newTypeDict.Add("Nanopolis.ParliamentPointer", "parliamentPointer")
-        newTypeDict.Add("Nanopolis.PoliceStation", "policeStation")
-        newTypeDict.Add("Nanopolis.Water", "water")
-        newTypeDict.Add("Nanopolis.Forest", "forest")
-        newTypeDict.Add("Nanopolis.WindFarm", "windFarm")
-        newTypeDict.Add("Nanopolis.CoalStation", "coalStation")
-        NewGame.TypeDict = newTypeDict
-    End Sub
     Sub FinishWeek(ByRef Game)
         Dim pos As Position
         For pos.y = 0 To 24
@@ -226,12 +203,13 @@ Public Class Game
                     Game.LotObjectMatrix(pos.y, pos.x).FinishConstruction(Game, pos)
                 End If
                 If Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.SmallResidential" Or Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.LargeResidential" Then
+                    Game.LotObjectMatrix(pos.y, pos.x).Work(Game.LotObjectMatrix(pos.y, pos.x).LowerMiddleWorkPlace, Game.LotObjectMatrix(pos.y, pos.x).MiddleUpperWorkPlace)
                     Game.NoOfResidentialLots += 1
                     If Game.TotalPopulation < 10 Then
                         Game.LotObjectMatrix(pos.y, pos.x).DwellerAmount += StartingPopulation
                     End If
                     If Game.LotObjectMatrix(pos.y, pos.x).LandValue > 0 Then
-                        Game.lotobjectmatrix(pos.y, pos.x).DwellerAmount += 5
+                        Game.LotObjectMatrix(pos.y, pos.x).DwellerAmount += 5
                     End If
                     Game.TotalPopulation += Game.LotObjectMatrix(pos.y, pos.x).DwellerAmount
                     End If
@@ -243,7 +221,8 @@ Public Class Game
                 Game.LotObjectMatrix(pos.y, pos.x).LandValue = Game.LotObjectMatrix(pos.y, pos.x).CalculateLandValue(pos, Game)
                 If Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.SmallResidential" Or Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.LargeResidential" Then
                     If Game.HasWorkBuildings = True Then
-                        Game.LotObjectMatrix(pos.y, pos.x).GenerateWorkOrShoppingPlace(True, Game.LotObjectMatrix, pos)
+                        Game.LotObjectMatrix(pos.y, pos.x).GenerateWorkOrShoppingPlace(True, Game.LotObjectMatrix, pos, False)
+                        Game.LotObjectMatrix(pos.y, pos.x).GenerateWorkOrShoppingPlace(True, Game.LotObjectMatrix, pos, True)
                     End If
                 End If
                 Game.LotObjectMatrix(pos.y, pos.x).CrimeRate = Game.LotObjectMatrix(pos.y, pos.x).CalculateCrimeRate(pos, Game)

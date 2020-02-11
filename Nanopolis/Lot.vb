@@ -137,7 +137,7 @@
                 Console.Write("1")
                 Console.Write(" Low density($20) ")
                 Console.Write("2")
-                Console.WriteLine(" High density($30)")
+                Console.WriteLine(" High density($150)")
                 Console.ResetColor()
                 input = Console.ReadKey(True)
                 If input.Key = ConsoleKey.D1 Then
@@ -155,7 +155,7 @@
                     Game.LotObjectMatrix(Pos.y, Pos.x) = construction
                     Game.HasShoppingPlace = True
                     Game.HasWorkBuildings = True
-                    Game.CityGovernment.Spend(30)
+                    Game.CityGovernment.Spend(150)
                 End If
             Case ConsoleKey.D3
                 Game.GameMap.GridCodes(Pos.y, Pos.x) = 32
@@ -418,7 +418,7 @@ Public Class ResidentialLot
     Public MiddleUpperWorkPlace As Position
     Public LowerMiddleShoppingPlace As Position
     Public MiddleUpperShoppingPlace As Position
-    Sub GenerateWorkOrShoppingPlace(FindingWork, ByRef LotObjectMatrix, pos, IsUpperOrMiddleClass)
+    Sub GenerateWorkOrShoppingPlace(FindingWork, ByRef LotObjectMatrix, pos, SocialClass)
         Randomize()
         Dim offset As Position
         Dim Right As Boolean
@@ -552,40 +552,60 @@ Public Class ResidentialLot
                     ShoppingPlace.y = pos.y + offset.y
                     ShoppingPlace.x = pos.x + offset.x
                 End If
-                If LotObjectMatrix(WorkPlace.y, WorkPlace.x).GetType.ToString = "Nanopolis.SmallCommercial" And FindingWork And Not IsUpperOrMiddleClass Then
-                    Found = True
-                ElseIf LotObjectMatrix(ShoppingPlace.y, ShoppingPlace.x).GetType.ToString = "Nanopolis.CommercialLot" And FindingWork = False Then
-                    Found = True
-                ElseIf LotObjectMatrix(ShoppingPlace.y, ShoppingPlace.x).GetType.ToString = "Nanopolis.Industry" And FindingWork = False Then
-                    Found = True
+                If SocialClass = "Lower" Then
+                    If LotObjectMatrix(WorkPlace.y, WorkPlace.x).GetType.ToString = "Nanopolis.SmallCommercial" And FindingWork Then
+                        Found = True
+                    ElseIf LotObjectMatrix(WorkPlace.y, WorkPlace.x).GetType.ToString = "Nanopolis.Industry" And FindingWork Then
+                        Found = True
+                    End If
+                ElseIf SocialClass = "Middle" Then
+                    If LotObjectMatrix(WorkPlace.y, WorkPlace.x).GetType.ToString = "Nanopolis.SmallCommercial" And FindingWork Then
+                        Found = True
+                    End If
+                ElseIf SocialClass = "Upper" Then
+                    If LotObjectMatrix(WorkPlace.y, WorkPlace.x).GetType.ToString = "Nanopolis.LargeCommercial" And FindingWork Then
+                        Found = True
+                    End If
                 End If
             End If
         End While
     End Sub
-    Sub LowerMiddleBuy(SalesTaxRate, ByRef Game, ShoppingPlace)
-        For i As Integer = 0 To (DwellerAmount * LowerClassProportion)
+    Sub LowerMiddleShop(SalesTaxRate, ByRef Game, ShoppingPlace)
+        For i As Integer = 0 To Int(DwellerAmount * LowerClassProportion) + Int(DwellerAmount * MiddleClassProportion)
             Game.LotObjectMatrix(ShoppingPlace.y, ShoppingPlace.x).GainRevenue(20)
+            Game.LotObjectMatrix(ShoppingPlace.y, ShoppingPlace.x).PaySalesTax(SalesTaxRate)
         Next
     End Sub
-    Sub MiddleUpperBuy(SalesTaxRate, ByRef Game, ShoppingPlace)
+    Sub MiddleUpperShop(SalesTaxRate, ByRef Game, ShoppingPlace)
         For i As Integer = 0 To (DwellerAmount * UpperClassProportion)
             Game.LotObjectMatrix(ShoppingPlace.y, ShoppingPlace.x).GainRevenue(250)
-            Game.LotObjectMatrix(ShoppingPlace, ShoppingPlace).PaySalesTax(SalesTaxRate)
+            Game.LotObjectMatrix(ShoppingPlace.y, ShoppingPlace.x).PaySalesTax(SalesTaxRate)
+        Next
+    End Sub
+    Sub Work(LowerMiddleWorkPlace, MiddleUpperWorkPlace)
+        For i As Integer = 0 To Int(DwellerAmount * LowerClassProportion)
+            LowerClassCash += Int(DwellerAmount * LowerClassProportion * 75)
+        Next
+        For i As Integer = 0 To Int(DwellerAmount * MiddleClassProportion)
+            MiddleClassCash += Int(DwellerAmount * MiddleClassProportion * 150)
+        Next
+        For i As Integer = 0 To (DwellerAmount * UpperClassProportion)
+            UpperClassCash += Int(DwellerAmount * UpperClassProportion * 300)
         Next
     End Sub
     Sub PayIncomeTax(LowerRate, MiddleRate, UpperRate, ByRef Game)
         Dim tax As Integer
-        For i As Integer = 0 To (DwellerAmount * LowerClassProportion)
+        For i As Integer = 0 To Int(DwellerAmount * LowerClassProportion)
             tax = LowerClassCash * (LowerRate / 100)
             LowerClassCash -= tax
             Game.CityGovernment.Treasury += tax
         Next
-        For i As Integer = 0 To (DwellerAmount * MiddleClassProportion)
+        For i As Integer = 0 To Int(DwellerAmount * MiddleClassProportion)
             tax = MiddleClassCash * (MiddleRate / 100)
             MiddleClassCash -= tax
             Game.CityGovernment.Treasury += tax
         Next
-        For i As Integer = 0 To (DwellerAmount * UpperClassProportion)
+        For i As Integer = 0 To Int(DwellerAmount * UpperClassProportion)
             tax = UpperClassCash * (UpperRate / 100)
             UpperClassCash -= tax
             Game.CityGovernment.Treasury += tax
@@ -606,10 +626,32 @@ End Class
 Public Class SmallResidential
     Inherits ResidentialLot
     Protected MaxNoOfDwellers As Integer = 25
+    Overloads Sub MoveIn(Amount)
+        DwellerAmount += Amount
+        If LandValue > 50 Then
+            MiddleClassProportion += 0.05
+            LowerClassProportion -= 0.05
+        End If
+        If LandValue > 110 Then
+            UpperClassProportion += 0.05
+            MiddleClassProportion -= 0.05
+        End If
+    End Sub
 End Class
 Public Class LargeResidential
     Inherits ResidentialLot
     Protected MaxNoOfDwellers As Integer = 100
+    Overloads Sub MoveIn(Amount)
+        DwellerAmount += Amount
+        If LandValue > 40 Then
+            MiddleClassProportion += 0.05
+            LowerClassProportion -= 0.05
+        End If
+        If LandValue > 100 Then
+            UpperClassProportion += 0.05
+            MiddleClassProportion -= 0.05
+        End If
+    End Sub
 End Class
 Public Class CommercialLot
     Inherits Lot
