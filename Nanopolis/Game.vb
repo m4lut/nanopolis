@@ -203,7 +203,9 @@ Public Class Game
                     Game.LotObjectMatrix(pos.y, pos.x).FinishConstruction(Game, pos)
                 End If
                 If Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.SmallResidential" Or Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.LargeResidential" Then
-                    Game.LotObjectMatrix(pos.y, pos.x).Work(Game.LotObjectMatrix(pos.y, pos.x).LowerMiddleWorkPlace, Game.LotObjectMatrix(pos.y, pos.x).MiddleUpperWorkPlace)
+                    If Game.HasWorkBuildings Then
+                        Game.LotObjectMatrix(pos.y, pos.x).Work(Game.LotObjectMatrix(pos.y, pos.x).LowerWorkPlace, Game.LotObjectMatrix(pos.y, pos.x).MiddleUpperWorkPlace)
+                    End If
                     Game.NoOfResidentialLots += 1
                     If Game.TotalPopulation < 10 Then
                         Game.LotObjectMatrix(pos.y, pos.x).DwellerAmount += StartingPopulation
@@ -211,15 +213,17 @@ Public Class Game
                     If Game.LotObjectMatrix(pos.y, pos.x).LandValue > 0 Then
                         Game.LotObjectMatrix(pos.y, pos.x).DwellerAmount += 5
                     End If
-                    Game.LotObjectMatrix(pos.y, pos.x).LowerShop(Game.CityGovernment.SalesTaxRate, Game, Game.LotObjectMatrix.LowerMiddleShoppingPlace, pos)
-                    Game.LotObjectMatrix(pos.y, pos.x).MiddleUpperShop(Game.CityGovernment.SalesTaxRate, Game, Game.LotObjectMatrix.MiddleUpperShoppingPlace)
-                    If Game.NoOfWeeksPlayed Mod 4 = 0 Then
-                        Game.LotObjectMatrix(pos.y, pos.x).PayIncomeTax(Game.CityGovernment.LowerRate, Game.CityGovernment.MiddleRate, Game.CityGovernment.UpperRate, Game)
+                    If Game.HasShoppingPlace Then
+                        Game.LotObjectMatrix(pos.y, pos.x).LowerShop(Game.CityGovernment.SalesTaxRate, Game, Game.LotObjectMatrix.LowerMiddleShoppingPlace, pos)
+                        Game.LotObjectMatrix(pos.y, pos.x).MiddleUpperShop(Game.CityGovernment.SalesTaxRate, Game, Game.LotObjectMatrix.MiddleUpperShoppingPlace)
+                        If Game.NoOfWeeksPlayed Mod 4 = 0 Then
+                            Game.LotObjectMatrix(pos.y, pos.x).PayIncomeTax(Game.CityGovernment.LowerIncomeTax, Game.CityGovernment.MiddleIncomeTax, Game.CityGovernment.UpperIncomeTax, Game)
+                        End If
                     End If
                     Game.LotObjectMatrix(pos.y, pos.x).MoveIn()
-                    Game.TotalPopulation += Game.LotObjectMatrix(pos.y, pos.x).DwellerAmount
-                End If
-                If Game.NoOfResidentialLots <> 0 Then
+                        Game.TotalPopulation += Game.LotObjectMatrix(pos.y, pos.x).DwellerAmount
+                    End If
+                    If Game.NoOfResidentialLots <> 0 Then
                     Game.HasResidential = True
                 Else
                     Game.HasResidential = False
@@ -2737,12 +2741,13 @@ Public Class Map
                     Console.WriteLine()
                 Next
             Next
+            Console.WriteLine("Move to return to normal map")
         End If
         Console.Write("Y" & Int(Pos.y))
         Console.WriteLine(", X" & Int(Pos.x))
         Console.WriteLine("Land Value: " & Game.LotObjectMatrix(Pos.y, Pos.x).LandValue)
-        Console.WriteLine("Government Budget: $" & Game.cityGovernment.GetTreasury)
-        If Game.citygovernment.gettreasury < 0 Then
+        Console.WriteLine("Government Budget: $" & Game.CityGovernment.GetTreasury)
+        If Game.CityGovernment.GetTreasury < 0 Then
             Console.ForegroundColor = ConsoleColor.Red
             Console.WriteLine("IN DEBT!")
             Console.ResetColor()
@@ -2752,6 +2757,9 @@ Public Class Map
         Console.WriteLine("Crime Rate: " & Game.LotObjectMatrix(Pos.y, Pos.x).CrimeRate & "/1000")
         Console.WriteLine("No. of weeks played: " & Game.NoOfWeeksPLayed)
         Console.WriteLine("Population: " & Game.TotalPopulation)
+        If Game.LotObjectMatrix(Pos.y, Pos.x).GetType.ToString = "Nanopolis.SmallResidential" Or Game.LotObjectMatrix(Pos.y, Pos.x).GetType.ToString = "Nanopolis.LargeResidential" Then
+            Console.WriteLine("Finances of this building: " & Game.LotObjectMatrix(Pos.y, Pos.x).LowerClassCash & ", " & Game.LotObjectMatrix(Pos.y, Pos.x).LowerClassCash & ", " & Game.LotObjectMatrix(Pos.y, Pos.x).LowerClassCash)
+        End If
         Return
     End Sub
 End Class

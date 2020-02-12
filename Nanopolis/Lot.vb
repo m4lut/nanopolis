@@ -314,7 +314,7 @@
         Dim tempModifier As Integer = 0
         Dim tji As Integer = 0
         If Game.LotObjectMatrix(Pos.y, Pos.x).GetType.ToString = "Nanopolis.SmallRoad" Or Game.LotObjectMatrix(Pos.y, Pos.x).GetType.ToString = "Nanopolis.LargeRoad" Then
-            Game.LotObjectMatrix(Pos.y, Pos.x).CalculateTJI()
+            Game.LotObjectMatrix(Pos.y, Pos.x).CalculateTJI(Game)
             tempModifier += tji
             Return tempModifier
         Else
@@ -418,7 +418,7 @@ Public Class ResidentialLot
     Public UpperWorkPlace As Position
     Public LowerMiddleShoppingPlace As Position
     Public MiddleUpperShoppingPlace As Position
-    Sub GenerateWorkOrShoppingPlace(FindingWork, ByRef LotObjectMatrix, pos, SocialClass)
+    Sub GenerateWorkOrShoppingPlace(FindingWork, ByRef Game, pos, SocialClass)
         Randomize()
         Dim offset As Position
         Dim Right As Boolean
@@ -549,18 +549,24 @@ Public Class ResidentialLot
             If FindingWork Then
                 WorkPlace.y = pos.y + offset.y
                 WorkPlace.x = pos.x + offset.x
+                If WorkPlace.y < 0 Or WorkPlace.y > 24 Then
+                    Continue While
+                End If
+                If WorkPlace.x < 0 Or WorkPlace.x > Game.GameSettings.MapWidth Then
+                    Continue While
+                End If
                 If SocialClass = "Lower" Then
-                    If LotObjectMatrix(WorkPlace.y, WorkPlace.x).GetType.ToString = "Nanopolis.SmallCommercial" And LotObjectMatrix(WorkPlace.y, WorkPlace.x).HasRoadConnection Then
+                    If Game.LotObjectMatrix(WorkPlace.y, WorkPlace.x).GetType.ToString = "Nanopolis.SmallCommercial" AndAlso Game.LotObjectMatrix(WorkPlace.y, WorkPlace.x).HasRoadConnection Then
                         Found = True
-                    ElseIf LotObjectMatrix(WorkPlace.y, WorkPlace.x).GetType.ToString = "Nanopolis.Industry" And FindingWork And LotObjectMatrix(WorkPlace.y, WorkPlace.x).HasRoadConnection Then
+                    ElseIf Game.LotObjectMatrix(WorkPlace.y, WorkPlace.x).GetType.ToString = "Nanopolis.Industry" AndAlso Game.LotObjectMatrix(WorkPlace.y, WorkPlace.x).HasRoadConnection Then
                         Found = True
                     End If
                 ElseIf SocialClass = "Middle" Then
-                    If (LotObjectMatrix(WorkPlace.y, WorkPlace.x).GetType.ToString = "Nanopolis.SmallCommercial" Or LotObjectMatrix(WorkPlace.y, WorkPlace.x).GetType.ToString = "Nanopolis.LargeCommercial") And FindingWork And LotObjectMatrix(WorkPlace.y, WorkPlace.x).HasRoadConnection Then
+                    If (Game.LotObjectMatrix(WorkPlace.y, WorkPlace.x).GetType.ToString = "Nanopolis.SmallCommercial" Or Game.LotObjectMatrix(WorkPlace.y, WorkPlace.x).GetType.ToString = "Nanopolis.LargeCommercial") AndAlso Game.LotObjectMatrix(WorkPlace.y, WorkPlace.x).HasRoadConnection Then
                         Found = True
                     End If
                 ElseIf SocialClass = "Upper" Then
-                    If LotObjectMatrix(WorkPlace.y, WorkPlace.x).GetType.ToString = "Nanopolis.LargeCommercial" And FindingWork And LotObjectMatrix(WorkPlace.y, WorkPlace.x).HasRoadConnection Then
+                    If Game.LotObjectMatrix(WorkPlace.y, WorkPlace.x).GetType.ToString = "Nanopolis.LargeCommercial" AndAlso Game.LotObjectMatrix(WorkPlace.y, WorkPlace.x).HasRoadConnection Then
                         Found = True
                     End If
                 End If
@@ -568,22 +574,20 @@ Public Class ResidentialLot
                 ShoppingPlace.y = pos.y + offset.y
                 ShoppingPlace.x = pos.x + offset.x
                 If SocialClass = "Lower" Then
-                    If LotObjectMatrix(ShoppingPlace.y, ShoppingPlace.x).GetType.ToString = "Nanopolis.SmallCommercial" And LotObjectMatrix(ShoppingPlace.y, ShoppingPlace.x).HasRoadConnection Then
+                    If Game.LotObjectMatrix(ShoppingPlace.y, ShoppingPlace.x).GetType.ToString = "Nanopolis.SmallCommercial" And Game.LotObjectMatrix(ShoppingPlace.y, ShoppingPlace.x).HasRoadConnection Then
                         Found = True
                     End If
                 ElseIf SocialClass = "Middle" Then
-                    If (LotObjectMatrix(WorkPlace.y, WorkPlace.x).GetType.ToString = "Nanopolis.SmallCommercial" Or LotObjectMatrix(WorkPlace.y, WorkPlace.x).GetType.ToString = "Nanopolis.LargeCommercial") And LotObjectMatrix(ShoppingPlace.y, ShoppingPlace.x).HasRoadConnection Then
+                    If (Game.LotObjectMatrix(WorkPlace.y, WorkPlace.x).GetType.ToString = "Nanopolis.SmallCommercial" Or Game.LotObjectMatrix(WorkPlace.y, WorkPlace.x).GetType.ToString = "Nanopolis.LargeCommercial") AndAlso Game.LotObjectMatrix(ShoppingPlace.y, ShoppingPlace.x).HasRoadConnection Then
                         Found = True
                     End If
                 ElseIf SocialClass = "Upper" Then
-                    If LotObjectMatrix(WorkPlace.y, WorkPlace.x).GetType.ToString = "Nanopolis.LargeCommercial" And FindingWork And LotObjectMatrix(WorkPlace.y, WorkPlace.x).HasRoadConnection Then
+                    If Game.LotObjectMatrix(WorkPlace.y, WorkPlace.x).GetType.ToString = "Nanopolis.LargeCommercial" And FindingWork And Game.LotObjectMatrix(WorkPlace.y, WorkPlace.x).HasRoadConnection Then
                         Found = True
                     End If
                 End If
             End If
-
         End While
-
     End Sub
     Sub LowerShop(SalesTaxRate, ByRef Game, ShoppingPlace, Pos)
         For i As Integer = 0 To Int(DwellerAmount * LowerClassProportion)
