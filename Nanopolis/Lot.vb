@@ -103,12 +103,12 @@
                 Console.ForegroundColor = ConsoleColor.Black
                 Console.Write("1")
                 Console.ResetColor()
-                Console.Write("Low density($15)")
+                Console.Write("Low density($20)")
                 Console.BackgroundColor = ConsoleColor.Gray
                 Console.ForegroundColor = ConsoleColor.Black
                 Console.Write("2")
                 Console.ResetColor()
-                Console.WriteLine(" High density($25)")
+                Console.WriteLine(" High density($50)")
                 Console.ResetColor()
                 input = Console.ReadKey(True)
                 If input.Key = ConsoleKey.D1 Then
@@ -116,19 +116,13 @@
                     Dim construction As Construction = New Construction()
                     construction.NextTurnLot = "Nanopolis.SmallResidential"
                     Game.LotObjectMatrix(Pos.y, Pos.x) = construction
-                    Game.CityGovernment.Spend(15)
+                    Game.CityGovernment.Spend(20)
                 ElseIf input.Key = ConsoleKey.D2 Then
                     Game.GameMap.GridCodes(Pos.y, Pos.x) = 0
                     Dim construction As Construction = New Construction()
                     construction.NextTurnLot = "Nanopolis.LargeResidential"
                     Game.LotObjectMatrix(Pos.y, Pos.x) = construction
-                    If Game.HasWorkBuildings Then
-                        Game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(True, Game.LotObjectMatrix, Pos)
-                    End If
-                    If Game.HasWorkBuildings Then
-                        Game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(False, Game.LotObjectMatrix, Pos)
-                    End If
-                    Game.CityGovernment.Spend(25)
+                    Game.CityGovernment.Spend(50)
                 End If
             Case ConsoleKey.D2
                 Console.BackgroundColor = ConsoleColor.Gray
@@ -165,7 +159,14 @@
             Case ConsoleKey.D4
                 Console.BackgroundColor = ConsoleColor.Gray
                 Console.ForegroundColor = ConsoleColor.Black
-                Console.WriteLine("Low volume[1]($10) | High volume[2]($20)")
+                Console.Write("1")
+                Console.ResetColor()
+                Console.Write(" Low volume($10) ")
+                Console.BackgroundColor = ConsoleColor.Gray
+                Console.ForegroundColor = ConsoleColor.Black
+                Console.Write("2")
+                Console.ResetColor()
+                Console.WriteLine(" High volume($20)")
                 Console.ResetColor()
                 input = Console.ReadKey(True)
                 If input.Key = ConsoleKey.D1 Then
@@ -197,7 +198,14 @@
             Case ConsoleKey.D5
                 Console.BackgroundColor = ConsoleColor.Gray
                 Console.ForegroundColor = ConsoleColor.Black
-                Console.WriteLine("Coal [1]($150) | Wind Farm[2]($225)")
+                Console.Write("1")
+                Console.ResetColor()
+                Console.Write(" Coal($150) ")
+                Console.BackgroundColor = ConsoleColor.Gray
+                Console.ForegroundColor = ConsoleColor.Black
+                Console.Write("2")
+                Console.ResetColor()
+                Console.Write(" Wind Farm($225)")
                 Console.ResetColor()
                 input = Console.ReadKey(True)
                 If input.Key = ConsoleKey.D1 Then
@@ -214,7 +222,16 @@
                     Game.HasWorkBuildings = True
                 End If
             Case ConsoleKey.D6
-                Console.WriteLine("Small park[1]($15) | Large park[2]($40)")
+                Console.BackgroundColor = ConsoleColor.Gray
+                Console.ForegroundColor = ConsoleColor.Black
+                Console.Write("1")
+                Console.ResetColor()
+                Console.Write(" Small park($15) ")
+                Console.BackgroundColor = ConsoleColor.Gray
+                Console.ForegroundColor = ConsoleColor.Black
+                Console.Write("2")
+                Console.ResetColor()
+                Console.WriteLine(" Large park($40)")
                 input = Console.ReadKey(True)
                 If input.Key = ConsoleKey.D1 Then
                     Dim smallPark As SmallPark = New SmallPark()
@@ -259,14 +276,20 @@
             Case ConsoleKey.D9
                 Console.BackgroundColor = ConsoleColor.Gray
                 Console.ForegroundColor = ConsoleColor.Black
-                Console.WriteLine("Forest[1]($5) | Water[2]($30)")
+                Console.Write("1")
                 Console.ResetColor()
+                Console.Write(" Forest($10) ")
+                Console.BackgroundColor = ConsoleColor.Gray
+                Console.ForegroundColor = ConsoleColor.Black
+                Console.Write("2")
+                Console.ResetColor()
+                Console.WriteLine(" Water($30)")
                 input = Console.ReadKey(True)
                 If input.Key = ConsoleKey.D1 Then
                     Dim forest As Forest = New Forest()
                     Game.GameMap.GridCodes(Pos.y, Pos.x) = 39
                     Game.LotObjectMatrix(Pos.y, Pos.x) = forest
-                    Game.CityGovernment.Spend(5)
+                    Game.CityGovernment.Spend(10)
                 ElseIf input.Key = ConsoleKey.D2 Then
                     Dim water As Water = New Water()
                     Game.GameMap.GridCodes(Pos.y, Pos.x) = 38
@@ -775,24 +798,28 @@ Public Class Construction
                 Game.LotObjectMatrix(Pos.y, Pos.x) = smallResidential
                 Game.GameMap.GridCodes(Pos.y, Pos.x) = 1
                 If Game.HasWorkBuildings Then
-                    Game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(True, Game.LotObjectMatrix, Pos, "Lower")
-                    Game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(True, Game.LotObjectMatrix, Pos, "Middle")
-                    Game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(True, Game.LotObjectMatrix, Pos, "Upper")
+                    Game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(True, Game, Pos, "Lower")
+                    Game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(True, Game, Pos, "Middle")
+                    Game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(True, Game, Pos, "Upper")
                 End If
                 If Game.HasShoppingPlace Then
-                    Game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(False, Game.LotObjectMatrix, Pos, "Lower")
-                    Game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(False, Game.LotObjectMatrix, Pos, "Middle")
-                    Game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(False, Game.LotObjectMatrix, Pos, "Upper")
+                    Game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(False, Game, Pos, "Lower")
+                    Game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(False, Game, Pos, "Middle")
+                    Game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(False, Game, Pos, "Upper")
                 End If
             Case "Nanopolis.LargeResidential"
                 Dim largeResidential As LargeResidential = New LargeResidential()
                 Game.LotObjectMatrix(Pos.y, Pos.x) = largeResidential
                 Game.GameMap.GridCodes(Pos.y, Pos.x) = 2
                 If Game.HasWorkBuildings Then
-                    Game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(True, Game.LotObjectMatrix, Pos)
+                    Game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(True, Game, Pos, "Lower")
+                    Game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(True, Game, Pos, "Middle")
+                    Game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(True, Game, Pos, "Upper")
                 End If
                 If Game.HasShoppingPlace Then
-                    Game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(False, Game.LotObjectMatrix, Pos)
+                    Game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(False, Game.LotObjectMatrix, Pos, "Lower")
+                    Game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(False, Game.LotObjectMatrix, Pos, "Middle")
+                    Game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(False, Game.LotObjectMatrix, Pos, "Upper")
                 End If
             Case "Nanopolis.SmallCommercial"
                 Dim smallCommercial As SmallCommercial = New SmallCommercial()
