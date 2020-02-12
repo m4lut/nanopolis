@@ -198,6 +198,11 @@ Public Class Game
     Sub FinishWeek(ByRef Game)
         Dim pos As Position
         For pos.y = 0 To 24
+            For pos.x = 0 To (Game.GameSettings.Mapwidth - 1)
+                Game.LotObjectMatrix(pos.y, pos.x).RoadConnectionCheck(pos, Game)
+            Next
+        Next
+        For pos.y = 0 To 24
             For pos.x = 0 To (Game.GameSettings.MapWidth - 1)
                 If Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.Construction" Then
                     Game.LotObjectMatrix(pos.y, pos.x).FinishConstruction(Game, pos)
@@ -221,9 +226,9 @@ Public Class Game
                         End If
                     End If
                     Game.LotObjectMatrix(pos.y, pos.x).MoveIn()
-                        Game.TotalPopulation += Game.LotObjectMatrix(pos.y, pos.x).DwellerAmount
-                    End If
-                    If Game.NoOfResidentialLots <> 0 Then
+                    Game.TotalPopulation += Game.LotObjectMatrix(pos.y, pos.x).DwellerAmount
+                End If
+                If Game.NoOfResidentialLots <> 0 Then
                     Game.HasResidential = True
                 Else
                     Game.HasResidential = False
@@ -2744,9 +2749,9 @@ Public Class Map
             Console.WriteLine("Move to return to normal map")
         End If
         Console.Write("Y" & Int(Pos.y))
-        Console.WriteLine(", X" & Int(Pos.x))
-        Console.WriteLine("Land Value: " & Game.LotObjectMatrix(Pos.y, Pos.x).LandValue)
-        Console.WriteLine("Government Budget: $" & Game.CityGovernment.GetTreasury)
+        Console.Write(", X" & Int(Pos.x))
+        Console.Write("   Land Value: " & Game.LotObjectMatrix(Pos.y, Pos.x).LandValue)
+        Console.Write("   Government Budget: $" & Game.CityGovernment.GetTreasury & "   ")
         If Game.CityGovernment.GetTreasury < 0 Then
             Console.ForegroundColor = ConsoleColor.Red
             Console.WriteLine("IN DEBT!")
@@ -2754,12 +2759,39 @@ Public Class Map
         End If
         Dim buildingType As Type = Game.LotObjectMatrix(Pos.y, Pos.x).GetType
         Console.WriteLine(buildingType)
-        Console.WriteLine("Crime Rate: " & Game.LotObjectMatrix(Pos.y, Pos.x).CrimeRate & "/1000")
-        Console.WriteLine("No. of weeks played: " & Game.NoOfWeeksPLayed)
-        Console.WriteLine("Population: " & Game.TotalPopulation)
+        Console.Write("Crime Rate: " & Game.LotObjectMatrix(Pos.y, Pos.x).CrimeRate & "/1000")
+        Console.Write("   No. of weeks played: " & Game.NoOfWeeksPLayed)
         If Game.LotObjectMatrix(Pos.y, Pos.x).GetType.ToString = "Nanopolis.SmallResidential" Or Game.LotObjectMatrix(Pos.y, Pos.x).GetType.ToString = "Nanopolis.LargeResidential" Then
-            Console.WriteLine("Finances of this building: " & Game.LotObjectMatrix(Pos.y, Pos.x).LowerClassCash & ", " & Game.LotObjectMatrix(Pos.y, Pos.x).LowerClassCash & ", " & Game.LotObjectMatrix(Pos.y, Pos.x).LowerClassCash)
+            Console.Write("   Population: " & Game.TotalPopulation)
+            Console.WriteLine("   Finances of this building: " & Game.LotObjectMatrix(Pos.y, Pos.x).LowerClassCash & ", " & Game.LotObjectMatrix(Pos.y, Pos.x).LowerClassCash & ", " & Game.LotObjectMatrix(Pos.y, Pos.x).LowerClassCash & vbCrLf)
+        Else
+            Console.WriteLine("   Population: " & Game.TotalPopulation)
         End If
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.Write("WASD/ARROW KEYS")
+        Console.ResetColor()
+        Console.Write(" Navigate ")
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.Write("RETURN")
+        Console.ResetColor()
+        Console.Write(" Select lot ")
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.Write("N")
+        Console.ResetColor()
+        Console.Write(" Finish week ")
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.Write("G")
+        Console.ResetColor()
+        Console.Write(" Manage government ")
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.Write("ESC")
+        Console.ResetColor()
+        Console.WriteLine(" Main menu")
         Return
     End Sub
 End Class

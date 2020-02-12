@@ -328,31 +328,6 @@ Module Module1
         Dim InMenu As Boolean = False
         While Not InMenu
             Game.GameMap.PrintMap(Pos, Game)
-            Console.BackgroundColor = ConsoleColor.Gray
-            Console.ForegroundColor = ConsoleColor.Black
-            Console.Write("WASD/ARROW KEYS")
-            Console.ResetColor()
-            Console.Write(" Navigate ")
-            Console.BackgroundColor = ConsoleColor.Gray
-            Console.ForegroundColor = ConsoleColor.Black
-            Console.Write("RETURN")
-            Console.ResetColor()
-            Console.Write(" Select lot ")
-            Console.BackgroundColor = ConsoleColor.Gray
-            Console.ForegroundColor = ConsoleColor.Black
-            Console.Write("N")
-            Console.ResetColor()
-            Console.Write(" Finish week ")
-            Console.BackgroundColor = ConsoleColor.Gray
-            Console.ForegroundColor = ConsoleColor.Black
-            Console.Write("G")
-            Console.ResetColor()
-            Console.Write(" Manage government ")
-            Console.BackgroundColor = ConsoleColor.Gray
-            Console.ForegroundColor = ConsoleColor.Black
-            Console.Write("ESC")
-            Console.ResetColor()
-            Console.WriteLine(" Main menu")
             input = Console.ReadKey(True)
             Select Case input.Key
                 Case ConsoleKey.W

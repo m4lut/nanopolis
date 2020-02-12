@@ -1,5 +1,6 @@
 ﻿Public Class Lot
     Public CrimeRate As Integer = 0
+    Public HasRoadConnection As Boolean
     Const PowerDemand As Integer = 50
     Const BaseWeeksUntilAbandoned As Integer = 5
     Public Const BaseLandValue As Integer = 25
@@ -35,18 +36,18 @@
     Sub AbandonBuilding(ByRef Game, Pos)
         Me.Demolish(Pos, Game)
     End Sub
-    Function RoadConnectionCheck(Pos, ByRef Game)
+    Sub RoadConnectionCheck(Pos, ByRef Game)
         For j As Integer = -1 To 1
             For i As Integer = -1 To 1
                 If Game.LotObjectMatrix(Pos.y, Pos.x).GetType.ToString = "Nanopolis.SmallRoad" Or Game.LotObjectMatrix(Pos.y, Pos.x).GetType.ToString = "Nanopolis.LargeRoad" Then
-                    Return True
+                    Game.LotObjectMatrix(Pos.y, Pos.x).HasRoadConnection = True
+                    Return
                 ElseIf i = 0 And j = 0 Then
                     Continue For
                 End If
             Next
         Next
-        Return False
-    End Function
+    End Sub
     Public Sub Build(ByRef Pos, ByRef Game)
         Randomize()
         Dim ShopType As Integer = Math.Round((Rnd()) + 3)
@@ -109,7 +110,6 @@
                 Console.Write("2")
                 Console.ResetColor()
                 Console.WriteLine(" High density($50)")
-                Console.ResetColor()
                 input = Console.ReadKey(True)
                 If input.Key = ConsoleKey.D1 Then
                     Game.GameMap.GridCodes(Pos.y, Pos.x) = 0
@@ -128,10 +128,13 @@
                 Console.BackgroundColor = ConsoleColor.Gray
                 Console.ForegroundColor = ConsoleColor.Black
                 Console.Write("1")
-                Console.Write(" Low density($20) ")
-                Console.Write("2")
-                Console.WriteLine(" High density($150)")
                 Console.ResetColor()
+                Console.Write(" Low density($20) ")
+                Console.BackgroundColor = ConsoleColor.Gray
+                Console.ForegroundColor = ConsoleColor.Black
+                Console.Write("2")
+                Console.ResetColor()
+                Console.WriteLine(" High density($150)")
                 input = Console.ReadKey(True)
                 If input.Key = ConsoleKey.D1 Then
                     Game.GameMap.GridCodes(Pos.y, Pos.x) = ShopType
@@ -174,20 +177,44 @@
                     Game.LotObjectMatrix(Pos.y, Pos.x) = smallRoad
                     Game.GameMap.GridCodes(Pos.y, Pos.x) = 13
                     'some of the logic for displaying proper road texture
-                    If Game.GameMap.GridCodes(Pos.y + 1, Pos.x) = 13 Then
-                        Game.GameMap.GridCodes(Pos.y + 1, Pos.x) = 14
-                        Game.GameMap.GridCodes(Pos.y, Pos.x) = 14
-                    ElseIf Game.GameMap.GridCodes(Pos.y + 1, Pos.x) = 14 Then
-                        Game.GameMap.GridCodes(Pos.y, Pos.x) = 13
-                    ElseIf Game.GameMap.GridCodes(Pos.y + 1, Pos.x) = 13 And Game.GameMap.GridCodes(Pos.y, Pos.x + 1) = 14 Then
-                        Game.GameMap.GridCodes(Pos.y, Pos.x) = 21
-                    ElseIf Game.GameMap.GridCodes(Pos.y + 1, Pos.x) = 13 And Game.GameMap.GridCodes(Pos.y, Pos.x - 1) = 13 Then
-                        Game.GameMap.GridCodes(Pos.y, Pos.x) = 20
-                    ElseIf Game.GameMap.GridCodes(Pos.y - 1, Pos.x) = 13 And Game.GameMap.GridCodes(Pos.y, Pos.x + 1) = 13 Then
-                        Game.GameMap.GridCodes(Pos.y, Pos.x) = 19
-                    ElseIf Game.GameMap.GridCodes(Pos.y - 1, Pos.x) = 13 And Game.GameMap.GridCodes(Pos.y, Pos.x - 1) = 13 Then
-                        Game.GameMap.GridCodes(Pos.y, Pos.x) = 18
-                    End If
+                    For i As Integer = -1 To 1
+                        For j As Integer = -1 To 1
+                            If Pos.y + j < 0 Then
+                                Continue For
+                            End If
+                            If Pos.y + j > 24 Then
+                                Continue For
+                            End If
+                            If Pos.x + i < 0 Then
+                                Continue For
+                            End If
+                            If Pos.x + i > (Game.GameSettings.MapWidth - 1) Then
+                                Continue For
+                            End If
+                            If i = 0 And j = 0 Then
+                                Continue For
+                            End If
+                            If i = 1 And j = 1 Then
+                                Continue For
+                            End If
+                            If i = 1 And j = -1 Then
+                                Continue For
+                            End If
+                            If i = -1 And j = 1 Then
+                                Continue For
+                            End If
+                            If i = -1 And j = -1 Then
+                                Continue For
+                            End If
+                            If i = -1 And j = 0 And (Game.GameMap.GridCodes(Pos.y + j, Pos.x + i) = 13 Or Game.GameMap.Gridcodes(Pos.y + j, Pos.x + i) = 11) And (Game.GameMap.Gridcodes(Pos.y, Pos.x) = 13 Or Game.GameMap.Gridcodes(Pos.y, Pos.x) = 11) Then
+                                Game.GameMap.Gridcodes(Pos.y, Pos.x) = 11
+                                Game.GameMap.Gridcodes(Pos.y + j, Pos.x + i) = 11
+                            End If
+                            If j = -1 And i = 1 And Game.LotObjectMatrix(Pos.y + j, Pos.x + i).GetType.ToString = "Nanopolis.SmallRoad" And Game.LotObjectMatrix(Pos.y, Pos.x + 1).GetType.ToString = "Nanopolis.SmallRoad" And Game.LotObjectMatrix(Pos.y, Pos.x).GetType.ToString <> "Nanopolis.SmallRoad" Then
+                                Game.GameMap.GridCodes(Pos.y, Pos.x) = 19
+                            End If
+                        Next
+                    Next
                     Game.cityGovernment.Spend(10)
                 ElseIf input.Key = ConsoleKey.D2 Then
                     Game.GameMap.GridCodes(Pos.y, Pos.x) = 24
@@ -359,15 +386,15 @@ Public Class Road
     Public TrafficJamIndex As Integer
     Public TimesReferenced As Integer = 0
     Public Shared RoadGraph(Game.GameSettings.MapWidth, 24) As Integer
-    Function CalculateTJI(ByRef Game)
-        Dim tempTJI As Integer = 0
-        For i As Integer = 0 To Game.GameSettings.MapWidth
-            For j As Integer = 0 To 25
-                tempTJI += Game.LotObjectMatrix(j, i).TimesReferenced
-            Next
-        Next
-        Return TrafficJamIndex
-    End Function
+    'Function CalculateTJI(ByRef Game)
+    'Dim tempTJI As Integer = 0
+    'For i As Integer = 0 To Game.GameSettings.MapWidth
+    'For j As Integer = 0 To 25
+    '            tempTJI += Game.LotObjectMatrix(j, i).TimesReferenced
+    'Next
+    'Next
+    'Return TrafficJamIndex
+    'End Function
     Function CheckIfJunction(ByRef Game, Pos)
         For i As Integer = -1 To 1
             For j As Integer = -1 To 1
@@ -469,40 +496,43 @@ Public Class ResidentialLot
                 End If
                 RandomY = Rnd()
                 If RandomY > 0.35 And RandomY <= 0.6 Then
-                    UpComponent = 2
+                    UpComponent = 1
                 ElseIf RandomY > 0.6 And RandomY <= 0.8 Then
-                    UpComponent = 3
+                    UpComponent = 2
                 ElseIf RandomY > 0.8 And RandomY <= 0.9 Then
-                    UpComponent = 4
+                    UpComponent = 3
                 ElseIf RandomY > 0.9 And RandomY <= 0.95 Then
-                    UpComponent = 5
+                    UpComponent = 4
                 ElseIf RandomY > 0.95 And RandomY <= 0.97 Then
-                    UpComponent = 6
+                    UpComponent = 5
                 ElseIf RandomY > 0.97 Then
                     UpComponent = Int(Rnd() * 100) + 6
                 Else
-                    UpComponent = 1
+                    UpComponent = 0
                 End If
                 RandomX = Rnd()
                 If RandomX > 0.35 And RandomX <= 0.6 Then
-                    RightComponent = 2
+                    RightComponent = 1
                 ElseIf RandomX > 0.6 And RandomX <= 0.8 Then
-                    RightComponent = 3
+                    RightComponent = 2
                 ElseIf RandomX > 0.8 And RandomX <= 0.9 Then
-                    RightComponent = 4
+                    RightComponent = 3
                 ElseIf RandomX > 0.9 And RandomX <= 0.95 Then
-                    RightComponent = 5
+                    RightComponent = 4
                 ElseIf RandomX > 0.95 And RandomX <= 0.97 Then
-                    RightComponent = 6
+                    RightComponent = 5
                 ElseIf RandomX > 0.97 Then
                     RightComponent = Int(Rnd() * 100) + 6
                 Else
-                    RightComponent = 1
+                    RightComponent = 0
                 End If
                 If Right Then
                     RightComponent *= 1
                 Else
                     RightComponent *= -1
+                End If
+                If RightComponent = 0 And UpComponent = 0 Then
+                    Continue While
                 End If
                 If Up Then
                     UpComponent *= 1
@@ -526,35 +556,38 @@ Public Class ResidentialLot
                 End If
                 RandomY = Rnd()
                 If RandomY > 0.35 And RandomY <= 0.6 Then
-                    UpComponent = 2
-                ElseIf RandomY > 0.6 And RandomY <= 0.8 Then
-                    UpComponent = 3
-                ElseIf RandomY > 0.8 And RandomY <= 0.9 Then
-                    UpComponent = 4
-                ElseIf RandomY > 0.9 And RandomY <= 0.95 Then
-                    UpComponent = 5
-                ElseIf RandomY > 0.95 And RandomY <= 0.97 Then
-                    UpComponent = 6
-                ElseIf RandomY > 0.97 Then
-                    UpComponent = Int(Rnd() * 100) + 6
-                Else
                     UpComponent = 1
+                ElseIf RandomY > 0.6 And RandomY <= 0.8 Then
+                    UpComponent = 2
+                ElseIf RandomY > 0.8 And RandomY <= 0.9 Then
+                    UpComponent = 3
+                ElseIf RandomY > 0.9 And RandomY <= 0.95 Then
+                    UpComponent = 4
+                ElseIf RandomY > 0.95 And RandomY <= 0.97 Then
+                    UpComponent = 5
+                ElseIf RandomY > 0.97 Then
+                    UpComponent = Int(Rnd() * 100) + 5
+                Else
+                    UpComponent = 0
                 End If
                 RandomX = Rnd()
                 If RandomX > 0.35 And RandomX <= 0.6 Then
-                    RightComponent = 2
-                ElseIf RandomX > 0.6 And RandomX <= 0.8 Then
-                    RightComponent = 3
-                ElseIf RandomX > 0.8 And RandomX <= 0.9 Then
-                    RightComponent = 4
-                ElseIf RandomX > 0.9 And RandomX <= 0.95 Then
-                    RightComponent = 5
-                ElseIf RandomX > 0.95 And RandomX <= 0.97 Then
-                    RightComponent = 6
-                ElseIf RandomX > 0.97 Then
-                    RightComponent = Int(Rnd() * 100) + 6
-                Else
                     RightComponent = 1
+                ElseIf RandomX > 0.6 And RandomX <= 0.8 Then
+                    RightComponent = 2
+                ElseIf RandomX > 0.8 And RandomX <= 0.9 Then
+                    RightComponent = 3
+                ElseIf RandomX > 0.9 And RandomX <= 0.95 Then
+                    RightComponent = 4
+                ElseIf RandomX > 0.95 And RandomX <= 0.97 Then
+                    RightComponent = 5
+                ElseIf RandomX > 0.97 Then
+                    RightComponent = Int(Rnd() * 100) + 5
+                Else
+                    RightComponent = 0
+                End If
+                If RightComponent = 0 And UpComponent = 0 Then
+                    Continue While
                 End If
                 If Right Then
                     RightComponent *= 1
@@ -571,25 +604,41 @@ Public Class ResidentialLot
             End If
             If FindingWork Then
                 WorkPlace.y = pos.y + offset.y
+                Console.Write(WorkPlace.y & ",")
                 WorkPlace.x = pos.x + offset.x
+                Console.Write(WorkPlace.x & ",")
                 If WorkPlace.y < 0 Or WorkPlace.y > 24 Then
+                    Console.WriteLine("y is out of range ")
                     Continue While
                 End If
-                If WorkPlace.x < 0 Or WorkPlace.x > Game.GameSettings.MapWidth Then
+                If WorkPlace.x < 0 Or WorkPlace.x > (Game.GameSettings.MapWidth - 1) Then
+                    Console.WriteLine("x is out of range ")
                     Continue While
                 End If
                 If SocialClass = "Lower" Then
-                    If Game.LotObjectMatrix(WorkPlace.y, WorkPlace.x).GetType.ToString = "Nanopolis.SmallCommercial" AndAlso Game.LotObjectMatrix(WorkPlace.y, WorkPlace.x).HasRoadConnection Then
+                    If Game.LotObjectMatrix(WorkPlace.y, WorkPlace.x).GetType.ToString = "Nanopolis.SmallCommercial" And Game.LotObjectMatrix(WorkPlace.y, WorkPlace.x).HasRoadConnection Then
+                        Console.WriteLine("small commercial found!")
+                        Game.LotObjectMatrix(pos.y, pos.x).LowerWorkPlace.y = WorkPlace.y
+                        Game.LotObjectMatrix(pos.y, pos.x).LowerWorkPlace.x = WorkPlace.x
                         Found = True
-                    ElseIf Game.LotObjectMatrix(WorkPlace.y, WorkPlace.x).GetType.ToString = "Nanopolis.Industry" AndAlso Game.LotObjectMatrix(WorkPlace.y, WorkPlace.x).HasRoadConnection Then
+                    ElseIf Game.LotObjectMatrix(WorkPlace.y, WorkPlace.x).GetType.ToString = "Nanopolis.Industry" And Game.LotObjectMatrix(WorkPlace.y, WorkPlace.x).HasRoadConnection Then
+                        Console.WriteLine("Industry found!")
+                        Game.LotObjectMatrix(pos.y, pos.x).LowerWorkPlace.y = WorkPlace.y
+                        Game.LotObjectMatrix(pos.y, pos.x).LowerWorkPlace.x = WorkPlace.x
                         Found = True
                     End If
                 ElseIf SocialClass = "Middle" Then
-                    If (Game.LotObjectMatrix(WorkPlace.y, WorkPlace.x).GetType.ToString = "Nanopolis.SmallCommercial" Or Game.LotObjectMatrix(WorkPlace.y, WorkPlace.x).GetType.ToString = "Nanopolis.LargeCommercial") AndAlso Game.LotObjectMatrix(WorkPlace.y, WorkPlace.x).HasRoadConnection Then
+                    If (Game.LotObjectMatrix(WorkPlace.y, WorkPlace.x).GetType.ToString = "Nanopolis.SmallCommercial" Or Game.LotObjectMatrix(WorkPlace.y, WorkPlace.x).GetType.ToString = "Nanopolis.LargeCommercial") And Game.LotObjectMatrix(WorkPlace.y, WorkPlace.x).HasRoadConnection Then
+                        Console.WriteLine("middle class workplace found!")
+                        Game.LotObjectMatrix(pos.y, pos.x).MiddleWorkPlace.y = WorkPlace.y
+                        Game.LotObjectMatrix(pos.y, pos.x).MiddleWorkPlace.x = WorkPlace.x
                         Found = True
                     End If
                 ElseIf SocialClass = "Upper" Then
-                    If Game.LotObjectMatrix(WorkPlace.y, WorkPlace.x).GetType.ToString = "Nanopolis.LargeCommercial" AndAlso Game.LotObjectMatrix(WorkPlace.y, WorkPlace.x).HasRoadConnection Then
+                    If Game.LotObjectMatrix(WorkPlace.y, WorkPlace.x).GetType.ToString = "Nanopolis.LargeCommercial" And Game.LotObjectMatrix(WorkPlace.y, WorkPlace.x).HasRoadConnection Then
+                        Console.WriteLine("upper class workplace found!")
+                        Game.LotObjectMatrix(pos.y, pos.x).UpperWorkPlace.y = WorkPlace.y
+                        Game.LotObjectMatrix(pos.y, pos.x).UpperWorkPlace.x = WorkPlace.x
                         Found = True
                     End If
                 End If
@@ -601,15 +650,16 @@ Public Class ResidentialLot
                         Found = True
                     End If
                 ElseIf SocialClass = "Middle" Then
-                    If (Game.LotObjectMatrix(WorkPlace.y, WorkPlace.x).GetType.ToString = "Nanopolis.SmallCommercial" Or Game.LotObjectMatrix(WorkPlace.y, WorkPlace.x).GetType.ToString = "Nanopolis.LargeCommercial") AndAlso Game.LotObjectMatrix(ShoppingPlace.y, ShoppingPlace.x).HasRoadConnection Then
+                    If (Game.LotObjectMatrix(WorkPlace.y, WorkPlace.x).GetType.ToString = "Nanopolis.SmallCommercial" Or Game.LotObjectMatrix(WorkPlace.y, WorkPlace.x).GetType.ToString = "Nanopolis.LargeCommercial") And Game.LotObjectMatrix(ShoppingPlace.y, ShoppingPlace.x).HasRoadConnection Then
                         Found = True
                     End If
                 ElseIf SocialClass = "Upper" Then
-                    If Game.LotObjectMatrix(WorkPlace.y, WorkPlace.x).GetType.ToString = "Nanopolis.LargeCommercial" And FindingWork And Game.LotObjectMatrix(WorkPlace.y, WorkPlace.x).HasRoadConnection Then
+                    If Game.LotObjectMatrix(WorkPlace.y, WorkPlace.x).GetType.ToString = "Nanopolis.LargeCommercial" And Game.LotObjectMatrix(WorkPlace.y, WorkPlace.x).HasRoadConnection Then
                         Found = True
                     End If
                 End If
             End If
+            Console.WriteLine("")
         End While
     End Sub
     Sub LowerShop(SalesTaxRate, ByRef Game, ShoppingPlace, Pos)
@@ -798,9 +848,15 @@ Public Class Construction
                 Game.LotObjectMatrix(Pos.y, Pos.x) = smallResidential
                 Game.GameMap.GridCodes(Pos.y, Pos.x) = 1
                 If Game.HasWorkBuildings Then
+                    Console.WriteLine("starting lower")
                     Game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(True, Game, Pos, "Lower")
+                    Console.WriteLine("lower finished")
+                    Console.WriteLine("starting middle")
                     Game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(True, Game, Pos, "Middle")
+                    Console.WriteLine("middle finished")
+                    Console.WriteLine("starting upper")
                     Game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(True, Game, Pos, "Upper")
+                    Console.WriteLine("upper finished")
                 End If
                 If Game.HasShoppingPlace Then
                     Game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(False, Game, Pos, "Lower")
