@@ -52,6 +52,7 @@ Public Class Game
     Public LotObjectMatrix(24, 32) As Lot
     Public HasWorkBuildings As Boolean = False
     Public HasShoppingPlace As Boolean = False
+    Public HasUpperWorkplace As Boolean = False
     Public TestMap As Map
     Public NoOfResidentialLots As Integer = 0
     Public NoOfCommercialLots As Integer = 0
@@ -199,6 +200,9 @@ Public Class Game
         Dim pos As Position
         For pos.y = 0 To 24
             For pos.x = 0 To (Game.GameSettings.Mapwidth - 1)
+                If Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.LargeCommercial" Then
+                    Game.HasUpperWorkPlace = True
+                End If
                 Game.LotObjectMatrix(pos.y, pos.x).RoadConnectionCheck(pos, Game)
             Next
         Next
