@@ -46,13 +46,14 @@ Public Class Game
     Const StartingPopulation As Integer = 10
     Public TotalPowerSupply As Integer
     Public TotalPopulation As Integer = 0
-    Public TotalPowerDemand As Integer
+    Public TotalPowerDemand As Integer = 0
     Public GameMap As Map
     Public CityGovernment As Government
     Public LotObjectMatrix(24, 32) As Lot
     Public HasWorkBuildings As Boolean = False
     Public HasShoppingPlace As Boolean = False
-    Public HasUpperWorkplace As Boolean = False
+    Public HasUpperWorkPlace As Boolean = False
+    Public HasUpperShoppingPlace As Boolean = False
     Public TestMap As Map
     Public NoOfResidentialLots As Integer = 0
     Public NoOfCommercialLots As Integer = 0
@@ -200,8 +201,14 @@ Public Class Game
         Dim pos As Position
         For pos.y = 0 To 24
             For pos.x = 0 To (Game.GameSettings.Mapwidth - 1)
+                If Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.SmallCommercial" Then
+                    Game.HasShoppingPlace = True
+                    Game.HasWorkBuildings = True
+                End If
                 If Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.LargeCommercial" Then
                     Game.HasUpperWorkPlace = True
+                    Game.HasWorkBuildings = True
+                    Game.HasShoppingPlace = True
                 End If
                 Game.LotObjectMatrix(pos.y, pos.x).RoadConnectionCheck(pos, Game)
             Next
@@ -2772,6 +2779,7 @@ Public Class Map
         Else
             Console.WriteLine("   Population: " & Game.TotalPopulation)
         End If
+        Console.WriteLine("---------------------------------------------------------------------------------------------------------------------------------------------------------------------")
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
         Console.Write("WASD/ARROW KEYS")
@@ -2804,15 +2812,14 @@ Public Class Government
     Const StartingTreasury As Integer = 20000
     Const StartingExecPower As Integer = 100
     Public Treasury As Integer
-    Public ExecutivePower As Integer
+    Protected ExecutivePower As Integer
     Public HasParliament As Boolean
     Public ApprovalRate As Integer
-    Public LegislativeControl As Integer
+    Protected LegislativeControl As Integer
     Public SalesTaxRate As Integer
     Public LowerIncomeTax As Integer
     Public MiddleIncomeTax As Integer
     Public UpperIncomeTax As Integer
-    Public EnvironmentStatus As Integer
     Public CivilLibertyIndex As Integer
     Public CityUnemploymentRate As Integer
     Public CityPollutionIndex As Integer
