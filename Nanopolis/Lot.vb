@@ -10,16 +10,6 @@
     Public WeeksUntilAbandoned As Integer = BaseWeeksUntilAbandoned
     Public LandValue As Integer = BaseLandValue
     Public LandValueModifier As Integer
-    Sub FindPath(ByRef Game, WhereFrom, WhereTo, ByRef Path)
-        Dim Queue As New List(Of Position)
-        Dim Discovered As New List(Of Position)
-        Dim Parent As New List(Of Position)
-        Dim temp As Integer = 0
-        Dim tempPos As Position
-        Queue.Add(WhereFrom)
-        Discovered.Add(WhereFrom)
-        Dim Found As Boolean = False
-    End Sub
     Sub SetAbandonedWeeks(ByRef Game, Pos)
         If (BaseLandValue - InternalLandValueModifier) >= 0 Then
             WeeksUntilAbandoned = BaseWeeksUntilAbandoned
@@ -29,6 +19,39 @@
         If WeeksUntilAbandoned <= 0 Then
             AbandonBuilding(Game, Pos)
         End If
+    End Sub
+    Sub FindBuildingPath(Game, StartPos, EndPos)
+        Dim pos As Position
+        Dim tempWeight As Integer
+        pos.y = StartPos.y
+        pos.x = StartPos.x
+        Dim UpWeight As Integer
+        Dim DownWeight As Integer
+        Dim LeftWeight As Integer
+        Dim RightWeight As Integer
+        For i As Integer = -1 To 1
+            For j As Integer = -1 To 1
+                If i = -1 And j = -1 Then
+                    Continue For
+                End If
+                If i = 1 And j = 1 Then
+                    Continue For
+                End If
+                If i = 1 And j = -1 Then
+                    Continue For
+                End If
+                If i = -1 And j = 1 Then
+                    Continue For
+                End If
+                If Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.SmallRoad" Then
+                    tempWeight = 60 - Game.LotObjectMatrix(pos.y, pos.x).TimesReferenced
+
+                End If
+                If Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.LargeRoad" Then
+                    tempWeight = 140 - Game.LotObjectMatrix(pos.y, pos.x).TimesReferenced
+                End If
+            Next
+        Next
     End Sub
     Sub AbandonBuilding(ByRef Game, Pos)
         Me.Demolish(Pos, Game)

@@ -65,28 +65,28 @@ Public Class Game
                 testMap.GridCodes(24, 32) = -1
             Next
         Next
-        testMap.GridCodes(0, 0) = 11
-        testMap.GridCodes(0, 1) = 12
-        testMap.GridCodes(0, 2) = 13
-        testMap.GridCodes(0, 3) = 14
-        testMap.GridCodes(0, 4) = 15
-        testMap.GridCodes(0, 5) = 16
-        testMap.GridCodes(0, 6) = 17
-        testMap.GridCodes(0, 7) = 18
-        testMap.GridCodes(0, 8) = 19
-        testMap.GridCodes(0, 9) = 20
-        testMap.GridCodes(0, 10) = 21
-        testMap.GridCodes(0, 11) = 22
-        testMap.GridCodes(0, 12) = 23
-        testMap.GridCodes(0, 13) = 24
-        testMap.GridCodes(0, 14) = 25
-        testMap.GridCodes(0, 15) = 26
-        testMap.GridCodes(0, 16) = 27
-        testMap.GridCodes(0, 17) = 28
-        testMap.GridCodes(0, 18) = 29
-        testMap.GridCodes(0, 19) = 30
-        testMap.GridCodes(0, 20) = 31
-        testMap.GridCodes(0, 21) = 42
+        testMap.GridCodes(0, 0) = -1 'grass
+        testMap.GridCodes(0, 1) = 0 'construction
+        testMap.GridCodes(0, 2) = 1 'small residential
+        testMap.GridCodes(0, 3) = 2 'large residential
+        testMap.GridCodes(0, 4) = 3 'small commercial 1
+        testMap.GridCodes(0, 5) = 4 'small commercial 2
+        testMap.GridCodes(0, 6) = 5 'large commercial
+        testMap.GridCodes(0, 7) = 6 'small park
+        testMap.GridCodes(0, 8) = 7 'large park upper left
+        testMap.GridCodes(0, 9) = 8 'large park upper right
+        testMap.GridCodes(0, 10) = 9 'large park lower left
+        testMap.GridCodes(0, 11) = 10 'large park lower right
+        testMap.GridCodes(0, 12) = 11 'small road horizontal
+        testMap.GridCodes(0, 13) = 12 'small road vertical
+        testMap.GridCodes(0, 14) = 13 'small road 4way
+        testMap.GridCodes(0, 15) = 14 'small road up left right
+        testMap.GridCodes(0, 16) = 15 'small road down left right
+        testMap.GridCodes(0, 17) = 16 'small road down up left
+        testMap.GridCodes(0, 18) = 17 'small road down up right
+        testMap.GridCodes(0, 19) = 18
+        testMap.GridCodes(0, 20) = 19
+        testMap.GridCodes(0, 21) = 20 
         testMap.GridCodes(0, 22) = 21
         testMap.GridCodes(0, 23) = 22
         testMap.GridCodes(0, 24) = 23
@@ -586,16 +586,14 @@ Public Class Map
                                         Console.Write("/ : \")
                                         Console.ResetColor()
                                     Case 25
-                                        Console.ForegroundColor = ConsoleColor.White
-                                        Console.BackgroundColor = ConsoleColor.DarkGray
-                                        Console.Write("/ : \")
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write("     ")
                                         Console.ResetColor()
                                     Case 26
                                         Console.ForegroundColor = ConsoleColor.White
                                         Console.BackgroundColor = ConsoleColor.DarkGray
-                                        Console.Write("/ :|")
-                                        Console.BackgroundColor = ConsoleColor.Green
-                                        Console.Write(" ")
+                                        Console.Write("/ : \")
+                                        Console.ResetColor()
                                     Case 27
                                         Console.BackgroundColor = ConsoleColor.Green
                                         Console.Write(" ")
@@ -843,7 +841,7 @@ Public Class Map
                                     Case 21
                                         Console.BackgroundColor = ConsoleColor.Green
                                         Console.Write(" ")
-                                        Console.BackgroundColor = ConsoleColor.Black
+                                        Console.ForegroundColor = ConsoleColor.Black
                                         Console.BackgroundColor = ConsoleColor.DarkGray
                                         Console.Write("/  _")
                                         Console.ResetColor()
@@ -876,9 +874,11 @@ Public Class Map
                                         Console.Write("-   -")
                                         Console.ResetColor()
                                     Case 27
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
                                         Console.BackgroundColor = ConsoleColor.DarkGray
                                         Console.ForegroundColor = ConsoleColor.White
-                                        Console.Write("-   -")
+                                        Console.Write("|  -")
                                         Console.ResetColor()
                                     Case 28
                                         Console.BackgroundColor = ConsoleColor.DarkGray
@@ -1188,8 +1188,10 @@ Public Class Map
                                         Console.Write("_____")
                                         Console.ResetColor()
                                     Case 27
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
                                         Console.BackgroundColor = ConsoleColor.DarkGray
-                                        Console.Write("     ")
+                                        Console.Write("|   ")
                                         Console.ResetColor()
                                     Case 28
                                         Console.BackgroundColor = ConsoleColor.DarkGray
@@ -1486,9 +1488,11 @@ Public Class Map
                                         Console.Write("     ")
                                         Console.ResetColor()
                                     Case 27
+                                        Console.BackgroundColor = ConsoleColor.Green
+                                        Console.Write(" ")
                                         Console.BackgroundColor = ConsoleColor.DarkGray
                                         Console.ForegroundColor = ConsoleColor.White
-                                        Console.Write("\ : /")
+                                        Console.Write("|: /")
                                         Console.ResetColor()
                                     Case 28
                                         Console.BackgroundColor = ConsoleColor.Green
@@ -1760,16 +1764,14 @@ Public Class Map
                                     Console.Write("/ : \")
                                     Console.ResetColor()
                                 Case 25
-                                    Console.ForegroundColor = ConsoleColor.White
-                                    Console.BackgroundColor = ConsoleColor.DarkGray
-                                    Console.Write("/ : \")
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write("     ")
                                     Console.ResetColor()
                                 Case 26
                                     Console.ForegroundColor = ConsoleColor.White
                                     Console.BackgroundColor = ConsoleColor.DarkGray
-                                    Console.Write("/ :|")
-                                    Console.BackgroundColor = ConsoleColor.Green
-                                    Console.Write(" ")
+                                    Console.Write("/ : \")
+                                    Console.ResetColor()
                                 Case 27
                                     Console.BackgroundColor = ConsoleColor.Green
                                     Console.Write(" ")
@@ -2017,7 +2019,7 @@ Public Class Map
                                 Case 21
                                     Console.BackgroundColor = ConsoleColor.Green
                                     Console.Write(" ")
-                                    Console.BackgroundColor = ConsoleColor.Black
+                                    Console.ForegroundColor = ConsoleColor.Black
                                     Console.BackgroundColor = ConsoleColor.DarkGray
                                     Console.Write("/  _")
                                     Console.ResetColor()
@@ -2050,9 +2052,11 @@ Public Class Map
                                     Console.Write("-   -")
                                     Console.ResetColor()
                                 Case 27
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
                                     Console.BackgroundColor = ConsoleColor.DarkGray
                                     Console.ForegroundColor = ConsoleColor.White
-                                    Console.Write("-   -")
+                                    Console.Write("|  -")
                                     Console.ResetColor()
                                 Case 28
                                     Console.BackgroundColor = ConsoleColor.DarkGray
@@ -2361,8 +2365,10 @@ Public Class Map
                                     Console.Write("_____")
                                     Console.ResetColor()
                                 Case 27
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
                                     Console.BackgroundColor = ConsoleColor.DarkGray
-                                    Console.Write("     ")
+                                    Console.Write("|   ")
                                     Console.ResetColor()
                                 Case 28
                                     Console.BackgroundColor = ConsoleColor.DarkGray
@@ -2659,9 +2665,11 @@ Public Class Map
                                     Console.Write("     ")
                                     Console.ResetColor()
                                 Case 27
+                                    Console.BackgroundColor = ConsoleColor.Green
+                                    Console.Write(" ")
                                     Console.BackgroundColor = ConsoleColor.DarkGray
                                     Console.ForegroundColor = ConsoleColor.White
-                                    Console.Write("\ : /")
+                                    Console.Write("|: /")
                                     Console.ResetColor()
                                 Case 28
                                     Console.BackgroundColor = ConsoleColor.Green
@@ -2759,6 +2767,7 @@ Public Class Map
                 Next
             Next
             Console.WriteLine("Move to return to normal map")
+            Console.ReadKey(True)
         End If
         Console.Write("Y" & Int(Pos.y))
         Console.Write(", X" & Int(Pos.x))
