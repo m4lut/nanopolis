@@ -1,8 +1,10 @@
 ﻿Public Class Lot
+    Public Path(1) As Position
     Public CrimeRate As Integer = 0
     Public HasRoadConnection As Boolean
     Const PowerDemand As Integer = 50
     Const BaseWeeksUntilAbandoned As Integer = 5
+    Public RoadConnectedTo As Position
     Public Const BaseLandValue As Integer = 25
     Public InternalLandValueModifier As Integer
     Public Shadows ExternalLandValueModifier As Integer = 0
@@ -22,36 +24,83 @@
     End Sub
     Sub FindBuildingPath(Game, StartPos, EndPos)
         Dim pos As Position
+        Dim Fringe(1) As Position
         Dim tempWeight As Integer
+        Dim Path(1) As Position
+        Dim pathSize As Integer = 1
         pos.y = StartPos.y
         pos.x = StartPos.x
-        Dim UpWeight As Integer
-        Dim DownWeight As Integer
-        Dim LeftWeight As Integer
-        Dim RightWeight As Integer
-        For i As Integer = -1 To 1
-            For j As Integer = -1 To 1
-                If i = -1 And j = -1 Then
-                    Continue For
-                End If
-                If i = 1 And j = 1 Then
-                    Continue For
-                End If
-                If i = 1 And j = -1 Then
-                    Continue For
-                End If
-                If i = -1 And j = 1 Then
-                    Continue For
-                End If
-                If Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.SmallRoad" Then
-                    tempWeight = 60 - Game.LotObjectMatrix(pos.y, pos.x).TimesReferenced
-
-                End If
-                If Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.LargeRoad" Then
-                    tempWeight = 140 - Game.LotObjectMatrix(pos.y, pos.x).TimesReferenced
-                End If
+        Dim UpWeight As Integer = -1
+        Dim DownWeight As Integer = -1
+        Dim LeftWeight As Integer = -1
+        Dim RightWeight As Integer = -1
+        Dim Found As Boolean = False
+        While Not Found
+            For i As Integer = -1 To 1
+                For j As Integer = -1 To 1
+                    If i = -1 And j = -1 Then
+                        Continue For
+                    End If
+                    If i = 1 And j = 1 Then
+                        Continue For
+                    End If
+                    If i = 1 And j = -1 Then
+                        Continue For
+                    End If
+                    If i = -1 And j = 1 Then
+                        Continue For
+                    End If
+                    Game.LotObjectMatrix(pos.y + j, pos.x + i).Visited = True
+                    If pos.y = EndPos.y And pos.x = EndPos.x Then
+                        Game.LotObjectMatrix(StartPos.y, StartPos.x).Path = Path
+                    Else
+                        Continue For
+                    End If
+                    If Game.LotObjectMatrix(pos.y + j, pos.x + i).GetType.ToString = "Nanopolis.SmallRoad" Then
+                        tempWeight = 60 - Game.LotObjectMatrix(pos.y + j, pos.x + i).TimesReferenced
+                        If i = 0 And j = -1 Then
+                            UpWeight = tempWeight
+                            Game.LotObjectMatrix(pos.y + j, pos.x + i).Discovered = True
+                        ElseIf i = 0 And j = 1 Then
+                            DownWeight = tempWeight
+                            Game.LotObjectMatrix(pos.y + j, pos.x + i).Discovered = True
+                        ElseIf i = -1 And j = 0 Then
+                            LeftWeight = tempWeight
+                            Game.LotObjectMatrix(pos.y + j, pos.x + i).Discovered = True
+                        ElseIf i = 1 And j = 0 Then
+                            RightWeight = tempWeight
+                            Game.LotObjectMatrix(pos.y + j, pos.x + i).Discovered = True
+                        End If
+                    End If
+                    If Game.LotObjectMatrix(pos.y + j, pos.x + i).GetType.ToString = "Nanopolis.LargeRoad" Then
+                        tempWeight = 140 - Game.LotObjectMatrix(pos.y + j, pos.x + i).TimesReferenced
+                        If i = 0 And j = -1 Then
+                            UpWeight = tempWeight
+                            Game.LotObjectMatrix(pos.y + j, pos.x + i).Discovered = True
+                        ElseIf i = 0 And j = 1 Then
+                            DownWeight = tempWeight
+                            Game.LotObjectMatrix(pos.y + j, pos.x + i).Discovered = True
+                        ElseIf i = -1 And j = 0 Then
+                            LeftWeight = tempWeight
+                            Game.LotObjectMatrix(pos.y + j, pos.x + i).Discovered = True
+                        ElseIf i = 1 And j = 0 Then
+                            RightWeight = tempWeight
+                            Game.LotObjectMatrix(pos.y + j, pos.x + i).Discovered = True
+                        End If
+                    End If
+                    Game.LotObjectMatrix(pos.y, pos.x).Complete = True
+                    If UpWeight > DownWeight And UpWeight > RightWeight And UpWeight > LeftWeight Then
+                        pos.y += 1
+                    ElseIf RightWeight > DownWeight And RightWeight > UpWeight And RightWeight > LeftWeight Then
+                        pos.y += 1
+                    ElseIf LeftWeight > DownWeight And LeftWeight > RightWeight And LeftWeight > UpWeight Then
+                        pos.y += 1
+                    ElseIf DownWeight > UpWeight And DownWeight > RightWeight And DownWeight > LeftWeight Then
+                        pos.y += 1
+                    End If
+                Next
             Next
-        Next
+        End While
     End Sub
     Sub AbandonBuilding(ByRef Game, Pos)
         Me.Demolish(Pos, Game)
@@ -70,6 +119,10 @@
                 End If
                 If Game.LotObjectMatrix(Pos.y + j, Pos.x + i).GetType.ToString = "Nanopolis.SmallRoad" Or Game.LotObjectMatrix(Pos.y + j, Pos.x + i).GetType.ToString = "Nanopolis.LargeRoad" Then
                     Game.LotObjectMatrix(Pos.y, Pos.x).HasRoadConnection = True
+                    Dim roadConnectionPos As Position
+                    roadConnectionPos.y = Pos.y + j
+                    roadConnectionPos.x = Pos.x + i
+                    Game.LotObjectMatrix(Pos.y, Pos.x).RoadConnectedTo = roadConnectionPos
                 End If
             Next
         Next
@@ -393,7 +446,7 @@
             Game.LotObjectMatrix(Pos.y, Pos.x).CalculateTJI(Game)
             tempModifier += tji
             Return tempModifier
-        ElseIf Game.LotObjectMatrix(Pos.y, Pos.x).GetType.Tostring = "Nanopolis.SmallResidential" Or Game.LotObjectMatrix(Pos.y, Pos.x).GetType.Tostring = "Nanopolis.LargeResidential" Then
+        ElseIf Game.LotObjectMatrix(Pos.y, Pos.x).GetType.ToString = "Nanopolis.SmallResidential" Or Game.LotObjectMatrix(Pos.y, Pos.x).GetType.ToString = "Nanopolis.LargeResidential" Then
             If Game.LotObjecMatrix(Pos.y, Pos.x).DwellerAmount = Game.LotObjectMatrix(Pos.y, Pos.x).MaxNoOfDwellers Then
                 tempModifier += 25
             End If
@@ -414,15 +467,20 @@ End Class
 Public Class Road
     Inherits Lot
     Public IsJunction As Boolean
-    Public TrafficJamIndex As Integer
+    Public TrafficJamIndex As Integer = 0
     Public TimesReferenced As Integer = 0
-    Public Shared RoadGraph(Game.GameSettings.MapWidth, 24) As Integer
+    Public Visited As Boolean = False
+    Public Complete As Boolean = False
+    Public UpWeight As Integer
+    Public DownWeight As Integer
+    Public LeftWeight As Integer
+    Public RightWeight As Integer
     Function CalculateTJI(ByRef Game)
         Dim tempTJI As Integer = 0
         'For i As Integer = 0 To Game.GameSettings.MapWidth
         'For j As Integer = 0 To 24
         'tempTJI += Game.LotObjectMatrix(j, i).TimesReferenced
-        'TrafficJamIndex += tempTJI
+        'TrafficJamIndex += tempTJI 
         'Next
         'Next
         For i As Integer = -2 To 2
@@ -432,7 +490,7 @@ Public Class Road
                 End If
             Next
         Next
-            Return TrafficJamIndex
+        Return TrafficJamIndex
     End Function
     Function CheckIfJunction(ByRef Game, Pos)
         For i As Integer = -1 To 1
@@ -460,14 +518,6 @@ Public Class Road
             Next
         Next
     End Function
-    Sub CreateRoadGraph(Game)
-        Dim pos As Position
-        For pos.x = 0 To 32
-            For pos.y = 0 To 24
-                Game.LotObjectMatrix(pos.y, pos.x).CheckIfJunction(Game, pos)
-            Next
-        Next
-    End Sub
 End Class
 Public Class SmallRoad
     Inherits Road

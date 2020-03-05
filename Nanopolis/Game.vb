@@ -58,6 +58,7 @@ Public Class Game
     Public NoOfResidentialLots As Integer = 0
     Public NoOfCommercialLots As Integer = 0
     Public NoOfWeeksPlayed As Integer = 1
+    Public Junctions() As Position
     Sub ShowTestMap(Game)
         Dim testMap As Map = New Map()
         For i As Integer = 0 To 32
@@ -211,6 +212,25 @@ Public Class Game
                     Game.HasShoppingPlace = True
                 End If
                 Game.LotObjectMatrix(pos.y, pos.x).RoadConnectionCheck(pos, Game)
+                For i As Integer = -1 To 1
+                    For j As Integer = -1 To 1
+                        If i = 1 And j = 1 Then
+                            Continue For
+                        End If
+                        If i = 1 And j = -1 Then
+                            Continue For
+                        End If
+                        If i = -1 And j = 1 Then
+                            Continue For
+                        End If
+                        If i = -1 And j = -1 Then
+                            Continue For
+                        End If
+                        If Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.SmallRoad" Or Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.LargeRoad" Then
+
+                        End If
+                    Next
+                Next
             Next
         Next
         For pos.y = 0 To 24
