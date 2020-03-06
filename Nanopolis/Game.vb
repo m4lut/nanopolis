@@ -240,7 +240,7 @@ Public Class Game
                 End If
                 If Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.SmallResidential" Or Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.LargeResidential" Then
                     If Game.HasWorkBuildings Then
-                        Game.LotObjectMatrix(pos.y, pos.x).Work(Game.LotObjectMatrix(pos.y, pos.x).LowerWorkPlace, Game.LotObjectMatrix(pos.y, pos.x).MiddleUpperWorkPlace)
+                        Game.LotObjectMatrix(pos.y, pos.x).Work(Game.LotObjectMatrix(pos.y, pos.x))
                     End If
                     Game.NoOfResidentialLots += 1
                     If Game.TotalPopulation < 10 Then

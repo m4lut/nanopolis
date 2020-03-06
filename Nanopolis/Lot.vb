@@ -24,7 +24,7 @@
     End Sub
     Sub FindBuildingPath(Game, StartPos, EndPos)
         Dim pos As Position
-        Dim Fringe(1) As Position
+        Dim Fringe(1, 1) As Position
         Dim tempWeight As Integer
         Dim Path(1) As Position
         Dim pathSize As Integer = 1
@@ -98,6 +98,8 @@
                     ElseIf DownWeight > UpWeight And DownWeight > RightWeight And DownWeight > LeftWeight Then
                         pos.y += 1
                     End If
+                    Console.Write(pos.y & ", ")
+                    Console.WriteLine(pos.x)
                 Next
             Next
         End While
@@ -784,7 +786,7 @@ Public Class ResidentialLot
     Sub UpperShop(ByRef Game, ShoppingPlace, Pos)
 
     End Sub
-    Sub Work(LowerMiddleWorkPlace, MiddleUpperWorkPlace)
+    Sub Work(Lot)
         For i As Integer = 0 To Int(DwellerAmount * LowerClassProportion)
             LowerClassCash += Int(DwellerAmount * LowerClassProportion * 75)
         Next
