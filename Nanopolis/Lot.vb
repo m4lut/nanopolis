@@ -23,86 +23,101 @@
         End If
     End Sub
     Sub FindBuildingPath(Game, StartPos, EndPos)
-        Dim pos As Position
-        Dim Fringe(1, 1) As Position
-        Dim tempWeight As Integer
-        Dim Path(1) As Position
-        Dim pathSize As Integer = 1
-        pos.y = StartPos.y
-        pos.x = StartPos.x
-        Dim UpWeight As Integer = -1
-        Dim DownWeight As Integer = -1
-        Dim LeftWeight As Integer = -1
-        Dim RightWeight As Integer = -1
+        Dim AdjacentVertices(3) As Position
+        Dim Discovered(24, Game.GameSettings.MapWidth - 1) As Boolean
         Dim Found As Boolean = False
-        While Not Found
-            For i As Integer = -1 To 1
-                For j As Integer = -1 To 1
-                    If i = -1 And j = -1 Then
-                        Continue For
+        Dim V As Position
+        Dim U As Position
+        Dim Parent(24, Game.GameSettings.MapWidth - 1) As Position
+        Dim C As Position
+        Dim Queue(24, Game.GameSettings.MapWidth - 1) As Integer
+        Dim QueueSize = 1
+        Dim AdjacentAmount As Integer = 0
+        For i As Integer = 0 To 4
+            For j As Integer = 0 To 4
+                Discovered(j, i) = False
+                Queue(j, i) = 0
+            Next
+        Next
+        Queue(StartPos.Y, StartPos.X) = 1
+        Discovered(StartPos.Y, StartPos.X) = True
+        While QueueSize > 0 And Found = False
+            U.y = -1
+            U.x = -1
+            AdjacentAmount = 0
+            For i As Integer = 0 To 3
+                AdjacentVertices(i).y = -1
+                AdjacentVertices(i).x = -1
+            Next
+            For i As Integer = 0 To 4
+                For j As Integer = 0 To 4
+                    If Queue(j, i) = 1 Then
+                        V.x = i
+                        V.y = j
                     End If
-                    If i = 1 And j = 1 Then
-                        Continue For
-                    End If
-                    If i = 1 And j = -1 Then
-                        Continue For
-                    End If
-                    If i = -1 And j = 1 Then
-                        Continue For
-                    End If
-                    Game.LotObjectMatrix(pos.y + j, pos.x + i).Visited = True
-                    If pos.y = EndPos.y And pos.x = EndPos.x Then
-                        Game.LotObjectMatrix(StartPos.y, StartPos.x).Path = Path
-                    Else
-                        Continue For
-                    End If
-                    If Game.LotObjectMatrix(pos.y + j, pos.x + i).GetType.ToString = "Nanopolis.SmallRoad" Then
-                        tempWeight = 60 - Game.LotObjectMatrix(pos.y + j, pos.x + i).TimesReferenced
-                        If i = 0 And j = -1 Then
-                            UpWeight = tempWeight
-                            Game.LotObjectMatrix(pos.y + j, pos.x + i).Discovered = True
-                        ElseIf i = 0 And j = 1 Then
-                            DownWeight = tempWeight
-                            Game.LotObjectMatrix(pos.y + j, pos.x + i).Discovered = True
-                        ElseIf i = -1 And j = 0 Then
-                            LeftWeight = tempWeight
-                            Game.LotObjectMatrix(pos.y + j, pos.x + i).Discovered = True
-                        ElseIf i = 1 And j = 0 Then
-                            RightWeight = tempWeight
-                            Game.LotObjectMatrix(pos.y + j, pos.x + i).Discovered = True
-                        End If
-                    End If
-                    If Game.LotObjectMatrix(pos.y + j, pos.x + i).GetType.ToString = "Nanopolis.LargeRoad" Then
-                        tempWeight = 140 - Game.LotObjectMatrix(pos.y + j, pos.x + i).TimesReferenced
-                        If i = 0 And j = -1 Then
-                            UpWeight = tempWeight
-                            Game.LotObjectMatrix(pos.y + j, pos.x + i).Discovered = True
-                        ElseIf i = 0 And j = 1 Then
-                            DownWeight = tempWeight
-                            Game.LotObjectMatrix(pos.y + j, pos.x + i).Discovered = True
-                        ElseIf i = -1 And j = 0 Then
-                            LeftWeight = tempWeight
-                            Game.LotObjectMatrix(pos.y + j, pos.x + i).Discovered = True
-                        ElseIf i = 1 And j = 0 Then
-                            RightWeight = tempWeight
-                            Game.LotObjectMatrix(pos.y + j, pos.x + i).Discovered = True
-                        End If
-                    End If
-                    Game.LotObjectMatrix(pos.y, pos.x).Complete = True
-                    If UpWeight > DownWeight And UpWeight > RightWeight And UpWeight > LeftWeight Then
-                        pos.y += 1
-                    ElseIf RightWeight > DownWeight And RightWeight > UpWeight And RightWeight > LeftWeight Then
-                        pos.y += 1
-                    ElseIf LeftWeight > DownWeight And LeftWeight > RightWeight And LeftWeight > UpWeight Then
-                        pos.y += 1
-                    ElseIf DownWeight > UpWeight And DownWeight > RightWeight And DownWeight > LeftWeight Then
-                        pos.y += 1
-                    End If
-                    Console.Write(pos.y & ", ")
-                    Console.WriteLine(pos.x)
                 Next
             Next
+            For i = 0 To 4
+                For j = 0 To 4
+                    If Queue(i, j) > 0 Then
+                        Queue(i, j) -= 1
+                    End If
+                Next
+            Next
+            QueueSize -= 1
+            For j As Integer = -1 To 1
+                For i As Integer = -1 To 1
+                    U.y = V.y + j
+                    U.x = V.x + i
+                    If U.y < 0 Or U.y > 24 Then
+                        Continue For
+                    End If
+                    If U.x < 0 Or U.x > Game.GameSettings.MapWidth - 1 Then
+                        Continue For
+                    End If
+                    If j = -1 And i = -1 Then
+                        Continue For
+                    End If
+                    If j = -1 And i = 1 Then
+                        Continue For
+                    End If
+                    If j = 1 And i = 1 Then
+                        Continue For
+                    End If
+                    If j = 1 And i = -1 Then
+                        Continue For
+                    End If
+                    If j = 0 And i = 0 Then
+                        Continue For
+                    End If
+                    If Game.LotObjectMatrix(U.y, U.x).GetType.ToString <> "Nanopolis.SmallRoad" And Game.LotObjectMatrix(U.y, U.x).GetType.ToString <> "Nanopolis.LargeRoad" Then
+                        Continue For
+                    End If
+                    AdjacentAmount += 1
+                    AdjacentVertices(AdjacentAmount - 1) = U
+                Next
+            Next
+            For i As Integer = 0 To (AdjacentAmount - 1)
+                U = AdjacentVertices(i)
+                If U.y <> -1 And Not Discovered(U.y, U.x) And Not Found Then
+                    QueueSize += 1
+                    Queue(U.y, U.x) = QueueSize
+                    Discovered(U.y, U.x) = True
+                    Parent(U.y, U.x) = V
+                    If Game.LotObjectMatrix(U.y, U.x) = "E" Then
+                        Found = True
+                        Parent(EndPos.Y, EndPos.X) = V
+                    End If
+                End If
+            Next
         End While
+        If Found = True Then
+            C = EndPos
+            Do
+                C = Parent(C.y, C.x)
+                Console.WriteLine(C.y & ", " & C.x)
+            Loop Until C.y = StartPos.y And C.x = StartPos.x
+        End If
     End Sub
     Sub AbandonBuilding(ByRef Game, Pos)
         Me.Demolish(Pos, Game)
@@ -477,48 +492,9 @@ Public Class Road
     Public DownWeight As Integer
     Public LeftWeight As Integer
     Public RightWeight As Integer
-    Function CalculateTJI(ByRef Game)
-        Dim tempTJI As Integer = 0
-        'For i As Integer = 0 To Game.GameSettings.MapWidth
-        'For j As Integer = 0 To 24
-        'tempTJI += Game.LotObjectMatrix(j, i).TimesReferenced
-        'TrafficJamIndex += tempTJI 
-        'Next
-        'Next
-        For i As Integer = -2 To 2
-            For j As Integer = -2 To 2
-                If Game.LotObjectMatrix(j, i).GetType.ToString = "Nanopolis.SmallResidential" Or Game.LotObjectMatrix(j, i).GetType.ToString = "Nanopolis.LargeResidential" Then
-                    tempTJI += (Game.LotObjectMatrix(j, i).DwellerAmount / 2)
-                End If
-            Next
-        Next
+    Function CalculateTJI(ByRef Game, StartPos, EndPos)
+
         Return TrafficJamIndex
-    End Function
-    Function CheckIfJunction(ByRef Game, Pos)
-        For i As Integer = -1 To 1
-            For j As Integer = -1 To 1
-                If i = -1 And j = -1 Then
-                    Continue For
-                End If
-                If i = -1 And j = 1 Then
-                    Continue For
-                End If
-                If i = 1 And j = -1 Then
-                    Continue For
-                End If
-                If i = 1 And j = 1 Then
-                    Continue For
-                End If
-                If i = 0 And j = 0 Then
-                    Continue For
-                End If
-                If Game.LotObjectMatrix(Pos.y + j, Pos.x + i).GetType.ToString = "Nanopolis.SmallRoad" Or Game.LotObjectMatrix(Pos.y, Pos.x).GetType.ToString = "Nanopolis.LargeRoad" Then
-                    Return True
-                Else
-                    Return False
-                End If
-            Next
-        Next
     End Function
 End Class
 Public Class SmallRoad
@@ -567,7 +543,6 @@ Public Class ResidentialLot
     Public MiddleUpperShoppingPlaceY As Integer
     Public MiddleUpperShoppingPlaceX As Integer
     Sub GenerateWorkOrShoppingPlace(FindingWork, MapWidth, ByRef LotObjectMatrix, pos, SocialClass, HasUpperWorkPlace)
-        Randomize()
         Dim Right As Boolean
         Dim Up As Boolean
         Dim RightComponent As Integer
@@ -579,9 +554,10 @@ Public Class ResidentialLot
         Dim Found As Boolean = False
         Dim finalPlaceY As Integer
         Dim finalPlaceX As Integer
-        RandomDirectionX = Rnd()
         While Found = False
+            Randomize()
             Threading.Thread.Sleep(Rnd)
+            RandomDirectionX = Rnd()
             If FindingWork Then
                 If RandomDirectionX >= 0.5 Then
                     Right = True
@@ -630,7 +606,6 @@ Public Class ResidentialLot
                     RightComponent *= -1
                 End If
                 If Not Up Then
-
                     UpComponent *= -1
                 End If
                 If RightComponent = 0 And UpComponent = 0 Then

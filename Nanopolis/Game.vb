@@ -205,6 +205,7 @@ Public Class Game
                 If Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.SmallCommercial" Then
                     Game.HasShoppingPlace = True
                     Game.HasWorkBuildings = True
+                    Game.LotObjectMatrix(pos.y, pos.x).FindBuildingPath()
                 End If
                 If Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.LargeCommercial" Then
                     Game.HasUpperWorkPlace = True
