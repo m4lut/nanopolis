@@ -39,15 +39,10 @@ Module Module1
         Console.ForegroundColor = ConsoleColor.Black
         Console.Write("3")
         Console.ResetColor()
-        Console.WriteLine(" Start a tutorial game (Not yet implemented!)")
-        Console.BackgroundColor = ConsoleColor.Gray
-        Console.ForegroundColor = ConsoleColor.Black
-        Console.Write("4")
-        Console.ResetColor()
         Console.WriteLine(" View key bindings")
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
-        Console.Write("5")
+        Console.Write("4")
         Console.ResetColor()
         Console.WriteLine(" Graphics options")
         Console.BackgroundColor = ConsoleColor.Gray
@@ -99,20 +94,15 @@ Module Module1
             Console.ForegroundColor = ConsoleColor.Black
             Console.Write("3")
             Console.ResetColor()
-            Console.WriteLine(" Start a tutorial game (not yet implemented!)")
+            Console.WriteLine(" View key bindings")
             Console.BackgroundColor = ConsoleColor.Gray
             Console.ForegroundColor = ConsoleColor.Black
             Console.Write("4")
             Console.ResetColor()
-            Console.WriteLine(" View key bindings")
-            Console.BackgroundColor = ConsoleColor.Gray
-            Console.ForegroundColor = ConsoleColor.Black
-            Console.Write("5")
-            Console.ResetColor()
             Console.WriteLine(" Quit to start menu")
             Console.BackgroundColor = ConsoleColor.Gray
             Console.ForegroundColor = ConsoleColor.Black
-            Console.Write("6")
+            Console.Write("5")
             Console.ResetColor()
             Console.WriteLine(" Quit to desktop")
             Console.BackgroundColor = ConsoleColor.Gray
@@ -248,7 +238,15 @@ Module Module1
     End Sub
     Sub LoadGame(ByRef game, isStart, GameSettings)
         Console.Clear()
+        Const maxLines As Integer = 46
         Dim PathName As String
+        Dim Line As String
+        Dim Character As Char
+        Dim CharacterNo As Integer
+        Dim Cells(32) As String
+        Dim Cell As String
+        Dim CellNo As Integer = 1
+        Dim NewGame As Game = New Game()
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
         Console.WriteLine("LOAD GAME")
@@ -257,11 +255,28 @@ Module Module1
         Console.Write(" ")
         Try
             PathName = Console.ReadLine()
-            Dim json As String = "{""GameSettings"":{""MapWidth"":""32"",""IsTutorial"":""false"",""TextureFile"":""textures.json""}""}"
-            Dim read = Linq.JObject.Parse(json)
-            Console.WriteLine(read.Item("GameSettings")("MapWidth").ToString)
-            Console.ReadLine()
-            'insert some JSON parsing here
+            PathName &= ".txt"
+            Dim Reader As New StreamReader(PathName)
+            While Reader.EndOfStream <> True
+                Line = Reader.ReadLine()
+                If Line.Substring(32) = 0 Then
+                    GameSettings.MapWidth = 32
+                Else
+                    GameSettings.MapWidth = 45
+                End If
+                For j As Integer = 0 To 25
+                    For i As Integer = 0 To GameSettings.MapWidth
+                        While Cell.Substring(",") = -1
+                            Character = Cell(CharacterNo)
+                            Cell &= Character
+                            If Cell = "Grass" Then
+                                Dim Grass As Grass = New Grass()
+                                NewGame.LotObjectMatrix(j, i) = Grass
+                            End If
+                        End While
+                    Next
+                Next
+            End While
             If PathName = Nothing Then
                 If isStart = True Then
                     StartMenu(GameSettings)

@@ -2,44 +2,6 @@
     Public x As Integer
     Public y As Integer
 End Structure
-Public Structure Texture
-    Private _line0 As List(Of String)
-    Private _line1 As List(Of String)
-    Private _line2 As List(Of String)
-    Private _line3 As List(Of String)
-    Public Property Line0 As List(Of String)
-        Get
-            Return _line0
-        End Get
-        Set(value As List(Of String))
-            _line0 = value
-        End Set
-    End Property
-    Public Property Line1 As List(Of String)
-        Get
-            Return _line1
-        End Get
-        Set(value As List(Of String))
-            _line1 = value
-        End Set
-    End Property
-    Public Property Line2 As List(Of String)
-        Get
-            Return _line2
-        End Get
-        Set(value As List(Of String))
-            _line2 = value
-        End Set
-    End Property
-    Public Property Line3 As List(Of String)
-        Get
-            Return _line3
-        End Get
-        Set(value As List(Of String))
-            _line3 = value
-        End Set
-    End Property
-End Structure
 Public Class Game
     Public Shared GameSettings As GameSettings
     Public HasResidential As Boolean = False
@@ -58,7 +20,6 @@ Public Class Game
     Public NoOfResidentialLots As Integer = 0
     Public NoOfCommercialLots As Integer = 0
     Public NoOfWeeksPlayed As Integer = 1
-    Public Junctions() As Position
     Sub ShowTestMap(Game)
         Dim testMap As Map = New Map()
         For i As Integer = 0 To 32
@@ -213,25 +174,6 @@ Public Class Game
                     Game.HasShoppingPlace = True
                 End If
                 Game.LotObjectMatrix(pos.y, pos.x).RoadConnectionCheck(pos, Game)
-                For i As Integer = -1 To 1
-                    For j As Integer = -1 To 1
-                        If i = 1 And j = 1 Then
-                            Continue For
-                        End If
-                        If i = 1 And j = -1 Then
-                            Continue For
-                        End If
-                        If i = -1 And j = 1 Then
-                            Continue For
-                        End If
-                        If i = -1 And j = -1 Then
-                            Continue For
-                        End If
-                        If Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.SmallRoad" Or Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.LargeRoad" Then
-
-                        End If
-                    Next
-                Next
             Next
         Next
         For pos.y = 0 To 24
@@ -240,6 +182,14 @@ Public Class Game
                     Game.LotObjectMatrix(pos.y, pos.x).FinishConstruction(Game, pos)
                 End If
                 If Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.SmallResidential" Or Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.LargeResidential" Then
+                    If Game.LotObjectMatrix(pos.y, pos.x).Path.Length = 1 Then
+                        Game.LotObjectMatrix(pos.y, pos.x).FindBuildingPath(Game, pos, Game.LotObjectMatrix(pos.y, pos.x).LowerWorkPlaceY, Game.LotObjectMatrix(pos.y, pos.x).LowerWorkPlaceX)
+                        Game.LotObjectMatrix(pos.y, pos.x).FindBuildingPath(Game, pos, Game.LotObjectMatrix(pos.y, pos.x).MiddleWorkPlaceY, Game.LotObjectMatrix(pos.y, pos.x).MiddleWorkPlaceX)
+                        Game.LotObjectMatrix(pos.y, pos.x).FindBuildingPath(Game, pos, Game.LotObjectMatrix(pos.y, pos.x).UpperWorkPlaceY, Game.LotObjectMatrix(pos.y, pos.x).UpperWorkPlaceX)
+                        Game.LotObjectMatrix(pos.y, pos.x).FindBuildingPath(Game, pos, Game.LotObjectMatrix(pos.y, pos.x).LowerShoppingPlaceY, Game.LotObjectMatrix(pos.y, pos.x).LowerShoppingPlaceX)
+                        Game.LotObjectMatrix(pos.y, pos.x).FindBuildingPath(Game, pos, Game.LotObjectMatrix(pos.y, pos.x).MiddleShoppingPlaceY, Game.LotObjectMatrix(pos.y, pos.x).MiddleShoppingPlaceX)
+                        Game.LotObjectMatrix(pos.y, pos.x).FindBuildingPath(Game, pos, Game.LotObjectMatrix(pos.y, pos.x).MiddleShoppingPlaceY, Game.LotObjectMatrix(pos.y, pos.x).MiddleShoppingPlaceX)
+                    End If
                     If Game.HasWorkBuildings Then
                         Game.LotObjectMatrix(pos.y, pos.x).Work(Game.LotObjectMatrix(pos.y, pos.x))
                     End If
@@ -251,8 +201,11 @@ Public Class Game
                         Game.LotObjectMatrix(pos.y, pos.x).DwellerAmount += 5
                     End If
                     If Game.HasShoppingPlace Then
-                        Game.LotObjectMatrix(pos.y, pos.x).LowerShop(Game.CityGovernment.SalesTaxRate, Game, Game.LotObjectMatrix.LowerMiddleShoppingPlace, pos)
-                        Game.LotObjectMatrix(pos.y, pos.x).MiddleUpperShop(Game.CityGovernment.SalesTaxRate, Game, Game.LotObjectMatrix.MiddleUpperShoppingPlace)
+                        Game.LotObjectMatrix(pos.y, pos.x).LowerShop(Game, Game.LotObjectMatrix(pos.y, pos.x).LowerShoppingPlaceY, Game.LotObjectMatrix(pos.y, pos.x).LowerShoppingPlaceX, pos)
+                        Game.LotObjectMatrix(pos.y, pos.x).MiddleShop(Game, Game.LotObjectMatrix(pos.y, pos.x).MiddleShoppingPlaceY, Game.LotObjectMatrix(pos.y, pos.x).MiddleShoppingPlaceX, pos)
+                        If Game.HasUpperShoppingPlace Then
+                            Game.LotObjectMatrix(pos.y, pos.x).UpperShop(Game, Game.LotObjectMatrix(pos.y, pos.x).UpperShoppingPlaceY, Game.LotObjectMatrix(pos.y, pos.x).UpperShoppingPlaceX, pos)
+                        End If
                         If Game.NoOfWeeksPlayed Mod 4 = 0 Then
                             Game.LotObjectMatrix(pos.y, pos.x).PayIncomeTax(Game.CityGovernment.LowerIncomeTax, Game.CityGovernment.MiddleIncomeTax, Game.CityGovernment.UpperIncomeTax, Game)
                         End If
@@ -268,15 +221,22 @@ Public Class Game
                 Game.LotObjectMatrix(pos.y, pos.x).LandValue = Game.LotObjectMatrix(pos.y, pos.x).CalculateLandValue(pos, Game)
                 If Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.SmallResidential" Or Game.LotObjectMatrix(pos.y, pos.x).GetType.ToString = "Nanopolis.LargeResidential" Then
                     If Game.HasWorkBuildings = True Then
-                        Game.LotObjectMatrix(pos.y, pos.x).GenerateWorkOrShoppingPlace(True, Game.GameSettings.MapWidth, Game.LotObjectMatrix, pos, "Lower")
-                        Game.LotObjectMatrix(pos.y, pos.x).GenerateWorkOrShoppingPlace(True, Game.GameSettings.MapWidth, Game.LotObjectMatrix, pos, "Middle")
-                        Game.LotObjectMatrix(pos.y, pos.x).GenerateWorkOrShoppingPlace(True, Game.GameSettings.MapWidth, Game.LotObjectMatrix, pos, "Upper")
+                        Game.LotObjectMatrix(pos.y, pos.x).GenerateWorkOrShoppingPlace(True, Game.GameSettings.MapWidth, Game.LotObjectMatrix, pos, "Lower", Game.HasUpperWorkPlace)
+                        Game.LotObjectMatrix(pos.y, pos.x).GenerateWorkOrShoppingPlace(True, Game.GameSettings.MapWidth, Game.LotObjectMatrix, pos, "Middle", Game.HasUpperWorkPlace)
+                        If Game.HasUpperWorkPlace Then
+                            Game.LotObjectMatrix(pos.y, pos.x).GenerateWorkOrShoppingPlace(True, Game.GameSettings.MapWidth, Game.LotObjectMatrix, pos, "Upper", Game.HasUpperWorkPlace)
+                        End If
                     End If
                 End If
                 Game.LotObjectMatrix(pos.y, pos.x).CrimeRate = Game.LotObjectMatrix(pos.y, pos.x).CalculateCrimeRate(pos, Game)
                 Game.LotObjectMatrix(pos.y, pos.x).SetAbandonedWeeks(Game, pos)
             Next
         Next
+        If Game.CityGovernment.WelfarePolicy = 1 Then
+            Game.CityGovernment.Spend(400)
+        ElseIf Game.CityGovernment.WelfarePolict = 2 Then
+            Game.CityGovernment.Spend(150)
+        End If
         pos.y = 12
         pos.x = 16
         Game.NoOfWeeksPlayed += 1
@@ -374,52 +334,7 @@ Public Class Game
     End Sub
 End Class
 Public Class Map
-    Public Textures(42) As Texture
     Public GridCodes(24, 32) As Integer
-    Sub LoadTextures()
-        Dim grassTexture As Texture
-        Dim constructionTexture As Texture
-        Dim smallResidentialTexture As Texture
-        Dim largeResidentialTexture As Texture
-        Dim smallCommercialTexture1 As Texture
-        Dim smallCommercialTexture2 As Texture
-        Dim largeCommercialTexture As Texture
-        Dim smallParkTexture As Texture
-        Dim largeParkTexture1 As Texture
-        Dim largeParkTexture2 As Texture
-        Dim largeParkTexture3 As Texture
-        Dim largeParkTexture4 As Texture
-        Dim smallRoadHorizontalTexture As Texture
-        Dim smallRoadVerticalTexture As Texture
-        Dim smallRoad4WayTexture As Texture
-        Dim smallRoadUpRightLeftTexture As Texture
-        Dim smallRoadRightDownLeftTexture As Texture
-        Dim smallRoadUpDownLeftTexture As Texture
-        Dim smallRoadUpRightDownTexture As Texture
-        Dim smallRoadUpLeftTexture As Texture
-        Dim smallRoadUpRightTexture As Texture
-        Dim smallRoadDownLeftTexture As Texture
-        Dim smallRoadRightDownTexture As Texture
-        Dim largeRoadHorizontalTexture As Texture
-        Dim largeRoadVerticalTexture As Texture
-        Dim largeRoadRightDownLeftTexture As Texture
-        Dim largeRoadUpRightLeftTexture As Texture
-        Dim largeRoadUpLeftTexture As Texture
-        Dim largeRoadUpRightTexture As Texture
-        Dim largeRoadDownLeftTexture As Texture
-        Dim largeRoadDownRightTexture As Texture
-        Dim industryTexture As Texture
-        Dim parliamentTexture1 As Texture
-        Dim parliamentTexture2 As Texture
-        Dim parliamentTexture3 As Texture
-        Dim parliamentTexture4 As Texture
-        Dim policeTexture As Texture
-        Dim waterTexture As Texture
-        Dim forestTexture As Texture
-        Dim windFarmTexture As Texture
-        Dim coalStationTexture As Texture
-        Dim largeRoadUpDownLeftTexture As Texture
-    End Sub
     Public Sub PrintMap(ByRef Pos, ByRef Game, Optional IsTestMap = False)
         Console.Clear()
         If IsTestMap = False Then
@@ -2856,6 +2771,7 @@ Public Class Government
     Public CityLiteracyRate As Integer
     Public CityEconomicInequality As Integer
     Public EconomicMobility As Integer
+    Public WelfarePolicy As Integer = 2
     Sub EstablishGovernment()
         Treasury = StartingTreasury
         ExecutivePower = StartingExecPower
@@ -2915,35 +2831,248 @@ Public Class Government
                 Return
         End Select
     End Sub
-    Sub ShowLegislatureMenu(ByRef Game)
-        Console.WriteLine(" ")
-        Console.BackgroundColor = ConsoleColor.Gray
-        Console.ForegroundColor = ConsoleColor.Black
-        Console.WriteLine("--THE LEGISLATURE--")
-        Console.ResetColor()
-        Console.WriteLine(" [1] Propose a bill for the legislature to vote on | [2] Dissolve parliament and trigger a General Election | [C] Return to gov't menu")
-        Dim key As ConsoleKey = Console.ReadKey(True).Key
-        If key = ConsoleKey.D1 Then
-            Game.CityGovernment.ShowPolicyMenu(False, Game)
-        End If
-    End Sub
     Sub ShowTreasuryMenu(ByRef Game)
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
         Console.WriteLine("  --THE TREASURY--")
         Console.ResetColor()
-        Console.WriteLine("  [1] Adjust tax rates | [2] Adjust interest rate | [3] Issue bonds | [4] View balance sheet | [C] Return to gov't menu")
+        Console.WriteLine("  [1] Adjust income tax [2] Adjust sales tax  [C] Return to gov't menu")
         Console.ReadLine()
+        Dim input As ConsoleKeyInfo = Console.ReadKey(True)
+        If input.Key = ConsoleKey.D1 Then
+            Console.WriteLine("[1] Lower tax rate: " & Game.CityGovernment.LowerIncomeTax)
+            Console.WriteLine("[2] Middle tax rate: " & Game.CityGovernment.MiddleIncomeTax)
+            Console.WriteLine("[3] Upper tax rate: " & Game.CityGovernment.UpperIncomeTax)
+            Dim input2 As ConsoleKeyInfo = Console.ReadKey(True)
+            Console.Write("Enter tax rate: ")
+            If input2.Key = ConsoleKey.D1 Then
+                Game.CityGovernment.LowerIncomeTax = Console.ReadLine()
+            ElseIf input2.Key = ConsoleKey.D2 Then
+                Game.CityGovernment.MiddleIncomeTax = Console.ReadLine()
+            ElseIf input2.Key = ConsoleKey.D3 Then
+                Game.CityGovernment.UpperIncomeTax = Console.ReadLine()
+            End If
+        ElseIf input.Key = ConsoleKey.D2 Then
+            Console.Write("Enter tax rate: ")
+            Game.CityGovernment.SalesTaxRate = Console.ReadLine()
+        ElseIf input.Key = ConsoleKey.C Then
+            Return
+        End If
     End Sub
-    Sub ShowPolicyMenu(IsExecutive As Boolean, ByRef Game As Game)
+    Sub ShowPolicyMenu(IsExecutive, ByRef Game)
+        Dim CorrectInput As Boolean = False
         Console.BackgroundColor = ConsoleColor.Gray
         Console.ForegroundColor = ConsoleColor.Black
         Console.WriteLine("  Change government policy:")
         Console.WriteLine("  Executive power: " & Game.CityGovernment.ExecutivePower)
-        Console.WriteLine("  Legislative control:" & Game.CityGovernment.LegislativeControl)
+        Console.WriteLine("  Legislative control:" & Game.CityGovernment.LegislativeControl & vbCrLf)
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.Write("  1")
         Console.ResetColor()
-    End Sub
-    Sub ShowGovtAlert()
-
+        Console.WriteLine("Gun control")
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.Write("  2")
+        Console.ResetColor()
+        Console.WriteLine("Immigration")
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.Write("  3")
+        Console.ResetColor()
+        Console.WriteLine("Surveillance")
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.Write("  4")
+        Console.ResetColor()
+        Console.WriteLine("Drugs")
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.Write("  5")
+        Console.ResetColor()
+        Console.WriteLine("Foreign Policy")
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.Write("  6")
+        Console.ResetColor()
+        Console.WriteLine("Welfare")
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.Write("  7")
+        Console.ResetColor()
+        Console.WriteLine("Environment")
+        Console.BackgroundColor = ConsoleColor.Gray
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.ResetColor()
+        Dim Input As ConsoleKeyInfo = Console.ReadKey(True)
+        Dim Input2 As ConsoleKeyInfo
+        While Not CorrectInput
+            If Input.Key = ConsoleKey.D1 Then
+                CorrectInput = True
+                Console.WriteLine(vbCrLf & "  Gun Control:")
+                Console.Write("  1")
+                Console.WriteLine(" Citizens should be able to purchase firearms freely")
+                Console.Write("  2")
+                Console.WriteLine(" Access to firearms should be restricted to the police and the military")
+                Input2 = Console.ReadKey(True)
+                If Input2.Key = ConsoleKey.D1 Then
+                    Game.CityGovernment.CivilLibertyIndex += 15
+                    Game.CityGovernment.CityUnemploymentRate -= 5
+                ElseIf Input2.Key = ConsoleKey.D2 Then
+                    Game.CityGovernment.CivilLibertyIndex -= 15
+                Else
+                    CorrectInput = False
+                    Continue While
+                End If
+            ElseIf Input.Key = ConsoleKey.D2 Then
+                CorrectInput = True
+                Console.WriteLine(vbCrLf & "  Immigration:")
+                Console.Write("  1")
+                Console.WriteLine(" Open borders with neighbouring nations")
+                Console.Write("  2")
+                Console.WriteLine(" Immigration restricted to skilled workers who pass a citizenship test")
+                Console.Write("  3")
+                Console.WriteLine(" Closed borders, only select government officials can leave the country")
+                Input2 = Console.ReadKey(True)
+                If Input2.Key = ConsoleKey.D1 Then
+                    Game.CityGovernment.CivilLibertyIndex += 10
+                    Game.CityGovernment.CityUnemploymentRate += 10
+                ElseIf Input2.Key = ConsoleKey.D2 Then
+                    Game.CityGovernment.CityUnemploymentRate += 5
+                ElseIf Input2.Key = ConsoleKey.D3 Then
+                    Game.CityGovernment.CityUnemploymentRate -= 5
+                    Game.CityGovernment.CivilLibertyIndex -= 15
+                Else
+                    CorrectInput = False
+                    Continue While
+                End If
+            ElseIf Input.Key = ConsoleKey.D3 Then
+                CorrectInput = True
+                Console.WriteLine(vbCrLf & " Surveillance:")
+                Console.Write("  1")
+                Console.WriteLine(" Citizens aren't monitored at all")
+                Console.Write("  2")
+                Console.WriteLine(" CCTV in public areas")
+                Console.Write("  3")
+                Console.WriteLine(" Geolocation through cellphones")
+                Input2 = Console.ReadKey(True)
+                If Input2.Key = ConsoleKey.D1 Then
+                    Game.CityGovernment.CivilLibertyIndex += 10
+                    For j As Integer = 0 To 24
+                        For i As Integer = 0 To (Game.GameSettings.MapWidth - 1)
+                            Game.LotObjectMatrix(j, i).CrimeRate += 10
+                        Next
+                    Next
+                ElseIf Input2.Key = ConsoleKey.D2 Then
+                    Game.CityGovernment.CivilLibertyIndex -= 15
+                    For j As Integer = 0 To 24
+                        For i As Integer = 0 To (Game.GameSettings.MapWidth - 1)
+                            Game.LotObjectMatrix(j, i).CrimeRate -= 10
+                        Next
+                    Next
+                Else
+                    CorrectInput = False
+                    Continue While
+                End If
+            ElseIf Input.Key = ConsoleKey.D4 Then
+                CorrectInput = True
+                Console.WriteLine(vbCrLf & " Drugs:")
+                Console.Write("  1")
+                Console.WriteLine(" No addictive substances may be bought")
+                Console.Write("  2")
+                Console.WriteLine(" Alcohol and tobacco are permitted")
+                Console.Write("  3")
+                Console.WriteLine(" All drugs are decriminalised, government stores sell drugs that are properly tested")
+                Input2 = Console.ReadKey(True)
+                If Input2.Key = ConsoleKey.D1 Then
+                    Game.CityGovernment.CivilLibertyIndex -= 10
+                    For j As Integer = 0 To 24
+                        For i As Integer = 0 To (Game.GameSettings.MapWidth - 1)
+                            Game.LotObjectMatrix(j, i).CrimeRate += 15
+                        Next
+                    Next
+                ElseIf Input2.Key = ConsoleKey.D3 Then
+                    Game.CityGovernment.CivilLibertyIndex += 5
+                    For j As Integer = 0 To 24
+                        For i As Integer = 0 To (Game.GameSettings.MapWidth - 1)
+                            Game.LotObjectMatrix(j, i).CrimeRate -= 10
+                        Next
+                    Next
+                Else
+                    CorrectInput = False
+                    Continue While
+                End If
+            ElseIf Input.Key = ConsoleKey.D5 Then
+                CorrectInput = True
+                Console.WriteLine(vbCrLf & "  Foreign Policy:")
+                Console.Write("  1")
+                Console.WriteLine(" Expansionism, conquer new territory for the sake of it")
+                Console.Write("  2")
+                Console.WriteLine(" Realpolitik, intervene in other nation's politics when it benefits you and hurts a rival nation")
+                Console.Write("  3")
+                Console.WriteLine(" Isolationism, diplomacy, avoid conflict at all costs")
+                Input2 = Console.ReadKey(True)
+                If Input2.Key = ConsoleKey.D1 Then
+                    Game.CityGovernment.CivilLibertyIndex -= 10
+                    Game.CityGovernment.CityUnemploymentRate -= 15
+                ElseIf Input2.Key = ConsoleKey.D3 Then
+                    Game.CityGovernment.CivilLibertyIndex += 5
+                Else
+                    CorrectInput = False
+                    Continue While
+                End If
+            ElseIf Input.Key = ConsoleKey.D6 Then
+                CorrectInput = True
+                Console.WriteLine(vbCrLf & " Welfare:")
+                Console.Write("  1")
+                Console.WriteLine(" Expansive welfare state with unemployment insurance, full aid for the homeless, support single parent households, and free education")
+                Console.Write("  2")
+                Console.WriteLine(" Some welfare, free 1ary & 2ary education, support food banks and social security")
+                Console.Write("  3")
+                Console.WriteLine(" No welfare, fully privatised education and pensions")
+                Input2 = Console.ReadKey(True)
+                If Input2.Key = ConsoleKey.D1 Then
+                    Game.CityGovernment.CivilLibertyIndex += 5
+                    Game.CityGovernment.CityUnemploymentRate += 10
+                    For j As Integer = 0 To 24
+                        For i As Integer = 0 To (Game.GameSettings.MapWidth - 1)
+                            Game.LotObjectMatrix(j, i).CrimeRate += 5
+                        Next
+                    Next
+                    Game.CityGovernment.WelfarePolicy = 1
+                ElseIf Input2.Key = ConsoleKey.D2 Then
+                    Game.CityGovernment.WelfarePolicy = 2
+                ElseIf Input2.Key = ConsoleKey.D3 Then
+                    Game.CityGovernment.CityUnemploymentRate -= 5
+                    Game.CityGovernment.CivilLibertyIndex -= 5
+                    Game.CityGovernment.WelfarePolicy = 3
+                Else
+                    CorrectInput = False
+                    Continue While
+                End If
+            ElseIf Input.Key = ConsoleKey.D7 Then
+                CorrectInput = True
+                Console.WriteLine(vbCrLf & " Environment:")
+                Console.Write("  1")
+                Console.WriteLine(" High carbon tax, licenses for hunting, restrict foresting, regulations on coal power stations")
+                Console.Write("  2")
+                Console.WriteLine(" Low carbon tax, mandate that trees are replaced")
+                Console.Write("  3")
+                Console.WriteLine(" No restrictions on foresting, no carbon tax")
+                Input2 = Console.ReadKey(True)
+                If Input2.Key = ConsoleKey.D1 Then
+                    Game.CityGovernment.CivilLibertyIndex -= 5
+                    Game.CityGovernment.CityUnemploymentRate += 15
+                ElseIf Input2.Key = ConsoleKey.D3 Then
+                    Game.CityGovernment.CivilLibertyIndex += 5
+                    Game.CityGovernment.CityUnemploymentRate -= 15
+                Else
+                    CorrectInput = False
+                    Continue While
+                End If
+            Else
+                Continue While
+            End If
+        End While
     End Sub
 End Class

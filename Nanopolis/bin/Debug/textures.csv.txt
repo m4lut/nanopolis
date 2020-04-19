@@ -1,5 +1,0 @@
-texturetype,grass,,,,,,,,
-line0,background=green,foreground=darkgreen,write(". . ."),resetcolor, , , , , 
-line1,background=green,foreground=darkgreen,write(" . . "),resetcolor, , , , ,
-line2,background=green,foreground=darkgreen,write(". . ."),resetcolor, , , , ,
-line3,background=green,foreground=darkgreen,write(" . . "),resetcolor, , , , ,

@@ -22,7 +22,10 @@
             AbandonBuilding(Game, Pos)
         End If
     End Sub
-    Sub FindBuildingPath(Game, StartPos, EndPos)
+    Sub FindBuildingPath(Game, StartPos, EndPosY, EndPosX)
+        Dim EndPos As Position
+        EndPos.y = EndPosY
+        EndPos.x = EndPosX
         Dim AdjacentVertices(3) As Position
         Dim Discovered(24, Game.GameSettings.MapWidth - 1) As Boolean
         Dim Found As Boolean = False
@@ -115,7 +118,7 @@
             C = EndPos
             Do
                 C = Parent(C.y, C.x)
-                Console.WriteLine(C.y & ", " & C.x)
+                Game.LotObjectMatrix(C.y, C.x).TimesReferenced += 1
             Loop Until C.y = StartPos.y And C.x = StartPos.x
         End If
     End Sub
@@ -464,7 +467,7 @@
             tempModifier += tji
             Return tempModifier
         ElseIf Game.LotObjectMatrix(Pos.y, Pos.x).GetType.ToString = "Nanopolis.SmallResidential" Or Game.LotObjectMatrix(Pos.y, Pos.x).GetType.ToString = "Nanopolis.LargeResidential" Then
-            If Game.LotObjecMatrix(Pos.y, Pos.x).DwellerAmount = Game.LotObjectMatrix(Pos.y, Pos.x).MaxNoOfDwellers Then
+            If Game.LotObjectMatrix(Pos.y, Pos.x).DwellerAmount = Game.LotObjectMatrix(Pos.y, Pos.x).MaxNoOfDwellers Then
                 tempModifier += 25
             End If
             Return tempModifier
@@ -492,8 +495,21 @@ Public Class Road
     Public DownWeight As Integer
     Public LeftWeight As Integer
     Public RightWeight As Integer
-    Function CalculateTJI(ByRef Game, StartPos, EndPos)
-
+    Function CalculateTJI(ByRef Game)
+        Dim TotalCapacity As Integer = 0
+        For j As Integer = 0 To 24
+            For i As Integer = 0 To (Game.GameSettings.MapWidth - 1)
+                If Game.LotObjectMatrix(j, i).GetType.ToString = "Nanopolis.SmallRoad" Or Game.LotObjectMatrix(i, j).GetType.ToString = "Nanopolis.LargeRoad" Then
+                    TrafficJamIndex += Game.LotObjectMatrix(j, i).TimesReferenced
+                End If
+                If Game.LotObjectMatrix(j, i).GetType.ToString = "Nanopolis.SmallRoad" Then
+                    TotalCapacity += 60
+                ElseIf Game.LotObjectMatrix(i, j).GetType.ToString = "Nanopolis.LargeRoad" Then
+                    TotalCapacity += 140
+                End If
+            Next
+        Next
+        TrafficJamIndex = (TrafficJamIndex / TotalCapacity) * (14 / 15)
         Return TrafficJamIndex
     End Function
 End Class
@@ -554,7 +570,13 @@ Public Class ResidentialLot
         Dim Found As Boolean = False
         Dim finalPlaceY As Integer
         Dim finalPlaceX As Integer
+        Dim LoopCount As Integer
         While Found = False
+            LoopCount += 1
+            If LoopCount > 100 Then
+                Console.WriteLine("Fatal error in GenerateWorkOrShoppingPlace(), please restart the game")
+                Console.ReadLine()
+            End If
             Randomize()
             Threading.Thread.Sleep(Rnd)
             RandomDirectionX = Rnd()
@@ -609,7 +631,6 @@ Public Class ResidentialLot
                     UpComponent *= -1
                 End If
                 If RightComponent = 0 And UpComponent = 0 Then
-                    Console.WriteLine("#")
                     Continue While
                 End If
             Else
@@ -658,7 +679,6 @@ Public Class ResidentialLot
                     RightComponent = 0
                 End If
                 If RightComponent = 0 And UpComponent = 0 Then
-                    Console.WriteLine("#")
                     Continue While
                 End If
                 If Not Right Then
@@ -670,14 +690,10 @@ Public Class ResidentialLot
             End If
             finalPlaceY = pos.y + UpComponent
             finalPlaceX = pos.x + RightComponent
-            Console.Write(finalPlaceY & ", ")
-            Console.WriteLine(finalPlaceX)
             If finalPlaceY < 0 Or finalPlaceY > 24 Then
-                Console.WriteLine("Y$")
                 Continue While
             End If
             If finalPlaceX < 0 Or finalPlaceX > (MapWidth - 1) Then
-                Console.WriteLine("X$")
                 Continue While
             End If
             If FindingWork Then
@@ -701,13 +717,11 @@ Public Class ResidentialLot
                         LotObjectMatrix(pos.y, pos.x).MiddleWorkPlaceX = finalPlaceX
                         Found = True
                     End If
-                ElseIf SocialClass = "Upper" Then
-                    If HasUpperWorkPlace Then
-                        If LotObjectMatrix(finalPlaceY, finalPlaceX).GetType.ToString = "Nanopolis.LargeCommercial" And LotObjectMatrix(finalPlaceY, finalPlaceX).HasRoadConnection Then
+                ElseIf SocialClass = "Upper" And HasUpperWorkPlace Then
+                    If LotObjectMatrix(finalPlaceY, finalPlaceX).GetType.ToString = "Nanopolis.LargeCommercial" And LotObjectMatrix(finalPlaceY, finalPlaceX).HasRoadConnection Then
                             LotObjectMatrix(pos.y, pos.x).UpperWorkPlaceY = finalPlaceY
                             LotObjectMatrix(pos.y, pos.x).UpperWorkPlaceX = finalPlaceX
-                            Found = True
-                        End If
+                        Found = True
                     End If
                 End If
             Else
@@ -733,35 +747,34 @@ Public Class ResidentialLot
             End If
         End While
     End Sub
-    Sub LowerShop(ByRef Game, ShoppingPlace, Pos)
+    Sub LowerShop(ByRef Game, ShoppingPlaceY, ShoppingPlaceX, Pos)
         For i As Integer = 0 To Int(DwellerAmount * LowerClassProportion)
-            Game.LotObjectMatrix(ShoppingPlace.y, ShoppingPlace.x).GainRevenue(20)
+            Game.LotObjectMatrix(ShoppingPlaceY, ShoppingPlaceX).GainRevenue(20)
             Game.LotObjectMatrix(Pos.y, Pos.x).LowerClassCash -= 20
-            Game.LotObjectMatrix(Pos.y, Pos.x).PaySalesTax(Game.CityGovernment.LowerIncomeTax)
+            Game.LotObjectMatrix(Pos.y, Pos.x).LowerClassCash -= 20 * (Game.CityGovernment.SalesTaxRate / 100)
         Next
     End Sub
-    Sub MiddleShop(ByRef Game, ShoppingPlace, Pos)
+    Sub MiddleShop(ByRef Game, ShoppingPlaceY, ShoppingPlaceX, Pos)
         For i As Integer = 0 To (DwellerAmount * MiddleClassProportion)
             If Game.LotObjectMatrix(MiddleShoppingPlaceY, MiddleShoppingPlaceX).GetType.ToString = "Nanopolis.LargeCommercial" Then
-                Game.LotObjectMatrix(ShoppingPlace.y, ShoppingPlace.x).GainRevenue(250)
+                Game.LotObjectMatrix(ShoppingPlaceY, ShoppingPlaceX).GainRevenue(250)
                 Game.LotObjectMatrix(Pos.y, Pos.x).MiddleClassCash -= 250
                 Game.LotObjectMatrix(Pos.y, Pos.x).MiddleClassCash -= 250 * (Game.CityGovernment.SalesTaxRate / 100)
             ElseIf Game.LotObjectMatrix(MiddleShoppingPlaceY, MiddleShoppingPlaceX).GetType.ToString = "Nanopolis.SmallCommercial" Then
-                Game.LotObjectMatrix(ShoppingPlace.y, ShoppingPlace.x).GainRevenue(20)
+                Game.LotObjectMatrix(ShoppingPlaceY, ShoppingPlaceX).GainRevenue(20)
                 Game.LotObjectMatrix(Pos.y, Pos.x).MiddleClassCash -= 20
                 Game.LotObjectMatrix(Pos.y, Pos.x).MiddleClassCash -= 20 * (Game.CityGovernment.SalesTaxRate / 100)
             End If
         Next
+    End Sub
+    Sub UpperShop(ByRef Game, ShoppingPlaceY, ShoppingPlaceX, Pos)
         For i As Integer = 0 To (DwellerAmount * UpperClassProportion)
-            Game.LotObjectMatrix(ShoppingPlace.y, ShoppingPlace.x).GainRevenue(250)
+            Game.LotObjectMatrix(ShoppingPlaceY, ShoppingPlaceX).GainRevenue(250)
             Game.LotObjectMatrix(Pos.y, Pos.x).UpperClassCash -= 250
             Game.LotObjectMatrix(Pos.y, Pos.x).UpperClassCash -= 250 * (Game.CityGovernment.SalesTaxRate / 100)
         Next
     End Sub
-    Sub UpperShop(ByRef Game, ShoppingPlace, Pos)
-
-    End Sub
-    Sub Work(Lot)
+    Sub Work(ByRef Lot)
         For i As Integer = 0 To Int(DwellerAmount * LowerClassProportion)
             LowerClassCash += Int(DwellerAmount * LowerClassProportion * 75)
         Next
@@ -804,11 +817,11 @@ Public Class ResidentialLot
 End Class
 Public Class SmallResidential
     Inherits ResidentialLot
-    Protected MaxNoOfDwellers As Integer = 25
+    Public MaxNoOfDwellers As Integer = 25
 End Class
 Public Class LargeResidential
     Inherits ResidentialLot
-    Protected MaxNoOfDwellers As Integer = 100
+    Public MaxNoOfDwellers As Integer = 100
     Overloads Sub MoveIn()
         DwellerAmount += 10
         If LandValue > 40 Then
@@ -944,6 +957,7 @@ Public Class Construction
                     Game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(False, Game.GameSettings.MapWidth, Game.LotObjectMatrix, Pos, "Lower", Nothing)
                     Game.LotObjectMatrix(Pos.y, Pos.x).GenerateWorkOrShoppingPlace(False, Game.GameSettings.MapWidth, Game.LotObjectMatrix, Pos, "Middle", Nothing)
                 End If
+
             Case "Nanopolis.LargeResidential"
                 Dim largeResidential As LargeResidential = New LargeResidential()
                 largeResidential.HasRoadConnection = tempHasRoadConnection
